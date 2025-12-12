@@ -1,84 +1,136 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import React, { createContext, useContext, useEffect, useState } from "react";
+
+import { getAllJobMeta, type JobMeta } from "@/services/jobs";
 import {
-  DarkTheme,
-  DefaultTheme,
-  ThemeProvider,
-} from "@react-navigation/native";
-import { Stack } from "expo-router";
-import { StatusBar } from "expo-status-bar";
-import { useEffect, useState } from "react";
-import { View } from "react-native";
+  loadProgressSummary,
+  type LearnProgressSummary,
+} from "@/services/learnProgress";
 
-import SplashScreenComponent from "@/components/SplashScreen";
-import { ThemeProvider as AppThemeProvider } from "@/contexts/theme-context";
-import { useColorScheme } from "@/hooks/use-color-scheme";
-import "@/i18n/config";
-import { AppStateProvider } from "@/store/appState";
-
-export const unstable_settings = {
-  anchor: "(tabs)",
+export type AppStateContextValue = {
+  regionState: string | null;
+  regionCity: string | null;
+  onboardingCompleted: boolean;
+  loading: boolean;
+  setRegion: (state: string | null, city: string | null) => Promise<void>;
+  markOnboardingCompleted: () => Promise<void>;
+  learnSummary: LearnProgressSummary | null;
+  jobFavorites: number;
+  jobInterested: number;
+  refreshGlobalProgress: () => Promise<void>;
 };
 
-function RootLayout() {
-  const colorScheme = useColorScheme();
-  const [showSplash, setShowSplash] = useState(true);
+const AppStateContext = createContext<AppStateContextValue | undefined>(
+  undefined
+);
+
+export function AppStateProvider({ children }: { children: React.ReactNode }) {
+  const [regionState, setRegionState] = useState<string | null>(null);
+  const [regionCity, setRegionCity] = useState<string | null>(null);
+  const [onboardingCompleted, setOnboardingCompleted] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [learnSummary, setLearnSummary] = useState<LearnProgressSummary | null>(
+    null
+  );
+  const [jobFavorites, setJobFavorites] = useState(0);
+  const [jobInterested, setJobInterested] = useState(0);
 
   useEffect(() => {
-    // Simple timer: show custom splash for ~2 seconds
-    const timeout = setTimeout(() => {
-      setShowSplash(false);
-    }, 2000);
+    let isMounted = true;
 
-    return () => clearTimeout(timeout);
+    const load = async () => {
+      try {
+        const [[, storedState], [, storedCity], [, onboarding]] =
+          await AsyncStorage.multiGet([
+            "Simorgh.regionState",
+            "Simorgh.regionCity",
+            "Simorgh.onboardingCompleted",
+          ]);
+        if (!isMounted) return;
+        setRegionState(storedState ?? null);
+        setRegionCity(storedCity ?? null);
+        setOnboardingCompleted(onboarding === "true");
+        await refreshGlobalProgress();
+      } catch (error) {
+        console.warn("AppStateProvider load error", error);
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    load();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
-  if (showSplash) {
-    return <SplashScreenComponent />;
-  }
+  const setRegion = async (state: string | null, city: string | null) => {
+    setRegionState(state);
+    setRegionCity(city);
+    try {
+      const entries: [string, string][] = [];
+      if (state != null) entries.push(["Simorgh.regionState", state]);
+      if (city != null) entries.push(["Simorgh.regionCity", city]);
+      if (entries.length > 0) {
+        await AsyncStorage.multiSet(entries);
+      }
+    } catch (error) {
+      console.warn("AppStateProvider setRegion error", error);
+    }
+  };
 
-  return (
-    <View style={{ flex: 1 }}>
-      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-        <AppThemeProvider>
-          <AppStateProvider>
-            <Stack
-              screenOptions={{
-                headerBackTitle: "",
-              }}
-            >
-              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-              <Stack.Screen
-                name="onboarding"
-                options={{ headerShown: false }}
-              />
-              <Stack.Screen name="events" options={{ title: "Events" }} />
-              <Stack.Screen
-                name="local-info"
-                options={{ headerShown: false }}
-              />
-              <Stack.Screen name="jobs" options={{ headerShown: false }} />
-              <Stack.Screen name="job/[id]" options={{ headerShown: false }} />
-              <Stack.Screen
-                name="learn-practice"
-                options={{ title: "Daily Practice" }}
-              />
-              <Stack.Screen name="learn-quiz" options={{ title: "Quiz" }} />
-              <Stack.Screen
-                name="learn-tutor"
-                options={{ title: "AI Tutor" }}
-              />
-              <Stack.Screen name="chat" options={{ headerShown: false }} />
-              <Stack.Screen name="radio" options={{ headerShown: false }} />
-              <Stack.Screen name="tools" options={{ headerShown: false }} />
-              <Stack.Screen
-                name="modal"
-                options={{ presentation: "modal", title: "Modal" }}
-              />
-            </Stack>
-          </AppStateProvider>
-        </AppThemeProvider>
-      </ThemeProvider>
-    </View>
+  const markOnboardingCompleted = async () => {
+    setOnboardingCompleted(true);
+    try {
+      await AsyncStorage.setItem("Simorgh.onboardingCompleted", "true");
+    } catch (error) {
+      console.warn("AppStateProvider markOnboardingCompleted error", error);
+    }
+  };
+
+  const refreshGlobalProgress = async () => {
+    try {
+      const [summary, meta] = await Promise.all([
+        loadProgressSummary(),
+        getAllJobMeta(),
+      ]);
+      setLearnSummary(summary);
+      const favorites = meta.filter((m: JobMeta) => m.favorite).length;
+      const interested = meta.filter((m: JobMeta) => m.interested).length;
+      setJobFavorites(favorites);
+      setJobInterested(interested);
+    } catch (error) {
+      console.warn("AppStateProvider refreshGlobalProgress error", error);
+    }
+  };
+
+  return React.createElement(
+    AppStateContext.Provider,
+    {
+      value: {
+        regionState,
+        regionCity,
+        onboardingCompleted,
+        loading,
+        setRegion,
+        markOnboardingCompleted,
+        learnSummary,
+        jobFavorites,
+        jobInterested,
+        refreshGlobalProgress,
+      },
+    },
+    children
   );
 }
 
-export default RootLayout;
+export function useAppState(): AppStateContextValue {
+  const ctx = useContext(AppStateContext);
+  if (!ctx) {
+    throw new Error("useAppState must be used within an AppStateProvider");
+  }
+  return ctx;
+}
