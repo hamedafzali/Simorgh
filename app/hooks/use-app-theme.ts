@@ -1,15 +1,12 @@
-"use strict";
+import { useContext } from "react";
+import { ThemeContext } from "@/contexts/theme-context";
 
-var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault").default;
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = exports.AppConfigContext = void 0;
-var _react = _interopRequireDefault(require("react"));
-const AppConfigContext = exports.AppConfigContext = /*#__PURE__*/_react.default.createContext({});
-const AppContext = /*#__PURE__*/_react.default.createContext({
-  message: {},
-  notification: {},
-  modal: {}
-});
-var _default = exports.default = AppContext;
+export function useAppTheme() {
+  const context = useContext(ThemeContext);
+  if (!context) {
+    throw new Error("useAppTheme must be used within a ThemeProvider");
+  }
+  return context;
+}
+
+export default useAppTheme;
