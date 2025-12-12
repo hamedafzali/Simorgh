@@ -25,3 +25,7 @@ export function ThemedView({
     />
   );
 }
+
+export default function ExamResult() {
+  return null;
+}

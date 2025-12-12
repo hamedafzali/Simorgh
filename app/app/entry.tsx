@@ -258,3 +258,7 @@ const styles = StyleSheet.create({
     padding: Spacing.sm,
   },
 });
+
+export default function Entry() {
+  return null;
+}
