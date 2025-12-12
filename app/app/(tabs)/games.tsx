@@ -1,7 +1,14 @@
 import { useRouter } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Animated, ScrollView, StyleSheet, View, ActivityIndicator, TouchableOpacity } from "react-native";
+import {
+  Animated,
+  ScrollView,
+  StyleSheet,
+  View,
+  ActivityIndicator,
+  TouchableOpacity,
+} from "react-native";
 
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
@@ -298,7 +305,7 @@ export default function GamesScreen() {
 
     // Navigate to specific game pages
     if (game.id === "cards") {
-      router.push("/(tabs)/games/cards");
+      router.push("/(tabs)/flashcards");
     } else {
       // For other games, show placeholder message
       console.log(`Game ${game.name} is not yet implemented`);
