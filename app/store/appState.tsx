@@ -148,7 +148,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   );
 }
 
-export function useAppState(): AppStateContextType {
+export function useAppState(): AppContextType {
   const context = useContext(AppContext);
   if (context === undefined) {
     throw new Error("useAppState must be used within an AppStateProvider");
