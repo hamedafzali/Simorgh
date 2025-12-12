@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import { View } from "react-native";
 import "react-native-reanimated";
 
-import SplashScreenComponent from "@/components/SplashScreen";
+import SplashScreen from "@/components/SplashScreen";
 import { ThemeProvider as AppThemeProvider } from "@/contexts/theme-context";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import "@/i18n/config";

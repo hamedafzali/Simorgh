@@ -4,7 +4,7 @@ import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 
 import { ModernCard } from "@/components/ui/modern-card";
-import { ProgressBar } from "@/components/progress-bar";
+import { ModernProgressBar } from "@/components/ui/ModernProgressBar";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { IconSymbol } from "@/components/ui/icon-symbol";
@@ -34,7 +34,7 @@ export default function HomeScreenWeb() {
               Learn: {learnSummary?.totalReviews ?? 0} reviews ·{" "}
               {learnSummary?.streakDays ?? 0}-day streak
             </ThemedText>
-            <ProgressBar
+            <ModernProgressBar
               value={
                 learnSummary && learnSummary.totalReviews > 0
                   ? Math.min(1, (learnSummary.streakDays || 0) / 7)
