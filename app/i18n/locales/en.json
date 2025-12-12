@@ -1,0 +1,57 @@
+{
+  "version": 1,
+  "localGuides": [
+    {
+      "id": "anmeldung",
+      "category": "registration",
+      "title": "City Registration (Anmeldung)",
+      "summary": "How to register your address at the local Bürgeramt.",
+      "sections": [
+        "Book an appointment at your local Bürgeramt or Bürgerbüro.",
+        "Prepare your passport, rental contract and Wohnungsgeberbestätigung.",
+        "Go to the appointment, sign the form and receive your registration certificate.",
+        "Keep the Meldebescheinigung for bank, insurance and visa processes."
+      ],
+      "regions": ["de", "berlin", "bayern", "nrw"]
+    },
+    {
+      "id": "residence-permit",
+      "category": "residence",
+      "title": "Residence Permit & Visa",
+      "summary": "Overview of residence titles and where to extend them.",
+      "sections": [
+        "Check your current visa or residence title and its expiry date.",
+        "Find the Ausländerbehörde (foreigners' office) responsible for your city.",
+        "Collect required documents such as passport, biometric photo and proof of income.",
+        "Book an appointment well in advance and bring all original documents."
+      ],
+      "regions": ["de"]
+    },
+    {
+      "id": "health-insurance",
+      "category": "health",
+      "title": "Health Insurance Basics",
+      "summary": "Statutory vs private insurance and how to choose a provider.",
+      "sections": [
+        "Most people in Germany are insured with statutory Krankenkassen.",
+        "Compare providers on their websites or via consultation hotlines.",
+        "Ask in your language if possible; many have Farsi or English-speaking staff.",
+        "Keep your insurance card with you for doctor visits and emergencies."
+      ],
+      "regions": ["de"]
+    },
+    {
+      "id": "integration-courses",
+      "category": "integration",
+      "title": "Integration & Language Courses",
+      "summary": "Information about BAMF integration and language courses.",
+      "sections": [
+        "Check whether you are eligible for a BAMF integration course.",
+        "Search for course providers in your city on the BAMF website.",
+        "Register for a placement test to find the right level.",
+        "Ask about cost coverage or reduced fees based on your status."
+      ],
+      "regions": ["de"]
+    }
+  ]
+}
