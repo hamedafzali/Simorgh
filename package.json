@@ -13,7 +13,7 @@
     "app:ios": "cd app && npm run ios",
     "start": "npm run backend",
     "start:all": "concurrently \"npm run backend\" \"npm run frontend\"",
-    "start:full": "npm run backend & sleep 2 && cd app && npx expo start --clear --port 8081",
+    "start:full": "pkill -f 'expo start' && pkill -f 'nodemon' && lsof -ti:3001 | xargs kill -9 2>/dev/null && lsof -ti:8081 | xargs kill -9 2>/dev/null && npm run backend & sleep 2 && cd app && npx expo start --clear --port 8081",
     "install:all": "npm install && cd backend && npm install && cd ../app && npm install && cd ../backend/admin && npm install",
     "seed": "cd backend && npm run seed",
     "seed:exams": "cd backend && npm run seed-exams",

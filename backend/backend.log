@@ -1,0 +1,14 @@
+
+> simorgh-backend@1.0.0 dev
+> nodemon src/server.js
+
+[33m[nodemon] 3.1.11[39m
+[33m[nodemon] to restart at any time, enter `rs`[39m
+[33m[nodemon] watching path(s): *.*[39m
+[33m[nodemon] watching extensions: js,mjs,cjs,json[39m
+[32m[nodemon] starting `node src/server.js`[39m
+Server is running on port 3001
+API: http://localhost:3001/api
+Admin Panel: http://localhost:3001/admin
+Access from your phone at: http://YOUR_LOCAL_IP:3001
+Connected to MongoDB
