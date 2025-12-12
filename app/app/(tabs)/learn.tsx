@@ -164,16 +164,17 @@ export default function ExamsScreen() {
         //   examsPerPage
         // );
         const result = { exams: [], total: 0, hasMore: false };
+        const examData = result.exams || [];
 
         if (append) {
           // Filter out duplicates by ID
           const existingIds = new Set(exams.map((exam: any) => exam.id));
-          const newExams = result.filter(
+          const newExams = examData.filter(
             (exam: any) => !existingIds.has(exam.id)
           );
           setExams((prev) => [...prev, ...newExams]);
         } else {
-          setExams(result);
+          setExams(examData);
         }
 
         // Get total count
@@ -182,7 +183,7 @@ export default function ExamsScreen() {
         // );
         const total = 0;
         setTotalCount(total);
-        setHasMore(result.length === examsPerPage);
+        setHasMore(examData.length === examsPerPage);
       } catch (error) {
         console.error("Error loading exams:", error);
       } finally {
@@ -260,8 +261,8 @@ export default function ExamsScreen() {
 
           <FlatList
             data={exams}
-            keyExtractor={(item, index) => `${item.id}-${index}`}
-            renderItem={({ item }) => (
+            keyExtractor={(item: any, index: number) => `${item.id}-${index}`}
+            renderItem={({ item }: { item: any }) => (
               <ExamCard exam={item} onStart={handleStartExam} />
             )}
             onEndReached={loadMoreExams}
