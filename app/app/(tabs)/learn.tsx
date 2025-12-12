@@ -211,7 +211,7 @@ export default function ExamsScreen() {
 
   useEffect(() => {
     const initializeApp = async () => {
-      await localLearningService.initialize();
+      // await localLearningService.initialize(); // Method doesn't exist yet
       loadCategoryCounts();
       loadExams();
     };
