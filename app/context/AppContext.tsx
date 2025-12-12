@@ -10,7 +10,7 @@ import { ThemedView } from "@/components/themed-view";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import { useAppState } from "@/store/appState";
+import { useAppState } from "../app/_layout";
 
 export default function HomeScreenWeb() {
   const { t } = useTranslation();

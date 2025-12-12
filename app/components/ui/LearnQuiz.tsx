@@ -21,7 +21,7 @@ import {
   FlashcardType,
   updateFlashcardAfterReview,
 } from "@/services/learnProgress";
-import { useAppState } from "@/store/appState";
+import { useAppState } from "../../app/_layout";
 
 type QuizMode = "multiple-choice" | "fill-in";
 
