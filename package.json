@@ -35,5 +35,8 @@
   "workspaces": [
     "backend",
     "app"
-  ]
+  ],
+  "dependencies": {
+    "react-native-worklets": "^0.7.1"
+  }
 }
