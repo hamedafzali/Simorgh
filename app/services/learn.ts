@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { learningService, type Exam, type Flashcard, type Word } from "./learningService";
 import { learnProgressService } from "./learnProgress";
 import { notificationsService } from "./notifications";

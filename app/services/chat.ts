@@ -61,13 +61,13 @@ export class ChatService {
     }
   }
 
-  async getChatSession(sessionId: string): Promise<ChatSession | null> {
+  async getChatSession(sessionId: string): Promise<ChatSession | undefined> {
     try {
       const sessions = await this.getChatSessions();
-      return sessions.find(s => s.id === sessionId) || null;
+      return sessions.find(s => s.id === sessionId);
     } catch (error) {
       console.error("Error loading chat session:", error);
-      return null;
+      return undefined;
     }
   }
 
