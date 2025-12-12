@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
-import { FlashcardComponent } from "@/components/flashcard";
+import FlashcardComponent from "@/components/flashcard";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { Spacing, Typography } from "@/constants/theme";
 import { useTheme } from "@/contexts/theme-context";
@@ -57,7 +57,7 @@ export default function FlashcardsScreen() {
       setLoading(true);
       console.log("Loading flashcards...");
       // Load all flashcards by explicitly setting due=false
-      const flashcardsData = await getFlashcards({ due: false });
+      const flashcardsData = await getFlashcards("all");
       console.log("Flashcards loaded:", flashcardsData);
       setFlashcards(flashcardsData);
     } catch (error) {

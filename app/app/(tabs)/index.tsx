@@ -156,14 +156,30 @@ export default function ProfileScreen() {
             </ThemedText>
             <ModernCard
               title="Location Settings"
-              description="Configure your region preferences"
-              icon={
-                <IconSymbol name="location" size={20} color={colors.primary} />
-              }
               variant="default"
               size="md"
-              onPress={() => router.push("/local-info")}
-            />
+              onPress={() => router.push("/(tabs)/community")}
+            >
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  marginBottom: 8,
+                }}
+              >
+                <IconSymbol name="location" size={20} color={colors.primary} />
+                <ThemedText
+                  style={{ marginLeft: 8, fontSize: 16, fontWeight: "500" }}
+                >
+                  Location Settings
+                </ThemedText>
+              </View>
+              <ThemedText
+                style={{ fontSize: 14, color: colors.text.textMuted }}
+              >
+                Configure your region preferences and contacts.
+              </ThemedText>
+            </ModernCard>
           </ThemedView>
         </Animated.View>
 
