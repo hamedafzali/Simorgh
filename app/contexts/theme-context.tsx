@@ -41,7 +41,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
   const card = useThemeColor({}, "card") as string;
   const border = useThemeColor({}, "border") as string;
   const primary = useThemeColor(
-    { light: Colors.light.primary[500], dark: Colors.dark.primary[500] },
+    { light: Colors.light.primary, dark: Colors.dark.primary },
     "primary"
   ) as string;
   const textMuted = useThemeColor({}, "textMuted") as string;
