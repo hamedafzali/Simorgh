@@ -33,6 +33,8 @@ export interface JobMeta {
   postedAt: number;
   isRemote: boolean;
   languageRequired: string;
+  favorite?: boolean;
+  interested?: boolean;
   status: string;
 }
 
@@ -62,12 +64,12 @@ export class JobsService {
 
   async getJobById(id: string): Promise<Job | null> {
     const jobs = await this.getAllJobs();
-    return jobs.find(job => job.id === id) || null;
+    return jobs.find((job) => job.id === id) || null;
   }
 
   async getAllJobMeta(): Promise<JobMeta[]> {
     const jobs = await this.getAllJobs();
-    return jobs.map(job => ({
+    return jobs.map((job) => ({
       id: job.id,
       title: job.title,
       company: job.company,
@@ -84,33 +86,38 @@ export class JobsService {
 
   async getJobsByCategory(category: string): Promise<Job[]> {
     const jobs = await this.getAllJobs();
-    return jobs.filter(job => job.category === category && job.status === "active");
+    return jobs.filter(
+      (job) => job.category === category && job.status === "active"
+    );
   }
 
   async getJobsByLocation(location: string): Promise<Job[]> {
     const jobs = await this.getAllJobs();
-    return jobs.filter(job => 
-      job.location.toLowerCase().includes(location.toLowerCase()) && 
-      job.status === "active"
+    return jobs.filter(
+      (job) =>
+        job.location.toLowerCase().includes(location.toLowerCase()) &&
+        job.status === "active"
     );
   }
 
   async getRemoteJobs(): Promise<Job[]> {
     const jobs = await this.getAllJobs();
-    return jobs.filter(job => job.isRemote && job.status === "active");
+    return jobs.filter((job) => job.isRemote && job.status === "active");
   }
 
   async searchJobs(query: string): Promise<Job[]> {
     const jobs = await this.getAllJobs();
     const lowercaseQuery = query.toLowerCase();
-    
-    return jobs.filter(job => 
-      job.status === "active" && (
-        job.title.toLowerCase().includes(lowercaseQuery) ||
-        job.company.toLowerCase().includes(lowercaseQuery) ||
-        job.description.toLowerCase().includes(lowercaseQuery) ||
-        job.requirements.some(req => req.toLowerCase().includes(lowercaseQuery))
-      )
+
+    return jobs.filter(
+      (job) =>
+        job.status === "active" &&
+        (job.title.toLowerCase().includes(lowercaseQuery) ||
+          job.company.toLowerCase().includes(lowercaseQuery) ||
+          job.description.toLowerCase().includes(lowercaseQuery) ||
+          job.requirements.some((req) =>
+            req.toLowerCase().includes(lowercaseQuery)
+          ))
     );
   }
 
@@ -134,7 +141,7 @@ export class JobsService {
 
   async removeFromFavorites(jobId: string): Promise<void> {
     const favorites = await this.getFavoriteJobs();
-    const filtered = favorites.filter(id => id !== jobId);
+    const filtered = favorites.filter((id) => id !== jobId);
     await AsyncStorage.setItem(FAVORITES_KEY, JSON.stringify(filtered));
   }
 
@@ -158,13 +165,13 @@ export class JobsService {
 
   async removeFromInterested(jobId: string): Promise<void> {
     const interested = await this.getInterestedJobs();
-    const filtered = interested.filter(id => id !== jobId);
+    const filtered = interested.filter((id) => id !== jobId);
     await AsyncStorage.setItem(INTERESTED_KEY, JSON.stringify(filtered));
   }
 
   async getJobsCount(): Promise<number> {
     const jobs = await this.getAllJobs();
-    return jobs.filter(job => job.status === "active").length;
+    return jobs.filter((job) => job.status === "active").length;
   }
 
   async getFavoritesCount(): Promise<number> {
@@ -184,16 +191,22 @@ export const jobsService = JobsService.getInstance();
 export const getAllJobs = () => jobsService.getAllJobs();
 export const getJobById = (id: string) => jobsService.getJobById(id);
 export const getAllJobMeta = () => jobsService.getAllJobMeta();
-export const getJobsByCategory = (category: string) => jobsService.getJobsByCategory(category);
-export const getJobsByLocation = (location: string) => jobsService.getJobsByLocation(location);
+export const getJobsByCategory = (category: string) =>
+  jobsService.getJobsByCategory(category);
+export const getJobsByLocation = (location: string) =>
+  jobsService.getJobsByLocation(location);
 export const getRemoteJobs = () => jobsService.getRemoteJobs();
 export const searchJobs = (query: string) => jobsService.searchJobs(query);
 export const getFavoriteJobs = () => jobsService.getFavoriteJobs();
-export const addToFavorites = (jobId: string) => jobsService.addToFavorites(jobId);
-export const removeFromFavorites = (jobId: string) => jobsService.removeFromFavorites(jobId);
+export const addToFavorites = (jobId: string) =>
+  jobsService.addToFavorites(jobId);
+export const removeFromFavorites = (jobId: string) =>
+  jobsService.removeFromFavorites(jobId);
 export const getInterestedJobs = () => jobsService.getInterestedJobs();
-export const addToInterested = (jobId: string) => jobsService.addToInterested(jobId);
-export const removeFromInterested = (jobId: string) => jobsService.removeFromInterested(jobId);
+export const addToInterested = (jobId: string) =>
+  jobsService.addToInterested(jobId);
+export const removeFromInterested = (jobId: string) =>
+  jobsService.removeFromInterested(jobId);
 export const getJobsCount = () => jobsService.getJobsCount();
 export const getFavoritesCount = () => jobsService.getFavoritesCount();
 export const getInterestedCount = () => jobsService.getInterestedCount();
