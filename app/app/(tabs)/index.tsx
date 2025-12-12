@@ -174,9 +174,7 @@ export default function ProfileScreen() {
                   Location Settings
                 </ThemedText>
               </View>
-              <ThemedText
-                style={{ fontSize: 14, color: colors.text.textMuted }}
-              >
+              <ThemedText style={{ fontSize: 14, color: colors.textMuted }}>
                 Configure your region preferences and contacts.
               </ThemedText>
             </ModernCard>
