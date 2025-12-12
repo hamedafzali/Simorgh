@@ -29,7 +29,6 @@ export const initI18n = async () => {
   let savedLanguage = await AsyncStorage.getItem(LANGUAGE_KEY);
   
   if (!savedLanguage) {
- {
     // Fallback to English if no saved language
     savedLanguage = "en";
   }
