@@ -39,7 +39,6 @@
           }
         }
       ],
-      "expo-localization",
       "expo-secure-store",
       "expo-web-browser"
     ],
