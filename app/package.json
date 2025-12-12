@@ -23,6 +23,7 @@
     "expo-splash-screen": "~0.20.5",
     "expo-status-bar": "~1.6.0",
     "i18next": "^23.2.11",
+    "metro": "^0.83.3",
     "metro-core": "^0.83.3",
     "react": "18.2.0",
     "react-i18next": "^13.0.1",
