@@ -26,6 +26,7 @@ export default function FlashcardsScreen() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isFlipped, setIsFlipped] = useState(false);
 
   console.log(
     "FlashcardsScreen rendering, loading:",
