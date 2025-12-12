@@ -139,3 +139,15 @@ export function useAppState(): AppStateContextValue {
   }
   return ctx;
 }
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <ThemeProvider>
+      <AppStateProvider>{children}</AppStateProvider>
+    </ThemeProvider>
+  );
+}
