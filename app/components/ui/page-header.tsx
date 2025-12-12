@@ -11,6 +11,7 @@ interface PageHeaderProps {
   onBackPress?: () => void;
   rightComponent?: React.ReactNode;
   subtitle?: string;
+  height?: string;
 }
 
 export default function PageHeader({
@@ -19,6 +20,7 @@ export default function PageHeader({
   onBackPress,
   rightComponent,
   subtitle,
+  height,
 }: PageHeaderProps) {
   const router = useRouter();
   const backgroundColor = useThemeColor({}, "background");
@@ -34,18 +36,19 @@ export default function PageHeader({
   };
 
   return (
-    <View style={[styles.container, { backgroundColor, borderBottomColor: borderColor }]}>
+    <View
+      style={[
+        styles.container,
+        { backgroundColor, borderBottomColor: borderColor },
+      ]}
+    >
       <View style={styles.leftSection}>
         {showBackButton && (
           <TouchableOpacity
             style={[styles.backButton, { borderColor }]}
             onPress={handleBackPress}
           >
-            <IconSymbol
-              name="chevron.left"
-              size={20}
-              color={textColor}
-            />
+            <IconSymbol name="chevron.left" size={20} color={textColor} />
           </TouchableOpacity>
         )}
         <View style={styles.titleContainer}>
@@ -60,9 +63,7 @@ export default function PageHeader({
         </View>
       </View>
       {rightComponent && (
-        <View style={styles.rightSection}>
-          {rightComponent}
-        </View>
+        <View style={styles.rightSection}>{rightComponent}</View>
       )}
     </View>
   );
