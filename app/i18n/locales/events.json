@@ -1,0 +1,59 @@
+{
+  "version": 1,
+  "events": [
+    {
+      "id": "berlin-language-cafe-1",
+      "city": "Berlin",
+      "state": "Berlin",
+      "type": "language-cafe",
+      "date": "2025-12-05",
+      "time": "18:00",
+      "latitude": 52.52,
+      "longitude": 13.405,
+      "localized": {
+        "fa": {
+          "title": "کافه زبان فارسی-آلمانی",
+          "description": "دورهمی دوستانه برای تمرین آلمانی و فارسی با مهاجران و داوطلبان.",
+          "locationText": "کافه نزدیک Alexanderplatz"
+        },
+        "de": {
+          "title": "Persisch-Deutsches Sprachen-Café",
+          "description": "Gemütliches Treffen zum Üben von Deutsch und Persisch mit Migrant*innen und Freiwilligen.",
+          "locationText": "Café Nähe Alexanderplatz"
+        },
+        "en": {
+          "title": "Persian-German Language Café",
+          "description": "Friendly meetup to practice German and Farsi with migrants and volunteers.",
+          "locationText": "Cafe near Alexanderplatz"
+        }
+      }
+    },
+    {
+      "id": "cologne-ngo-info-1",
+      "city": "Köln",
+      "state": "Nordrhein-Westfalen",
+      "type": "info-session",
+      "date": "2025-11-20",
+      "time": "16:00",
+      "latitude": 50.9375,
+      "longitude": 6.9603,
+      "localized": {
+        "fa": {
+          "title": "جلسه اطلاعات ادغام",
+          "description": "معرفی دوره‌های ادغام، مشاوره حقوقی پایه، و نکات زندگی در آلمان.",
+          "locationText": "مرکز مشاوره در مرکز شهر کُلن"
+        },
+        "de": {
+          "title": "Infoveranstaltung Integration",
+          "description": "Vorstellung von Integrationskursen, rechtlicher Erstberatung und Alltagstipps.",
+          "locationText": "Beratungszentrum in der Kölner Innenstadt"
+        },
+        "en": {
+          "title": "Integration Info Session",
+          "description": "Introduction to integration courses, basic legal counseling, and everyday tips.",
+          "locationText": "Counseling center in Cologne city center"
+        }
+      }
+    }
+  ]
+}
