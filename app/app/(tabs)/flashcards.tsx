@@ -183,10 +183,8 @@ export default function FlashcardsScreen() {
         <View style={styles.cardContainer}>
           {currentCard && (
             <FlashcardComponent
-              front={currentCard.front}
-              back={currentCard.back}
-              isFlipped={isFlipped}
-              onFlip={() => setIsFlipped(!isFlipped)}
+              flashcard={currentCard}
+              onUpdate={handleUpdateFlashcard}
             />
           )}
         </View>
