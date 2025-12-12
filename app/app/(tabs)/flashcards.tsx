@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
-import FlashcardComponent from "@/components/flashcard";
+import FlashcardComponent from "@/components/FlashcardComponent";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { Spacing, Typography } from "@/constants/theme";
 import { useTheme } from "@/contexts/theme-context";

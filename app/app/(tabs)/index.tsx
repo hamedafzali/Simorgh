@@ -199,19 +199,32 @@ export default function ProfileScreen() {
               delete your profile.
             </ThemedText>
             <ModernCard
-              title="Privacy & Data"
-              description="Manage your data and privacy"
-              icon={
+              variant="default"
+              size="md"
+              onPress={() => router.push("/settings")}
+            >
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  marginBottom: 8,
+                }}
+              >
                 <IconSymbol
                   name="lock.shield"
                   size={20}
                   color={colors.primary}
                 />
-              }
-              variant="default"
-              size="md"
-              onPress={() => router.push("/settings")}
-            />
+                <ThemedText
+                  style={{ marginLeft: 8, fontSize: 16, fontWeight: "500" }}
+                >
+                  Privacy & Data
+                </ThemedText>
+              </View>
+              <ThemedText style={{ fontSize: 14, color: colors.textMuted }}>
+                Manage your data and privacy settings
+              </ThemedText>
+            </ModernCard>
           </ThemedView>
         </Animated.View>
       </ScrollView>
