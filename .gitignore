@@ -1,1 +1,4 @@
-app/
+node_modules/
+.expo/
+.DS_Store
+tsconfig.json
