@@ -13,7 +13,7 @@
     "app:ios": "cd app && npm run ios",
     "start": "npm run backend",
     "start:all": "concurrently \"npm run backend\" \"npm run frontend\"",
-    "start:full": "concurrently \"npm run backend\" \"npm run app\"",
+    "start:full": "npm run backend && sleep 3 && cd app && npm start",
     "install:all": "npm install && cd backend && npm install && cd ../app && npm install && cd ../backend/admin && npm install",
     "seed": "cd backend && npm run seed",
     "seed:exams": "cd backend && npm run seed-exams",
