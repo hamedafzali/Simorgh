@@ -1,4 +1,4 @@
-import { getApiBaseUrl } from "../config/api";
+import { getApiBaseUrl } from "@/config/api";
 
 const API_BASE_URL = getApiBaseUrl();
 const API_Job_URL = "https://arbeitnow.com/api/job-board-api";
