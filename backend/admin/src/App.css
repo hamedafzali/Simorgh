@@ -1,0 +1,67 @@
+.App {
+  text-align: center;
+}
+
+.ant-layout-sider {
+  background: #001529 !important;
+}
+
+.ant-menu-dark {
+  background: #001529 !important;
+}
+
+.dashboard-card {
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.dashboard-card .ant-card-body {
+  padding: 24px;
+}
+
+.stat-number {
+  font-size: 30px;
+  font-weight: bold;
+  color: #1890ff;
+}
+
+.stat-label {
+  font-size: 14px;
+  color: #666;
+  margin-top: 8px;
+}
+
+.online-indicator {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #52c41a;
+  margin-right: 8px;
+}
+
+.offline-indicator {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ff4d4f;
+  margin-right: 8px;
+}
+
+.script-editor {
+  height: 600px;
+  border: 1px solid #d9d9d9;
+  border-radius: 6px;
+}
+
+.user-table .ant-table-tbody > tr > td {
+  padding: 12px 16px;
+}
+
+.chart-container {
+  background: #fff;
+  padding: 24px;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}

@@ -1,0 +1,39 @@
+{
+  "name": "simorgh-german-learning",
+  "version": "1.0.0",
+  "description": "Complete German Learning App with Backend and Mobile App",
+  "scripts": {
+    "backend": "cd backend && npm run dev",
+    "backend:start": "cd backend && npm start",
+    "admin:build": "cd backend && npm run admin:build",
+    "admin:dev": "cd backend && npm run admin:dev",
+    "frontend": "cd app && npm start",
+    "app": "cd app && npm start",
+    "app:android": "cd app && npm run android",
+    "app:ios": "cd app && npm run ios",
+    "start": "npm run backend",
+    "start:all": "concurrently \"npm run backend\" \"npm run frontend\"",
+    "start:full": "concurrently \"npm run backend\" \"npm run app\"",
+    "install:all": "npm install && cd backend && npm install && cd ../app && npm install && cd ../backend/admin && npm install",
+    "seed": "cd backend && npm run seed",
+    "seed:exams": "cd backend && npm run seed-exams",
+    "seed:flashcards": "cd backend && npm run seed-flashcards"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.0"
+  },
+  "keywords": [
+    "german",
+    "learning",
+    "education",
+    "react-native",
+    "mongodb",
+    "admin"
+  ],
+  "author": "Simorgh Team",
+  "license": "MIT",
+  "workspaces": [
+    "backend",
+    "app"
+  ]
+}
