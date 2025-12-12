@@ -6,6 +6,7 @@ import {
   loadProgressSummary,
   type LearnProgressSummary,
 } from "@/services/learnProgress";
+import { ThemeProvider } from "@/contexts/theme-context";
 
 export type AppStateContextValue = {
   regionState: string | null;
@@ -107,23 +108,27 @@ export function AppStateProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  return React.createElement(
-    AppStateContext.Provider,
-    {
-      value: {
-        regionState,
-        regionCity,
-        onboardingCompleted,
-        loading,
-        setRegion,
-        markOnboardingCompleted,
-        learnSummary,
-        jobFavorites,
-        jobInterested,
-        refreshGlobalProgress,
-      },
-    },
-    children
+  return (
+    <ThemeProvider>
+      {React.createElement(
+        AppStateContext.Provider,
+        {
+          value: {
+            regionState,
+            regionCity,
+            onboardingCompleted,
+            loading,
+            setRegion,
+            markOnboardingCompleted,
+            learnSummary,
+            jobFavorites,
+            jobInterested,
+            refreshGlobalProgress,
+          },
+        },
+        children
+      )}
+    </ThemeProvider>
   );
 }
 
