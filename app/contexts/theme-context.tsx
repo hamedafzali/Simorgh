@@ -26,7 +26,7 @@ interface ThemeContextType {
   availableThemes: { name: ThemeName; label: string; description: string }[];
 }
 
-const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
+export const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 interface ThemeProviderProps {
   children: ReactNode;
