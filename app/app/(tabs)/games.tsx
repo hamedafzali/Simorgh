@@ -1,11 +1,10 @@
 import { useRouter } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Animated, ScrollView, StyleSheet, View } from "react-native";
+import { Animated, ScrollView, StyleSheet, View, ActivityIndicator, TouchableOpacity } from "react-native";
 
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
-import { ActivityIndicator, TouchableOpacity } from "react-native";
 
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import PageHeader from "@/components/ui/page-header";
