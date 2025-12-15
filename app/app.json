@@ -7,7 +7,7 @@
     "icon": "./assets/images/splash-icon.png",
     "scheme": "simorghconnect",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
+    "newArchEnabled": false,
     "ios": {
       "supportsTablet": true
     },
@@ -26,7 +26,6 @@
       "favicon": "./assets/images/splash-icon.png"
     },
     "plugins": [
-      ["expo-router"],
       [
         "expo-splash-screen",
         {
