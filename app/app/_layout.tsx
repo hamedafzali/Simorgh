@@ -1,12 +1,13 @@
 import { Slot } from "expo-router";
-import { StyleSheet, View } from "react-native";
+import { PreferencesProvider } from "../contexts/PreferencesContext";
+import { DatabaseProvider } from "../contexts/DatabaseContext";
 
 export default function RootLayout() {
-  return <Slot />;
+  return (
+    <PreferencesProvider>
+      <DatabaseProvider>
+        <Slot />
+      </DatabaseProvider>
+    </PreferencesProvider>
+  );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});

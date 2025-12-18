@@ -5,10 +5,19 @@ import Flashcard from "./models/Flashcard";
 import Grammar from "./models/Grammar";
 import UserProgress from "./models/UserProgress";
 import Word from "./models/Word";
+import DatabaseVersion from "./models/DatabaseVersion";
 import { seedDatabase } from "./seed/seedData";
 
 // Export all models
-export { Exam, Exercise, Flashcard, Grammar, UserProgress, Word };
+export {
+  Exam,
+  Exercise,
+  Flashcard,
+  Grammar,
+  UserProgress,
+  Word,
+  DatabaseVersion,
+};
 
 // Export services
 export { default as FlashcardService } from "./services/FlashcardService";

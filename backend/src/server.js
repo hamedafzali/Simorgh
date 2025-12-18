@@ -29,10 +29,12 @@ app.get("/", (req, res) => {
 // API routes
 const apiRoutes = require("./routes/api");
 const databaseRoutes = require("./routes/database");
+const databaseVersionRoutes = require("./routes/databaseVersion");
 const adminRoutes = require("./routes/admin");
 const adminSQLiteRoutes = require("./routes/admin-sqlite");
 app.use("/api", apiRoutes);
 app.use("/api/database", databaseRoutes);
+app.use("/api/database-version", databaseVersionRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/admin", adminSQLiteRoutes);
 

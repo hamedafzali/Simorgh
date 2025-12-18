@@ -2,7 +2,7 @@
 
 ## Overview
 
-**Simorgh Connect** is a comprehensive German language learning application designed to help users learn German through interactive lessons, flashcards, exams, and practice exercises. The app also includes community features such as job listings, events, and document management to support immigrants and language learners in Germany.
+**Simorgh Connect** is a mobile-first community application designed specifically for the Iranian community residing in Germany. The app combines German language learning features with community support services including job listings, events, and document management, while maintaining full Persian (RTL) and German (LTR) language support with equal quality and consistency.
 
 **Project Type**: Full-stack mobile application  
 **Version**: 1.0.0  
@@ -16,15 +16,17 @@
 ### Technology Stack
 
 #### Frontend (Mobile App)
+
 - **Framework**: React Native with Expo (~54.0.0)
 - **Language**: TypeScript
 - **Routing**: Expo Router (~6.0.19)
 - **State Management**: React Context API
-- **Internationalization**: i18next (English, German, Farsi)
-- **Storage**: AsyncStorage (local data persistence)
-- **UI Libraries**: Custom themed components with glassmorphism design
+- **Internationalization**: i18next (Persian, German, English)
+- **Storage**: SQLite (offline storage, local cache)
+- **UI Libraries**: Custom themed components with modern European design aesthetic
 
 #### Backend
+
 - **Framework**: Node.js with Express
 - **Language**: JavaScript/TypeScript (mixed)
 - **Database**: MongoDB (Mongoose ODM)
@@ -33,6 +35,7 @@
 - **Real-time**: Socket.io (configured but not fully implemented)
 
 #### Admin Panel
+
 - **Framework**: React
 - **UI Library**: Ant Design (mentioned in structure docs)
 - **Deployment**: Served as static files from Express backend
@@ -75,6 +78,7 @@ Simorgh/
 ### 1. Language Learning
 
 #### Vocabulary Management
+
 - **Word Database**: Comprehensive German vocabulary with:
   - Word types: nouns, verbs, adjectives, adverbs, prepositions, conjunctions, pronouns, interjections
   - CEFR levels: A1, A2, B1, B2, C1, C2
@@ -86,6 +90,7 @@ Simorgh/
   - Audio files support
 
 #### Flashcards System
+
 - **Spaced Repetition Algorithm**: SM-2 algorithm implementation
 - **Features**:
   - Front/back text with hints
@@ -98,6 +103,7 @@ Simorgh/
 - **Integration**: Linked to word database via `wordId`
 
 #### Exams & Assessments
+
 - **Exam Types**: Practice, Mock, Certification
 - **Sections**: Reading, Writing, Listening, Speaking, Grammar, Vocabulary
 - **Features**:
@@ -109,6 +115,7 @@ Simorgh/
   - Active/inactive status
 
 #### Exercises
+
 - **Types**: Multiple-choice, fill-in-the-blank, translation, matching
 - **Features**:
   - Difficulty scoring
@@ -117,6 +124,7 @@ Simorgh/
   - Category organization
 
 #### Learning Progress
+
 - **Tracking**:
   - Mastered words count
   - Accuracy percentage
@@ -130,21 +138,25 @@ Simorgh/
 ### 2. Community Features
 
 #### Job Listings
+
 - Job application management
 - Job search functionality
 - Integration with backend services
 
 #### Events
+
 - Community events management
 - Event listings and details
 - Multi-language event descriptions
 
 #### Documents
+
 - Document form management
 - Document storage and organization
 - Integration with learning content
 
 #### Community Locations
+
 - Location-based services
 - Community map integration
 - Regional information
@@ -152,20 +164,29 @@ Simorgh/
 ### 3. User Interface
 
 #### Design System
-- **Theme**: Modern glassmorphism design with dark/light mode support
+
+- **Design Principles**: Minimalist yet warm visual language, contemporary European product design aesthetic
+- **Color System**:
+  - Primary Blue: #1F3A5F (brand anchor, trust)
+  - Primary Blue Light: #2F5D8A (interactive states)
+  - Accent Green: #2FA36B (community, growth)
+  - App Background: #F7F9FC
+  - Surface/Card Background: #FFFFFF
+  - Primary Text: #1E293B, Secondary Text: #64748B
+- **Typography**: "Inter", "Vazirmatn", system-ui (supports Persian and Latin)
 - **Components**: Custom UI library with:
-  - Modern cards, buttons, inputs
-  - Progress bars and badges
-  - Chips and dividers
-  - Skeleton loaders
-  - Avatar components
-- **Styling**: Centralized style system (see STYLE_GUIDE.md)
-- **Performance**: Optimized styles with memoization hooks
+  - Cards (16px radius, white background, subtle shadows)
+  - Buttons (48px height, 14px radius, proper states)
+  - Form inputs (48px height, 12px radius, focus states)
+  - Bottom navigation (64px height, center-aligned)
+- **RTL/LTR Support**: Full bidirectional language support
+- **Accessibility**: WCAG AA compliance, 44px minimum tap targets
 
 #### Navigation
+
 - **Drawer Navigation**: AppDrawerLayout component
 - **Routing**: Expo Router with typed routes
-- **Pages**: 
+- **Pages**:
   - Home screen
   - Learning interface
   - Quiz/exam screens
@@ -176,34 +197,40 @@ Simorgh/
 ### 4. Internationalization
 
 #### Supported Languages
-- **English** (en) - Default
-- **German** (de)
-- **Farsi/Persian** (fa)
+
+- **Persian/Farsi** (fa) - Primary language for Iranian community
+- **German** (de) - Target language for learning
+- **English** (en) - Secondary support language
 
 #### Translation Files
+
 - `en.json`, `de.json`, `fa.json` - Main translations
 - `phrases.json` - Common phrases
 - `events.json` - Event-related translations
 - `jobs.json` - Job-related translations
 
 #### Features
+
 - Language persistence (AsyncStorage)
 - Device language detection
 - Runtime language switching
 
 ### 5. Offline Support
 
-#### Local Database
-- **Storage**: AsyncStorage-based local database
-- **Schema**: 
-  - Exams
-  - Flashcards
-  - Words
-  - User settings
-  - Exam results
-- **Versioning**: Database version tracking for sync
+#### SQLite Database
+
+- **Storage**: SQLite database for offline storage and local cache
+- **Schema**:
+  - Exams table
+  - Flashcards table
+  - Words table
+  - User settings table
+  - Exam results table
+  - Sync tracking table
+- **Versioning**: Database version tracking for sync with MongoDB backend
 
 #### Sync Service
+
 - **Features**:
   - Online/offline status detection
   - Automatic sync (configurable interval)
@@ -213,11 +240,13 @@ Simorgh/
   - Last sync timestamp
 
 ### 6. Chat Interface
+
 - Chat component implemented
 - Backend chat service available
 - Language-specific chat support
 
 ### 7. Notifications
+
 - Notification service implemented
 - Achievement notifications
 - Study reminders
@@ -230,18 +259,21 @@ Simorgh/
 ### Backend (MongoDB)
 
 #### Word Model
+
 - Comprehensive vocabulary with articles, types, levels
 - Translations, definitions, conjugations
 - Audio files, related words, tags
 - Indexed for performance (word, level, wordType, frequencyScore, tags)
 
 #### Flashcard Model
+
 - Linked to Word model via `wordId`
 - Spaced repetition algorithm fields
 - User-specific tracking
 - Indexed for performance (userId, nextReview, deck, difficultyLevel, tags)
 
 #### Exam Model
+
 - Multi-section exam structure
 - Level-based (A1-C2)
 - Time limits, passing scores
@@ -249,11 +281,13 @@ Simorgh/
 - Indexed for performance (level, examType, isActive)
 
 #### Exercise Model
+
 - Various exercise types
 - Difficulty scoring
 - Level and category organization
 
 #### UserProgress Model
+
 - Learning statistics
 - Mastered words tracking
 - Exam results
@@ -261,25 +295,30 @@ Simorgh/
 - Streak tracking
 
 #### Grammar Model
+
 - Grammar rules and explanations
 - Examples and difficulty levels
 
 ### Frontend (Local Storage)
 
-#### LocalDatabase Schema
-- Version tracking
-- Exams array
-- Flashcards array
-- Words array
-- User settings
-- Exam results
-- Last sync timestamp
+#### SQLite Database
+
+- **Purpose**: Offline storage, local cache
+- **Sync**: API-based synchronization with MongoDB backend
+- **Schema**:
+  - Exams table
+  - Flashcards table
+  - Words table
+  - User settings table
+  - Exam results table
+  - Sync tracking table
 
 ---
 
 ## API Endpoints
 
 ### Learning Endpoints
+
 - `GET /api/stats` - Learning statistics
 - `GET /api/exercises` - Get exercises (filtered by level, type, category)
 - `GET /api/words` - Get words (filtered by level, category)
@@ -293,10 +332,12 @@ Simorgh/
 - `GET /api/categories` - Get learning categories
 
 ### Practice Endpoints
+
 - `POST /api/practice/start` - Start practice session
 - `POST /api/practice/:sessionId/complete` - Complete practice session
 
 ### Seed/Admin Endpoints
+
 - `POST /api/seed` - Seed database
 - `POST /api/seed/5000` - Generate 5000 flashcards
 - `POST /api/seed/link` - Link flashcards to words
@@ -305,6 +346,7 @@ Simorgh/
 - `POST /api/seed/5000exams` - Generate 5000 exams
 
 ### Other Endpoints
+
 - `POST /api/chat` - Chat endpoint (placeholder)
 - `GET /api/jobs` - Jobs endpoint (placeholder)
 
@@ -313,12 +355,14 @@ Simorgh/
 ## Configuration
 
 ### Environment
+
 - **Backend Port**: 3001 (default)
 - **API Base URL**: `http://localhost:3001/api` (development)
 - **MongoDB URI**: `mongodb://localhost:27017/simorgh` (default)
 - **Admin Panel**: `http://localhost:3001/admin`
 
 ### App Configuration
+
 - **App Name**: Simorgh Connect
 - **Slug**: simorgh-connect
 - **Scheme**: simorghconnect
@@ -330,6 +374,7 @@ Simorgh/
 ## Development Scripts
 
 ### Root Level
+
 - `npm run backend` - Start backend server
 - `npm run app` - Start Expo app
 - `npm run start:all` - Start both backend and frontend concurrently
@@ -340,12 +385,14 @@ Simorgh/
 - `npm run seed:flashcards` - Seed flashcards
 
 ### Backend
+
 - `npm run dev` - Start with nodemon
 - `npm start` - Start production server
 - `npm run admin:build` - Build admin panel
 - `npm run admin:dev` - Start admin panel in dev mode
 
 ### App
+
 - `npm start` - Start Expo
 - `npm run android` - Start on Android
 - `npm run ios` - Start on iOS
@@ -356,6 +403,7 @@ Simorgh/
 ## Key Services
 
 ### Frontend Services
+
 - `api.ts` - API client configuration
 - `learningService.ts` - Learning content management
 - `learn.ts` - Lesson and vocabulary management
@@ -368,6 +416,7 @@ Simorgh/
 - `notifications.ts` - Notification service
 
 ### Backend Services
+
 - `api.ts` - API utilities
 - `chat.ts` - Chat service
 - `checklists.ts` - Checklist management
@@ -389,6 +438,7 @@ Simorgh/
 ## Database Seeding
 
 ### Available Seed Scripts
+
 1. **Basic Seed** (`seedData.js`) - Initial database setup
 2. **5000 Flashcards** (`generate5000Flashcards.js`) - Generate large flashcard set
 3. **Link Flashcards** (`linkFlashcardsToWords.js`) - Link flashcards to words
@@ -401,18 +451,21 @@ Simorgh/
 ## Styling & Theming
 
 ### Theme System
+
 - **Dark/Light Mode**: Automatic theme switching
 - **Color Scheme**: Custom color palette
 - **Glassmorphism**: Modern glass effect design
 - **Responsive**: Screen-size aware styling
 
 ### Style Organization
+
 - **Centralized Styles**: `constants/common-styles.ts`
 - **Theme Constants**: `constants/theme.ts`
 - **Optimization Hooks**: `hooks/use-optimized-styles.ts`
 - **Performance**: Memoized styles to prevent recalculation
 
 ### Style Categories
+
 - Layout styles
 - Header styles
 - Card styles
@@ -425,6 +478,7 @@ Simorgh/
 ## Known Issues & TODOs
 
 ### Backend
+
 - [ ] SQLite integration (mentioned in APP_STRUCTURE.md)
 - [ ] Complete chat implementation
 - [ ] Complete jobs API implementation
@@ -432,6 +486,7 @@ Simorgh/
 - [ ] Socket.io real-time features
 
 ### Frontend
+
 - [ ] SQLite integration for offline storage (currently using AsyncStorage)
 - [ ] Complete sync service implementation
 - [ ] Conflict resolution UI
@@ -439,6 +494,7 @@ Simorgh/
 - [ ] Image upload for documents
 
 ### Admin Panel
+
 - [ ] Database content management interface
 - [ ] User management
 - [ ] Content moderation tools
@@ -449,6 +505,7 @@ Simorgh/
 ## Dependencies
 
 ### Key Frontend Dependencies
+
 - `expo`: ~54.0.0
 - `react`: 19.1.0
 - `react-native`: 0.81.5
@@ -459,6 +516,7 @@ Simorgh/
 - `react-native-reanimated`: ~4.1.1
 
 ### Key Backend Dependencies
+
 - `express`: ^4.18.2
 - `mongoose`: ^7.5.0
 - `jsonwebtoken`: ^9.0.2
@@ -473,12 +531,14 @@ Simorgh/
 ## Security Considerations
 
 ### Implemented
+
 - Helmet.js for security headers
 - CORS configuration
 - JWT authentication (configured)
 - Environment variables for sensitive data
 
 ### Recommendations
+
 - Implement rate limiting
 - Add input validation middleware
 - Secure file upload handling
@@ -490,12 +550,14 @@ Simorgh/
 ## Performance Optimizations
 
 ### Frontend
+
 - Memoized styles to prevent recalculation
 - Centralized style system reduces duplication
 - Optimized rendering with consistent style references
 - Theme-aware styling with hooks
 
 ### Backend
+
 - Database indexes on frequently queried fields
 - Pagination for large datasets
 - Efficient query filtering
@@ -505,10 +567,12 @@ Simorgh/
 ## Testing
 
 ### Current Status
+
 - No test files found in the codebase
 - No testing framework configured
 
 ### Recommendations
+
 - Add unit tests for services
 - Add integration tests for API endpoints
 - Add component tests for React Native components
@@ -519,11 +583,13 @@ Simorgh/
 ## Deployment
 
 ### Development
+
 - Backend: `http://localhost:3001`
 - Frontend: Expo development server
 - MongoDB: Local instance
 
 ### Production Considerations
+
 - Environment variable configuration
 - Production API URL setup
 - MongoDB connection string
@@ -535,11 +601,13 @@ Simorgh/
 ## Documentation
 
 ### Existing Documentation
+
 - `APP_STRUCTURE.md` - Project structure overview
 - `STYLE_GUIDE.md` - Styling guidelines and optimization
 - `THEME_SYSTEM.md` - Theme system documentation (referenced)
 
 ### Missing Documentation
+
 - API documentation
 - Component documentation
 - Setup/installation guide
@@ -551,6 +619,7 @@ Simorgh/
 ## Project Status
 
 ### Completed Features
+
 ✅ Core learning features (words, flashcards, exams)  
 ✅ Database models and schemas  
 ✅ Basic API endpoints  
@@ -558,20 +627,140 @@ Simorgh/
 ✅ Internationalization  
 ✅ Theme system  
 ✅ Local storage  
-✅ Admin panel structure  
+✅ Admin panel structure
 
 ### In Progress
+
 🔄 Sync service implementation  
 🔄 Chat functionality  
 🔄 Jobs API  
-🔄 User authentication  
+🔄 User authentication
 
 ### Planned
+
 📋 SQLite integration  
 📋 Complete admin panel features  
 📋 Audio playback  
 📋 Image upload  
-📋 Real-time features  
+📋 Real-time features
+
+---
+
+## Frontend Page Structure Analysis
+
+### Current Implementation Status
+
+#### Existing Pages
+
+1. **Main Page** (`index.tsx`) - Currently implemented as splash/intro screen
+
+   - Animated logo with circular menu
+   - Dual date/time display (Persian/Gregorian)
+   - Glass morphism design elements
+   - **Issue**: Functions as intro screen, not functional home page
+
+2. **Splash Screen** (`SplashScreen.tsx`) - Basic splash screen
+   - Logo and app name display
+   - Warm beige background (#F5E6D3)
+
+#### Missing Core Pages
+
+The following pages are **NOT IMPLEMENTED** but referenced in project summary:
+
+### 1. Learning Interface Pages
+
+**Recommended Structure:**
+
+- **Main Learning Page** (`/learn`)
+
+  - Progress overview (level, streak, mastered words)
+  - Daily goals and quick actions
+  - Integration with `LearningService.getUserLearningStats()`
+
+- **Vocabulary Section** (`/learn/vocabulary`)
+
+  - Word lists by level/category
+  - Flashcard review system
+  - Word details with definitions/examples
+  - Uses `WordService` and `FlashcardService`
+
+- **Grammar Section** (`/learn/grammar`)
+
+  - Grammar topics with rules and examples
+  - Interactive exercises
+  - Progress tracking by topic
+  - Uses `Grammar` model and `getGrammarTopics()`
+
+- **Practice Section** (`/learn/practice`)
+
+  - Multiple exercise types (MCQ, fill-in-blank, translation)
+  - Difficulty levels (A1-C2)
+  - Instant feedback system
+  - Uses `Exercise` model
+
+- **Exams Section** (`/learn/exams`)
+  - Mock tests and simulations
+  - Section-based assessments
+  - Results analysis
+  - Uses `Exam` model
+
+### 2. Community Features Pages
+
+- **Chat Interface** - Community discussion forum
+- **Job Listings** - Employment opportunities
+- **Events** - Community gatherings and workshops
+- **Documents** - Immigration document assistance
+- **Community Locations** - Location-based services
+
+### 3. User Management Pages
+
+- **Profile** - User settings and progress
+- **Settings** - App configuration and preferences
+
+### Backend Services Available
+
+#### Learning Services
+
+- **LearningService** (`learningService.ts`)
+
+  - User statistics and progress tracking
+  - Word management and search
+  - Flashcard spaced repetition system
+  - Grammar topics and exercises
+  - Exam management
+  - Daily content recommendations
+
+- **Learn Bundle** (`learn.ts`)
+  - Daily phrases (German, Persian, English)
+  - Vocabulary items by category
+  - Bilingual reading materials
+  - AsyncStorage-based local caching
+
+#### Other Services
+
+- **Chat Service** - Community chat functionality
+- **Jobs Service** - Job listings and applications
+- **Events Service** - Community event management
+- **Documents Service** - Document form management
+- **Notifications Service** - Achievement and reminder notifications
+
+### Implementation Requirements
+
+#### Frontend Integration Needs
+
+1. **API Integration**: Connect frontend to backend services
+2. **State Management**: Implement proper React Context for learning progress
+3. **Offline Support**: SQLite integration for local caching
+4. **RTL/LTR Support**: Full bidirectional language support
+5. **Design System**: Follow Style.md specifications
+6. **Navigation**: Implement bottom navigation and routing
+
+#### Technical Debt
+
+- Current `index.tsx` needs to be converted from splash screen to functional home page
+- Missing navigation structure between pages
+- No integration between frontend components and backend services
+- Theme system exists but not fully implemented across components
 
 ---
 
@@ -593,7 +782,5 @@ Simorgh/
 
 ---
 
-*Last Updated: Based on current codebase review*  
-*This summary should be reviewed and updated as the project evolves*
-
-
+_Last Updated: Based on current codebase review_  
+_This summary should be reviewed and updated as the project evolves_
