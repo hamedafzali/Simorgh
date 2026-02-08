@@ -4,12 +4,9 @@ import axios, {
   AxiosRequestConfig,
   InternalAxiosRequestConfig,
 } from "axios";
+import { API_BASE_URL } from "../config/api";
 
 // API Configuration
-const API_BASE_URL = __DEV__
-  ? "http://192.168.178.78:3001/api"
-  : "https://your-production-api.com/api";
-
 // Create axios instance with default configuration
 const apiClient: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,

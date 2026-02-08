@@ -4,6 +4,8 @@ node_modules/
 tsconfig.json
 *.log
 *.db
+.env
+.env.*
 backend/admin/build/
 backend/admin/node_modules/.cache/
 backend/admin/dist/

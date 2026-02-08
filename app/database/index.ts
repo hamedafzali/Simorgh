@@ -1,10 +1,10 @@
 import * as SQLite from "expo-sqlite";
-import { Platform } from "react-native";
+import { API_BASE_URL } from "../config/api";
 
 // Database configuration
 export const DB_NAME = "simorgh_local.db";
 export const DB_VERSION = "1.0.0";
-export const BACKEND_BASE_URL = "http://192.168.178.78:3001/api";
+export const BACKEND_BASE_URL = API_BASE_URL;
 
 // Database interface definitions
 export interface Word {
