@@ -41,9 +41,45 @@ export default function CommunityTab() {
         right={<Chevron />}
       />
       <ListItem
+        title="Countries"
+        subtitle="Starter packs for each country"
+        onPress={() => router.push("/countries" as any)}
+        right={<Chevron />}
+      />
+      <ListItem
+        title="Checklist"
+        subtitle="Track your progress"
+        onPress={() => router.push("/checklist" as any)}
+        right={<Chevron />}
+      />
+      <ListItem
+        title="Form Helper"
+        subtitle="Fill forms with Persian hints"
+        onPress={() => router.push("/forms" as any)}
+        right={<Chevron />}
+      />
+      <ListItem
+        title="Emergency Kit"
+        subtitle="Local emergency numbers"
+        onPress={() => router.push("/emergency" as any)}
+        right={<Chevron />}
+      />
+      <ListItem
         title="Locations"
         subtitle="Find local services and offices"
         onPress={() => router.push("/locations" as any)}
+        right={<Chevron />}
+      />
+      <ListItem
+        title="Timeline"
+        subtitle="30/60/90-day plan"
+        onPress={() => router.push("/timeline" as any)}
+        right={<Chevron />}
+      />
+      <ListItem
+        title="Trusted Services"
+        subtitle="Lawyers, translators, advisors"
+        onPress={() => router.push("/services" as any)}
         right={<Chevron />}
       />
       <ListItem

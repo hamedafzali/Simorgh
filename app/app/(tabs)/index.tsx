@@ -95,6 +95,42 @@ export default function HomeTab() {
       onPress: () => router.push("/documents" as any),
     },
     {
+      key: "countries",
+      label: "Countries",
+      icon: "globe" as const,
+      onPress: () => router.push("/countries" as any),
+    },
+    {
+      key: "timeline",
+      label: "Timeline",
+      icon: "clock" as const,
+      onPress: () => router.push("/timeline" as any),
+    },
+    {
+      key: "services",
+      label: "Services",
+      icon: "help-circle" as const,
+      onPress: () => router.push("/services" as any),
+    },
+    {
+      key: "checklist",
+      label: "Checklist",
+      icon: "check-circle" as const,
+      onPress: () => router.push("/checklist" as any),
+    },
+    {
+      key: "forms",
+      label: "Form Helper",
+      icon: "clipboard" as const,
+      onPress: () => router.push("/forms" as any),
+    },
+    {
+      key: "emergency",
+      label: "Emergency",
+      icon: "alert-triangle" as const,
+      onPress: () => router.push("/emergency" as any),
+    },
+    {
       key: "guides",
       label: "Guides",
       icon: "map" as const,
@@ -313,6 +349,56 @@ export default function HomeTab() {
             subtitle="Nearby"
             icon="map-pin"
             onPress={() => router.push("/locations" as any)}
+            style={homeStyles.quickItem}
+          />
+        </View>
+        <View style={homeStyles.quickRow}>
+          <GlassWidget
+            title="Countries"
+            subtitle="Starter packs"
+            icon="globe"
+            onPress={() => router.push("/countries" as any)}
+            style={homeStyles.quickItem}
+          />
+          <GlassWidget
+            title="Timeline"
+            subtitle="90 days"
+            icon="clock"
+            onPress={() => router.push("/timeline" as any)}
+            style={homeStyles.quickItem}
+          />
+        </View>
+        <View style={homeStyles.quickRow}>
+          <GlassWidget
+            title="Services"
+            subtitle="Trusted"
+            icon="help-circle"
+            onPress={() => router.push("/services" as any)}
+            style={homeStyles.quickItem}
+          />
+        </View>
+        <View style={homeStyles.quickRow}>
+          <GlassWidget
+            title="Checklist"
+            subtitle="Progress"
+            icon="check-circle"
+            onPress={() => router.push("/checklist" as any)}
+            style={homeStyles.quickItem}
+          />
+          <GlassWidget
+            title="Form Helper"
+            subtitle="Guided"
+            icon="clipboard"
+            onPress={() => router.push("/forms" as any)}
+            style={homeStyles.quickItem}
+          />
+        </View>
+        <View style={homeStyles.quickRow}>
+          <GlassWidget
+            title="Emergency"
+            subtitle="Numbers"
+            icon="alert-triangle"
+            onPress={() => router.push("/emergency" as any)}
             style={homeStyles.quickItem}
           />
         </View>
