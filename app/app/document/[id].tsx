@@ -21,7 +21,11 @@ export default function DocumentDetailScreen() {
 
   return (
     <Screen>
-      <Header title="Document" subtitle={doc ? doc.title : "Not found"} />
+      <Header
+        title="Document"
+        subtitle={doc ? doc.title : "Not found"}
+        showBack
+      />
 
       {!doc ? (
         <Card>

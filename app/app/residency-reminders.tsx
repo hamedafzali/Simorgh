@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import { useLocalSearchParams } from "expo-router";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Colors, Spacing, Typography } from "../constants/theme";
 import { useColorScheme } from "../hooks/use-color-scheme";
 import { Card } from "../components/ui/Card";
 import { PageHeader } from "../components/ui/PageHeader";
 import { Screen } from "../components/ui/Screen";
+import { getJson, setJson } from "../services/localStore";
 import {
   getResidencyReminders,
   supportedCountries,
@@ -28,23 +28,13 @@ export default function ResidencyRemindersScreen() {
   const [enabled, setEnabled] = useState<ReminderState>({});
 
   const load = useCallback(async () => {
-    try {
-      const raw = await AsyncStorage.getItem(storageKey(code));
-      if (raw) {
-        setEnabled(JSON.parse(raw));
-      }
-    } catch {
-      setEnabled({});
-    }
+    const next = await getJson<ReminderState>(storageKey(code), {});
+    setEnabled(next);
   }, [code]);
 
   const save = useCallback(
     async (next: ReminderState) => {
-      try {
-        await AsyncStorage.setItem(storageKey(code), JSON.stringify(next));
-      } catch {
-        // ignore storage errors for now
-      }
+      await setJson(storageKey(code), next);
     },
     [code]
   );

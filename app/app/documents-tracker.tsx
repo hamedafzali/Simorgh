@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Pressable, Text, TextInput, View } from "react-native";
 import { useLocalSearchParams } from "expo-router";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Colors, Spacing, Typography } from "../constants/theme";
 import { useColorScheme } from "../hooks/use-color-scheme";
 import { Card } from "../components/ui/Card";
 import { PageHeader } from "../components/ui/PageHeader";
 import { Screen } from "../components/ui/Screen";
+import { getJson, setJson } from "../services/localStore";
 import {
   getStarterPack,
   supportedCountries,
@@ -45,23 +45,13 @@ export default function DocumentsTrackerScreen() {
   const [newExpiry, setNewExpiry] = useState("");
 
   const load = useCallback(async () => {
-    try {
-      const raw = await AsyncStorage.getItem(storageKey(code));
-      if (raw) {
-        setDocs(JSON.parse(raw));
-      }
-    } catch {
-      setDocs(baseDocs);
-    }
+    const next = await getJson<DocItem[]>(storageKey(code), baseDocs);
+    setDocs(next);
   }, [baseDocs, code]);
 
   const save = useCallback(
     async (next: DocItem[]) => {
-      try {
-        await AsyncStorage.setItem(storageKey(code), JSON.stringify(next));
-      } catch {
-        // ignore storage errors for now
-      }
+      await setJson(storageKey(code), next);
     },
     [code]
   );

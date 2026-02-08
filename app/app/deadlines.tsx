@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Pressable, Text, TextInput, View } from "react-native";
 import { useLocalSearchParams } from "expo-router";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Colors, Spacing, Typography } from "../constants/theme";
 import { useColorScheme } from "../hooks/use-color-scheme";
 import { Card } from "../components/ui/Card";
 import { PageHeader } from "../components/ui/PageHeader";
 import { Screen } from "../components/ui/Screen";
+import { getJson, setJson } from "../services/localStore";
 import {
   getDeadlines,
   supportedCountries,
@@ -44,36 +44,24 @@ export default function DeadlinesScreen() {
   const [done, setDone] = useState<DoneMap>({});
 
   const load = useCallback(async () => {
-    try {
-      const [arrivalRaw, doneRaw] = await Promise.all([
-        AsyncStorage.getItem(arrivalKey(code)),
-        AsyncStorage.getItem(doneKey(code)),
-      ]);
-      if (arrivalRaw) setArrivalDate(arrivalRaw);
-      if (doneRaw) setDone(JSON.parse(doneRaw));
-    } catch {
-      setDone({});
-    }
+    const [arrivalValue, doneValue] = await Promise.all([
+      getJson<string>(arrivalKey(code), ""),
+      getJson<DoneMap>(doneKey(code), {}),
+    ]);
+    setArrivalDate(arrivalValue);
+    setDone(doneValue);
   }, [code]);
 
   const saveDone = useCallback(
     async (next: DoneMap) => {
-      try {
-        await AsyncStorage.setItem(doneKey(code), JSON.stringify(next));
-      } catch {
-        // ignore storage errors for now
-      }
+      await setJson(doneKey(code), next);
     },
     [code]
   );
 
   const saveArrival = useCallback(
     async (next: string) => {
-      try {
-        await AsyncStorage.setItem(arrivalKey(code), next);
-      } catch {
-        // ignore storage errors for now
-      }
+      await setJson(arrivalKey(code), next);
     },
     [code]
   );

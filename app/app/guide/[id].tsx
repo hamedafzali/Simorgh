@@ -24,7 +24,11 @@ export default function GuideDetailScreen() {
 
   return (
     <Screen>
-      <Header title="Guide" subtitle={guide ? guide.title : "Not found"} />
+      <Header
+        title="Guide"
+        subtitle={guide ? guide.title : "Not found"}
+        showBack
+      />
 
       {!guide ? (
         <Card>

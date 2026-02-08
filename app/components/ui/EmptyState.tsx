@@ -1,11 +1,6 @@
 import React from "react";
-import { Text, View, StyleProp, ViewStyle } from "react-native";
-import {
-  Colors,
-  ComponentStyles,
-  Spacing,
-  Typography,
-} from "../../constants/theme";
+import { StyleProp, StyleSheet, Text, View, ViewStyle } from "react-native";
+import { Colors, Spacing, Typography } from "../../constants/theme";
 import { useColorScheme } from "../../hooks/use-color-scheme";
 import { Button } from "./Button";
 
@@ -24,12 +19,7 @@ export function EmptyState({ message, action, style }: Props) {
 
   return (
     <View style={style}>
-      <Text
-        style={[
-          ComponentStyles.emptyStateText,
-          { color: palette.textSecondary },
-        ]}
-      >
+      <Text style={[styles.text, { color: palette.textSecondary }]}>
         {message}
       </Text>
       {action && <View style={{ height: Spacing.md }} />}
@@ -43,3 +33,11 @@ export function EmptyState({ message, action, style }: Props) {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  text: {
+    fontSize: Typography.sizes.bodySecondary,
+    lineHeight: 22,
+    textAlign: "center",
+  },
+});

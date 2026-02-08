@@ -39,25 +39,77 @@ class LearningService {
       )) as { count: number } | null;
       const totalWords = wordsResult?.count || 0;
 
-      // Get mock stats for now (can be enhanced later with actual progress tracking)
+      const wordsByLevelRows = (await db.getAllAsync(
+        "SELECT level, COUNT(*) as count FROM words GROUP BY level"
+      )) as Array<{ level: string; count: number }>;
+
+      const wordsByLevel: Record<string, number> = {};
+      wordsByLevelRows.forEach((row) => {
+        wordsByLevel[row.level] = row.count;
+      });
+
+      const flashcardStats = (await db.getFirstAsync(
+        "SELECT SUM(reviewCount) as totalReviews FROM flashcards"
+      )) as { totalReviews: number | null } | null;
+      const totalReviews = flashcardStats?.totalReviews || 0;
+
+      const mastered = (await db.getFirstAsync(
+        "SELECT COUNT(DISTINCT wordId) as count FROM flashcards WHERE reviewCount >= 5 AND wordId IS NOT NULL"
+      )) as { count: number } | null;
+      const masteredWords = mastered?.count || 0;
+
+      const accuracyRow = (await db.getFirstAsync(
+        "SELECT AVG(CAST(score AS FLOAT) / NULLIF(totalPoints, 0)) as accuracy FROM exam_results"
+      )) as { accuracy: number | null } | null;
+      const accuracy = Math.round((accuracyRow?.accuracy || 0) * 100);
+
+      const wordTypeRows = (await db.getAllAsync(
+        "SELECT wordType, COUNT(*) as count FROM words GROUP BY wordType"
+      )) as Array<{ wordType: string; count: number }>;
+      const grammarProgress: Record<string, number> = {};
+      wordTypeRows.forEach((row) => {
+        grammarProgress[row.wordType] = totalWords
+          ? Math.round((row.count / totalWords) * 100)
+          : 0;
+      });
+
+      const reviewDates = (await db.getAllAsync(
+        "SELECT updatedAt FROM flashcards WHERE reviewCount > 0"
+      )) as Array<{ updatedAt: string }>;
+      const daySet = new Set<string>();
+      reviewDates.forEach((row) => {
+        if (row.updatedAt) {
+          daySet.add(row.updatedAt.slice(0, 10));
+        }
+      });
+      let streakDays = 0;
+      if (daySet.size) {
+        const today = new Date();
+        for (let i = 0; i < 365; i += 1) {
+          const d = new Date(today);
+          d.setDate(today.getDate() - i);
+          const key = d.toISOString().slice(0, 10);
+          if (daySet.has(key)) {
+            streakDays += 1;
+          } else {
+            break;
+          }
+        }
+      }
+
+      const levelOrder = ["A1", "A2", "B1", "B2", "C1", "C2"] as const;
+      const currentLevel =
+        (levelOrder.find((lvl) => (wordsByLevel[lvl] || 0) > 0) ?? "A1");
+
       const stats: LearningStats = {
         totalWords,
-        masteredWords: Math.floor(totalWords * 0.3), // Mock: 30% mastered
-        accuracy: 85, // Mock: 85% accuracy
-        streakDays: 7, // Mock: 7 day streak
-        totalReviews: totalWords * 2, // Mock: 2 reviews per word
-        currentLevel: "A1",
-        wordsByLevel: {
-          A1: Math.floor(totalWords * 0.4),
-          A2: Math.floor(totalWords * 0.3),
-          B1: Math.floor(totalWords * 0.2),
-          B2: Math.floor(totalWords * 0.1),
-        },
-        grammarProgress: {
-          nouns: 80,
-          verbs: 65,
-          adjectives: 45,
-        },
+        masteredWords,
+        accuracy,
+        streakDays,
+        totalReviews,
+        currentLevel,
+        wordsByLevel,
+        grammarProgress,
       };
 
       return stats;
@@ -104,7 +156,7 @@ class LearningService {
         id: word.id,
         german: word.german,
         english: word.english,
-        persian: word.english, // Use English as fallback for Persian
+        persian: this.getPersianTranslation(word.translations, word.english),
         level: word.level,
         category: word.category,
         difficulty: word.frequency,
@@ -130,7 +182,7 @@ class LearningService {
         id: word.id,
         german: word.german,
         english: word.english,
-        persian: word.english, // Use English as fallback for Persian
+        persian: this.getPersianTranslation(word.translations, word.english),
         level: word.level,
         category: word.category,
         difficulty: word.frequency,
@@ -155,7 +207,7 @@ class LearningService {
         id: word.id,
         german: word.german,
         english: word.english,
-        persian: word.english,
+        persian: this.getPersianTranslation(word.translations, word.english),
         level: word.level,
         category: word.category,
         difficulty: word.frequency,
@@ -205,14 +257,37 @@ class LearningService {
 
   async submitExamResult(examId: string, answers: any[]): Promise<any> {
     try {
-      // Calculate score (mock implementation)
-      const score = Math.floor(Math.random() * 100);
-      await database.saveExamResult(examId, score, 100, answers);
-      return { success: true, score };
+      const totalPoints = answers.reduce(
+        (sum: number, answer: any) => sum + (answer?.points || 0),
+        0
+      );
+      const earned = answers.reduce(
+        (sum: number, answer: any) => sum + (answer?.isCorrect ? answer.points || 0 : 0),
+        0
+      );
+      await database.saveExamResult(examId, earned, totalPoints || 1, answers);
+      return { success: true, score: earned, totalPoints: totalPoints || 1 };
     } catch (error) {
       console.error("Error submitting exam:", error);
       throw error;
     }
+  }
+
+  private getPersianTranslation(rawTranslations: any, fallback: string): string {
+    try {
+      const translations = JSON.parse(rawTranslations || "[]") as Array<{
+        language: string;
+        text: string;
+        isPrimary?: boolean;
+      }>;
+      const fa = translations.find(
+        (t) => t.language === "fa" || t.language === "fa-IR"
+      );
+      if (fa?.text) return fa.text;
+    } catch {
+      // ignore parsing issues
+    }
+    return fallback;
   }
 }
 

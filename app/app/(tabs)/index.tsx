@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Text, View, Pressable } from "react-native";
 import { useRouter } from "expo-router";
 import { Colors, Spacing } from "../../constants/theme";
@@ -16,6 +16,8 @@ import {
   getHomeMenuShadeColor,
   homeStyles,
 } from "../../styles";
+import { homeShortcuts } from "../../services/homeShortcuts";
+import { getJson } from "../../services/localStore";
 
 export default function HomeTab() {
   const router = useRouter();
@@ -76,133 +78,45 @@ export default function HomeTab() {
       icon: "edit-3" as const,
       onPress: () => router.push("/learn/exams" as any),
     },
-    {
-      key: "jobs",
-      label: "Jobs",
-      icon: "briefcase" as const,
-      onPress: () => router.push("/(tabs)/jobs" as any),
-    },
-    {
-      key: "events",
-      label: "Events",
-      icon: "calendar" as const,
-      onPress: () => router.push("/events" as any),
-    },
-    {
-      key: "documents",
-      label: "Documents",
-      icon: "file-text" as const,
-      onPress: () => router.push("/documents" as any),
-    },
-    {
-      key: "countries",
-      label: "Countries",
-      icon: "globe" as const,
-      onPress: () => router.push("/countries" as any),
-    },
-    {
-      key: "timeline",
-      label: "Timeline",
-      icon: "clock" as const,
-      onPress: () => router.push("/timeline" as any),
-    },
-    {
-      key: "services",
-      label: "Services",
-      icon: "help-circle" as const,
-      onPress: () => router.push("/services" as any),
-    },
-    {
-      key: "checklist",
-      label: "Checklist",
-      icon: "check-circle" as const,
-      onPress: () => router.push("/checklist" as any),
-    },
-    {
-      key: "deadlines",
-      label: "Deadlines",
-      icon: "calendar" as const,
-      onPress: () => router.push("/deadlines" as any),
-    },
-    {
-      key: "documents-tracker",
-      label: "Doc Tracker",
-      icon: "file-text" as const,
-      onPress: () => router.push("/documents-tracker" as any),
-    },
-    {
-      key: "phrasebook",
-      label: "Phrasebook",
-      icon: "message-square" as const,
-      onPress: () => router.push("/phrasebook" as any),
-    },
-    {
-      key: "residency-reminders",
-      label: "Reminders",
-      icon: "bell" as const,
-      onPress: () => router.push("/residency-reminders" as any),
-    },
-    {
-      key: "school",
-      label: "School",
-      icon: "bookmark" as const,
-      onPress: () => router.push("/school" as any),
-    },
-    {
-      key: "support",
-      label: "Support",
-      icon: "heart" as const,
-      onPress: () => router.push("/support" as any),
-    },
-    {
-      key: "housing",
-      label: "Housing",
-      icon: "home" as const,
-      onPress: () => router.push("/housing-safety" as any),
-    },
-    {
-      key: "tax",
-      label: "Tax Basics",
-      icon: "file" as const,
-      onPress: () => router.push("/tax" as any),
-    },
-    {
-      key: "forms",
-      label: "Form Helper",
-      icon: "clipboard" as const,
-      onPress: () => router.push("/forms" as any),
-    },
-    {
-      key: "emergency",
-      label: "Emergency",
-      icon: "alert-triangle" as const,
-      onPress: () => router.push("/emergency" as any),
-    },
-    {
-      key: "guides",
-      label: "Guides",
-      icon: "map" as const,
-      onPress: () => router.push("/guides" as any),
-    },
-    {
-      key: "locations",
-      label: "Locations",
-      icon: "map-pin" as const,
-      onPress: () => router.push("/locations" as any),
-    },
-    {
-      key: "chat",
-      label: "Chat",
-      icon: "message-circle" as const,
-      onPress: () => router.push("/chat" as any),
-    },
-    {
-      key: "settings",
-      label: "Settings",
-      icon: "settings" as const,
-      onPress: () => router.push("/settings" as any),
-    },
   ];
+
+  const [shortcutState, setShortcutState] = useState<Record<string, boolean>>(
+    {}
+  );
+
+  useEffect(() => {
+    let mounted = true;
+    const load = async () => {
+      const defaultState = homeShortcuts.reduce<Record<string, boolean>>(
+        (acc, item) => {
+          acc[item.key] = true;
+          return acc;
+        },
+        {}
+      );
+      const stored = await getJson<Record<string, boolean>>(
+        "home_shortcuts",
+        defaultState
+      );
+      if (mounted) setShortcutState(stored);
+    };
+    load();
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const enabledShortcuts = useMemo(() => {
+    return homeShortcuts.filter((item) => shortcutState[item.key] !== false);
+  }, [shortcutState]);
+
+  const rows = useMemo(() => {
+    const result: typeof enabledShortcuts[] = [];
+    for (let i = 0; i < enabledShortcuts.length; i += 2) {
+      result.push(enabledShortcuts.slice(i, i + 2));
+    }
+    return result;
+  }, [enabledShortcuts]);
 
   return (
     <Screen>
@@ -247,8 +161,25 @@ export default function HomeTab() {
               Mostly cloudy
             </Text>
 
-            {/* Sync Button */}
-            <View style={{ marginTop: Spacing.xs }}>
+            <View style={homeStyles.homeActions}>
+              <Pressable
+                onPress={() => router.push("/settings" as any)}
+                accessibilityRole="button"
+                accessibilityLabel="Settings"
+                style={({ pressed }) => [
+                  homeStyles.iconButton,
+                  {
+                    opacity: pressed ? 0.7 : 1,
+                    borderColor: palette.borderLight,
+                    backgroundColor:
+                      colorScheme === "dark"
+                        ? "rgba(255,255,255,0.10)"
+                        : "rgba(255,255,255,0.20)",
+                  },
+                ]}
+              >
+                <Feather name="settings" size={16} color={palette.textPrimary} />
+              </Pressable>
               <SyncButton size="small" />
             </View>
           </View>
@@ -257,7 +188,7 @@ export default function HomeTab() {
 
       <GlassCard style={homeStyles.menuCard}>
         <Text style={[homeStyles.sectionTitle, { color: palette.textPrimary }]}>
-          Menu
+          Core learning
         </Text>
         <View style={homeStyles.menuGrid}>
           {menuItems.map((item) => (
@@ -344,112 +275,29 @@ export default function HomeTab() {
 
       <GlassCard>
         <Text style={[homeStyles.sectionTitle, { color: palette.textPrimary }]}>
-          Quick actions
+          Home shortcuts
         </Text>
         <Text
           style={[homeStyles.sectionHint, { color: palette.textSecondary }]}
         >
-          Everything you need—one tap away.
+          Customize this list in Settings.
         </Text>
 
-        <View style={homeStyles.quickRow}>
-          <GlassWidget
-            title="Jobs"
-            subtitle="Browse"
-            icon="briefcase"
-            onPress={() => router.push("/(tabs)/jobs" as any)}
-            style={homeStyles.quickItem}
-          />
-          <GlassWidget
-            title="Events"
-            subtitle="Nearby"
-            icon="calendar"
-            onPress={() => router.push("/events" as any)}
-            style={homeStyles.quickItem}
-          />
-        </View>
-        <View style={homeStyles.quickRow}>
-          <GlassWidget
-            title="Documents"
-            subtitle="Guides"
-            icon="file-text"
-            onPress={() => router.push("/documents" as any)}
-            style={homeStyles.quickItem}
-          />
-          <GlassWidget
-            title="Community"
-            subtitle="Chat"
-            icon="message-circle"
-            onPress={() => router.push("/(tabs)/community" as any)}
-            style={homeStyles.quickItem}
-          />
-        </View>
-        <View style={homeStyles.quickRow}>
-          <GlassWidget
-            title="Guides"
-            subtitle="Essentials"
-            icon="map"
-            onPress={() => router.push("/guides" as any)}
-            style={homeStyles.quickItem}
-          />
-          <GlassWidget
-            title="Locations"
-            subtitle="Nearby"
-            icon="map-pin"
-            onPress={() => router.push("/locations" as any)}
-            style={homeStyles.quickItem}
-          />
-        </View>
-        <View style={homeStyles.quickRow}>
-          <GlassWidget
-            title="Countries"
-            subtitle="Starter packs"
-            icon="globe"
-            onPress={() => router.push("/countries" as any)}
-            style={homeStyles.quickItem}
-          />
-          <GlassWidget
-            title="Timeline"
-            subtitle="90 days"
-            icon="clock"
-            onPress={() => router.push("/timeline" as any)}
-            style={homeStyles.quickItem}
-          />
-        </View>
-        <View style={homeStyles.quickRow}>
-          <GlassWidget
-            title="Services"
-            subtitle="Trusted"
-            icon="help-circle"
-            onPress={() => router.push("/services" as any)}
-            style={homeStyles.quickItem}
-          />
-        </View>
-        <View style={homeStyles.quickRow}>
-          <GlassWidget
-            title="Checklist"
-            subtitle="Progress"
-            icon="check-circle"
-            onPress={() => router.push("/checklist" as any)}
-            style={homeStyles.quickItem}
-          />
-          <GlassWidget
-            title="Form Helper"
-            subtitle="Guided"
-            icon="clipboard"
-            onPress={() => router.push("/forms" as any)}
-            style={homeStyles.quickItem}
-          />
-        </View>
-        <View style={homeStyles.quickRow}>
-          <GlassWidget
-            title="Emergency"
-            subtitle="Numbers"
-            icon="alert-triangle"
-            onPress={() => router.push("/emergency" as any)}
-            style={homeStyles.quickItem}
-          />
-        </View>
+        {rows.map((row, index) => (
+          <View key={`row-${index}`} style={homeStyles.quickRow}>
+            {row.map((item) => (
+              <GlassWidget
+                key={item.key}
+                title={item.title}
+                subtitle={item.subtitle}
+                icon={item.icon}
+                onPress={() => router.push(item.route as any)}
+                style={homeStyles.quickItem}
+              />
+            ))}
+            {row.length === 1 ? <View style={homeStyles.quickItem} /> : null}
+          </View>
+        ))}
       </GlassCard>
     </Screen>
   );

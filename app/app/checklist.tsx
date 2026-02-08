@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import { useLocalSearchParams } from "expo-router";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Colors, Spacing, Typography } from "../constants/theme";
 import { useColorScheme } from "../hooks/use-color-scheme";
 import { Card } from "../components/ui/Card";
 import { PageHeader } from "../components/ui/PageHeader";
 import { Screen } from "../components/ui/Screen";
+import { getJson, setJson } from "../services/localStore";
 import {
   getStarterPack,
   getTimeline,
@@ -63,23 +63,13 @@ export default function ChecklistScreen() {
   const [done, setDone] = useState<Record<string, boolean>>({});
 
   const load = useCallback(async () => {
-    try {
-      const raw = await AsyncStorage.getItem(storageKey(code));
-      if (raw) {
-        setDone(JSON.parse(raw));
-      }
-    } catch {
-      setDone({});
-    }
+    const next = await getJson<Record<string, boolean>>(storageKey(code), {});
+    setDone(next);
   }, [code]);
 
   const save = useCallback(
     async (next: Record<string, boolean>) => {
-      try {
-        await AsyncStorage.setItem(storageKey(code), JSON.stringify(next));
-      } catch {
-        // ignore storage errors for now
-      }
+      await setJson(storageKey(code), next);
     },
     [code]
   );

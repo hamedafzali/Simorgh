@@ -21,7 +21,11 @@ export default function EventDetailScreen() {
 
   return (
     <Screen>
-      <Header title="Event" subtitle={event ? event.title : "Not found"} />
+      <Header
+        title="Event"
+        subtitle={event ? event.title : "Not found"}
+        showBack
+      />
 
       {!event ? (
         <Card>

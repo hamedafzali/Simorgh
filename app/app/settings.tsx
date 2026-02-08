@@ -18,6 +18,8 @@ import { PageHeader } from "../components/ui/PageHeader";
 import { SyncButton } from "../components/ui/SyncButton";
 import { usePreferences } from "../contexts/PreferencesContext";
 import { useDatabase } from "../contexts/DatabaseContext";
+import { homeShortcuts } from "../services/homeShortcuts";
+import { getJson, setJson } from "../services/localStore";
 
 const GERMAN_STATES = [
   "Baden-Württemberg",
@@ -110,6 +112,29 @@ export default function SettingsScreen() {
   const [dbVersion, setDbVersion] = useState<any>(null);
   const [updateAvailable, setUpdateAvailable] = useState(false);
   const [updateCheckResult, setUpdateCheckResult] = useState<any>(null);
+  const [homeShortcutState, setHomeShortcutState] = useState<Record<
+    string,
+    boolean
+  >>({});
+
+  React.useEffect(() => {
+    const load = async () => {
+      const defaults = homeShortcuts.reduce<Record<string, boolean>>(
+        (acc, item) => {
+          acc[item.key] = true;
+          return acc;
+        },
+        {}
+      );
+      const stored = await getJson<Record<string, boolean>>(
+        "home_shortcuts",
+        defaults
+      );
+      setHomeShortcutState(stored);
+    };
+
+    load();
+  }, []);
 
   // Load database stats when initialized
   React.useEffect(() => {
@@ -252,6 +277,15 @@ export default function SettingsScreen() {
     if (location?.source === "device") {
       setLocation(null);
     }
+  }
+
+  function toggleHomeShortcut(key: string) {
+    const next = {
+      ...homeShortcutState,
+      [key]: homeShortcutState[key] === false ? true : !homeShortcutState[key],
+    };
+    setHomeShortcutState(next);
+    void setJson("home_shortcuts", next);
   }
 
   return (
@@ -491,6 +525,70 @@ export default function SettingsScreen() {
             })}
           </View>
         ) : null}
+      </GlassCard>
+
+      <GlassCard>
+        <Text style={[styles.sectionTitle, { color: palette.textPrimary }]}>
+          Home screen shortcuts
+        </Text>
+        <Text style={[styles.sectionHint, { color: palette.textSecondary }]}>
+          Choose which features show on the Home page.
+        </Text>
+
+        <View style={styles.shortcutList}>
+          {homeShortcuts.map((item) => {
+            const enabled = homeShortcutState[item.key] !== false;
+            return (
+              <View key={item.key} style={styles.shortcutRow}>
+                <View style={styles.shortcutText}>
+                  <Text
+                    style={[
+                      styles.shortcutTitle,
+                      { color: palette.textPrimary },
+                    ]}
+                  >
+                    {item.title}
+                  </Text>
+                  <Text
+                    style={[
+                      styles.shortcutSubtitle,
+                      { color: palette.textSecondary },
+                    ]}
+                  >
+                    {item.subtitle}
+                  </Text>
+                </View>
+                <Pressable
+                  onPress={() => toggleHomeShortcut(item.key)}
+                  accessibilityRole="switch"
+                  accessibilityState={{ checked: enabled }}
+                  style={({ pressed }) => [
+                    styles.toggle,
+                    {
+                      backgroundColor: enabled
+                        ? palette.accentGreen
+                        : "rgba(255,255,255,0.20)",
+                      borderColor: enabled
+                        ? palette.accentGreen
+                        : palette.borderLight,
+                      opacity: pressed ? 0.85 : 1,
+                    },
+                  ]}
+                >
+                  <View
+                    style={[
+                      styles.knob,
+                      {
+                        transform: [{ translateX: enabled ? 18 : 0 }],
+                        backgroundColor: palette.white,
+                      },
+                    ]}
+                  />
+                </Pressable>
+              </View>
+            );
+          })}
+        </View>
       </GlassCard>
 
       {/* Database Information Section */}
@@ -936,6 +1034,26 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     borderWidth: 1,
     maxWidth: "100%",
+  },
+  shortcutList: {
+    gap: Spacing.sm,
+  },
+  shortcutRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: Spacing.md,
+  },
+  shortcutText: {
+    flex: 1,
+  },
+  shortcutTitle: {
+    fontSize: Typography.sizes.bodySecondary,
+    fontWeight: Typography.fontWeight.semibold,
+  },
+  shortcutSubtitle: {
+    marginTop: 2,
+    fontSize: Typography.sizes.bodySmall,
   },
   inputRow: {
     flexDirection: "row",

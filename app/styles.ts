@@ -23,6 +23,20 @@ export const homeStyles = StyleSheet.create({
     flex: 1,
     alignItems: "flex-end",
   },
+  homeActions: {
+    marginTop: Spacing.sm,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.sm,
+  },
+  iconButton: {
+    width: 38,
+    height: 38,
+    borderRadius: 12,
+    borderWidth: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   divider: {
     width: 1,
     height: 44,

@@ -32,6 +32,7 @@ export default function CountryScreen() {
       <Header
         title={country ? country.name : "Country"}
         subtitle={country?.summary || "Starter pack"}
+        showBack
       />
 
       <Card>

@@ -6,6 +6,7 @@ import { useColorScheme } from "../../hooks/use-color-scheme";
 import { Card } from "../../components/ui/Card";
 import { Header } from "../../components/ui/Header";
 import { ListItem } from "../../components/ui/ListItem";
+import { SectionHeader } from "../../components/ui/SectionHeader";
 import { Screen } from "../../components/ui/Screen";
 import { Chevron } from "../../components/ui/Chevron";
 
@@ -34,12 +35,7 @@ export default function CommunityTab() {
         </Text>
       </Card>
 
-      <ListItem
-        title="Guides"
-        subtitle="Residency, registration, banking, health"
-        onPress={() => router.push("/guides" as any)}
-        right={<Chevron />}
-      />
+      <SectionHeader title="Essentials" subtitle="Daily setup and checklists" />
       <ListItem
         title="Countries"
         subtitle="Starter packs for each country"
@@ -65,42 +61,6 @@ export default function CommunityTab() {
         right={<Chevron />}
       />
       <ListItem
-        title="Residency Reminders"
-        subtitle="Important deadlines"
-        onPress={() => router.push("/residency-reminders" as any)}
-        right={<Chevron />}
-      />
-      <ListItem
-        title="School Enrollment"
-        subtitle="Guide for children"
-        onPress={() => router.push("/school" as any)}
-        right={<Chevron />}
-      />
-      <ListItem
-        title="Support Resources"
-        subtitle="Mental health and women support"
-        onPress={() => router.push("/support" as any)}
-        right={<Chevron />}
-      />
-      <ListItem
-        title="Housing Safety"
-        subtitle="Checklist and scam warnings"
-        onPress={() => router.push("/housing-safety" as any)}
-        right={<Chevron />}
-      />
-      <ListItem
-        title="Tax Basics"
-        subtitle="Deadlines and basics"
-        onPress={() => router.push("/tax" as any)}
-        right={<Chevron />}
-      />
-      <ListItem
-        title="Phrasebook"
-        subtitle="Emergency and daily phrases"
-        onPress={() => router.push("/phrasebook" as any)}
-        right={<Chevron />}
-      />
-      <ListItem
         title="Form Helper"
         subtitle="Fill forms with Persian hints"
         onPress={() => router.push("/forms" as any)}
@@ -113,9 +73,20 @@ export default function CommunityTab() {
         right={<Chevron />}
       />
       <ListItem
-        title="Locations"
-        subtitle="Find local services and offices"
-        onPress={() => router.push("/locations" as any)}
+        title="Phrasebook"
+        subtitle="Emergency and daily phrases"
+        onPress={() => router.push("/phrasebook" as any)}
+        right={<Chevron />}
+      />
+
+      <SectionHeader
+        title="Residency & Work"
+        subtitle="Legal, housing, and enrollment"
+      />
+      <ListItem
+        title="Guides"
+        subtitle="Residency, registration, banking, health"
+        onPress={() => router.push("/guides" as any)}
         right={<Chevron />}
       />
       <ListItem
@@ -131,16 +102,43 @@ export default function CommunityTab() {
         right={<Chevron />}
       />
       <ListItem
-        title="FAQ"
-        subtitle="Quick answers to common questions"
-        onPress={() => router.push("/faq" as any)}
+        title="Residency Reminders"
+        subtitle="Important deadlines"
+        onPress={() => router.push("/residency-reminders" as any)}
+        right={<Chevron />}
+      />
+      <ListItem
+        title="Housing Safety"
+        subtitle="Checklist and scam warnings"
+        onPress={() => router.push("/housing-safety" as any)}
+        right={<Chevron />}
+      />
+      <ListItem
+        title="Tax Basics"
+        subtitle="Deadlines and basics"
+        onPress={() => router.push("/tax" as any)}
+        right={<Chevron />}
+      />
+      <ListItem
+        title="School Enrollment"
+        subtitle="Guide for children"
+        onPress={() => router.push("/school" as any)}
         right={<Chevron />}
       />
 
+      <SectionHeader title="Support" subtitle="Wellbeing and safety" />
       <ListItem
-        title="Chat"
-        subtitle="Ask questions and get help"
-        onPress={() => router.push("/chat" as any)}
+        title="Support Resources"
+        subtitle="Mental health and women support"
+        onPress={() => router.push("/support" as any)}
+        right={<Chevron />}
+      />
+
+      <SectionHeader title="Community" subtitle="Find people and places" />
+      <ListItem
+        title="Locations"
+        subtitle="Find local services and offices"
+        onPress={() => router.push("/locations" as any)}
         right={<Chevron />}
       />
       <ListItem
@@ -150,9 +148,21 @@ export default function CommunityTab() {
         right={<Chevron />}
       />
       <ListItem
+        title="Chat"
+        subtitle="Ask questions and get help"
+        onPress={() => router.push("/chat" as any)}
+        right={<Chevron />}
+      />
+      <ListItem
         title="Documents"
         subtitle="Immigration forms and guidance"
         onPress={() => router.push("/documents" as any)}
+        right={<Chevron />}
+      />
+      <ListItem
+        title="FAQ"
+        subtitle="Quick answers to common questions"
+        onPress={() => router.push("/faq" as any)}
         right={<Chevron />}
       />
       <View style={{ height: Spacing.lg }} />
