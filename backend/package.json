@@ -1,0 +1,40 @@
+{
+  "name": "simorgh-backend",
+  "version": "1.0.0",
+  "description": "Unified Backend for Simorgh German Learning App - API Server and Admin Panel",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "seed": "node src/seed/runSeed.js",
+    "seed-exams": "node src/seed/generate5000Exams.js",
+    "seed-flashcards": "node src/seed/generate5000Flashcards.js",
+    "admin:dev": "cd admin && npm start",
+    "admin:build": "cd admin && npm run build",
+    "admin:install": "cd admin && npm install"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "helmet": "^7.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^7.5.0",
+    "socket.io": "^4.7.2",
+    "sqlite3": "^5.1.7",
+    "path": "^0.12.7"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "keywords": [
+    "german",
+    "learning",
+    "api",
+    "education",
+    "admin"
+  ],
+  "author": "Simorgh Team",
+  "license": "MIT"
+}

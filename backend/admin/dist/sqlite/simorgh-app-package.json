@@ -1,0 +1,15 @@
+{
+  "version": "1.0.0",
+  "timestamp": 1765461469867,
+  "database_file": "simorgh_app.db",
+  "description": "Simorgh German Learning App - SQLite Database Package",
+  "stats": {
+    "flashcards": 5000,
+    "exams": 5000,
+    "words": 48
+  },
+  "compatibility": {
+    "min_app_version": "1.0.0",
+    "platform": "react-native"
+  }
+}
