@@ -66,6 +66,28 @@ export type SchoolGuide = {
   documents: string[];
 };
 
+export type SupportResource = {
+  countryCode: string;
+  category: string;
+  name: string;
+  summary: string;
+  contact?: string;
+};
+
+export type HousingChecklist = {
+  countryCode: string;
+  title: string;
+  items: string[];
+  warnings: string[];
+};
+
+export type TaxReminder = {
+  countryCode: string;
+  title: string;
+  timing: string;
+  notes: string;
+};
+
 export type DeadlineItem = {
   countryCode: string;
   title: string;
@@ -452,6 +474,96 @@ export const schoolGuides: SchoolGuide[] = [
   },
 ];
 
+export const supportResources: SupportResource[] = [
+  {
+    countryCode: "DE",
+    category: "Mental Health",
+    name: "Persian-Speaking Therapists",
+    summary: "Find Farsi-speaking counselors and therapists.",
+    contact: "Ask your Hausarzt for referrals",
+  },
+  {
+    countryCode: "DE",
+    category: "Women’s Support",
+    name: "Women’s Counseling Centers",
+    summary: "Support for women, family, and safety concerns.",
+    contact: "Local Frauenberatung offices",
+  },
+  {
+    countryCode: "DE",
+    category: "Crisis",
+    name: "Crisis Hotline",
+    summary: "Immediate emotional support and crisis help.",
+    contact: "Telefonseelsorge 116 123",
+  },
+  {
+    countryCode: "GLOBAL",
+    category: "Mental Health",
+    name: "Local Counseling Services",
+    summary: "Search for counseling services in your city.",
+  },
+  {
+    countryCode: "GLOBAL",
+    category: "Women’s Support",
+    name: "Women’s Resource Centers",
+    summary: "Safety and support resources for women.",
+  },
+];
+
+export const housingChecklists: HousingChecklist[] = [
+  {
+    countryCode: "DE",
+    title: "Housing Safety Checklist",
+    items: [
+      "Signed rental contract with full address",
+      "Deposit receipt and payment method",
+      "Handover protocol (Übergabeprotokoll)",
+      "Check for mold, heating, and water issues",
+      "Confirm who pays utilities (Nebenkosten)",
+    ],
+    warnings: [
+      "Never pay cash without receipt.",
+      "Avoid listings that require prepayment before viewing.",
+      "Verify landlord identity and property address.",
+    ],
+  },
+  {
+    countryCode: "GLOBAL",
+    title: "Housing Safety Checklist",
+    items: [
+      "Written contract with full address",
+      "Receipt for deposits or fees",
+      "Check utilities, locks, and safety",
+      "Confirm who pays which bills",
+    ],
+    warnings: [
+      "Avoid prepayment before viewing.",
+      "Verify landlord identity and address.",
+    ],
+  },
+];
+
+export const taxReminders: TaxReminder[] = [
+  {
+    countryCode: "DE",
+    title: "Annual tax return",
+    timing: "Yearly (often by July 31)",
+    notes: "Use ELSTER or a tax advisor for filing.",
+  },
+  {
+    countryCode: "DE",
+    title: "Check tax class (Steuerklasse)",
+    timing: "After marriage or job change",
+    notes: "Update via Finanzamt if needed.",
+  },
+  {
+    countryCode: "GLOBAL",
+    title: "Annual tax return",
+    timing: "Yearly (local deadline)",
+    notes: "Check local tax authority deadlines.",
+  },
+];
+
 export const phrasebook: PhraseEntry[] = [
   {
     countryCode: "DE",
@@ -556,6 +668,23 @@ export function getSchoolGuide(countryCode: string): SchoolGuide {
     schoolGuides.find((guide) => guide.countryCode === countryCode) ||
     schoolGuides.find((guide) => guide.countryCode === "GLOBAL")!
   );
+}
+
+export function getSupportResources(countryCode: string): SupportResource[] {
+  const items = supportResources.filter((item) => item.countryCode === countryCode);
+  return items.length ? items : supportResources.filter((item) => item.countryCode === "GLOBAL");
+}
+
+export function getHousingChecklist(countryCode: string): HousingChecklist {
+  return (
+    housingChecklists.find((item) => item.countryCode === countryCode) ||
+    housingChecklists.find((item) => item.countryCode === "GLOBAL")!
+  );
+}
+
+export function getTaxReminders(countryCode: string): TaxReminder[] {
+  const items = taxReminders.filter((item) => item.countryCode === countryCode);
+  return items.length ? items : taxReminders.filter((item) => item.countryCode === "GLOBAL");
 }
 
 export function getPhrasebook(countryCode: string): PhraseEntry[] {

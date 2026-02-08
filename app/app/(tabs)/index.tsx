@@ -149,6 +149,24 @@ export default function HomeTab() {
       onPress: () => router.push("/school" as any),
     },
     {
+      key: "support",
+      label: "Support",
+      icon: "heart" as const,
+      onPress: () => router.push("/support" as any),
+    },
+    {
+      key: "housing",
+      label: "Housing",
+      icon: "home" as const,
+      onPress: () => router.push("/housing-safety" as any),
+    },
+    {
+      key: "tax",
+      label: "Tax Basics",
+      icon: "file" as const,
+      onPress: () => router.push("/tax" as any),
+    },
+    {
       key: "forms",
       label: "Form Helper",
       icon: "clipboard" as const,

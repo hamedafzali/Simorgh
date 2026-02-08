@@ -77,6 +77,24 @@ export default function CommunityTab() {
         right={<Chevron />}
       />
       <ListItem
+        title="Support Resources"
+        subtitle="Mental health and women support"
+        onPress={() => router.push("/support" as any)}
+        right={<Chevron />}
+      />
+      <ListItem
+        title="Housing Safety"
+        subtitle="Checklist and scam warnings"
+        onPress={() => router.push("/housing-safety" as any)}
+        right={<Chevron />}
+      />
+      <ListItem
+        title="Tax Basics"
+        subtitle="Deadlines and basics"
+        onPress={() => router.push("/tax" as any)}
+        right={<Chevron />}
+      />
+      <ListItem
         title="Phrasebook"
         subtitle="Emergency and daily phrases"
         onPress={() => router.push("/phrasebook" as any)}

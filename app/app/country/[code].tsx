@@ -123,6 +123,24 @@ export default function CountryScreen() {
         variant="secondary"
         onPress={() => router.push(`/school?country=${code}` as any)}
       />
+      <View style={{ height: Spacing.sm }} />
+      <Button
+        title="Support Resources"
+        variant="secondary"
+        onPress={() => router.push(`/support?country=${code}` as any)}
+      />
+      <View style={{ height: Spacing.sm }} />
+      <Button
+        title="Housing Safety"
+        variant="secondary"
+        onPress={() => router.push(`/housing-safety?country=${code}` as any)}
+      />
+      <View style={{ height: Spacing.sm }} />
+      <Button
+        title="Tax Basics"
+        variant="secondary"
+        onPress={() => router.push(`/tax?country=${code}` as any)}
+      />
 
       <View style={{ height: Spacing.lg }} />
 
