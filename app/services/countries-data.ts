@@ -28,6 +28,8 @@ export type ServiceEntry = {
   city?: string;
   summary: string;
   contact?: string;
+  verified?: boolean;
+  verifiedNote?: string;
 };
 
 export type EmergencyContact = {
@@ -47,6 +49,21 @@ export type FormGuide = {
     example?: string;
   }>;
   tips: string[];
+};
+
+export type ReminderItem = {
+  countryCode: string;
+  title: string;
+  dueInDays: number;
+  notes: string;
+};
+
+export type SchoolGuide = {
+  countryCode: string;
+  title: string;
+  summary: string;
+  steps: string[];
+  documents: string[];
 };
 
 export type DeadlineItem = {
@@ -231,19 +248,41 @@ export const serviceDirectory: ServiceEntry[] = [
     category: "Legal",
     name: "Immigration Legal Aid (Berlin)",
     city: "Berlin",
-    summary: "Low-cost legal guidance for residency questions.",
+    summary: "Community-vetted legal guidance for residency questions.",
+    verified: true,
+    verifiedNote: "Verified by community reports",
   },
   {
     countryCode: "DE",
     category: "Translation",
     name: "Certified Translators Network",
-    summary: "Find sworn translations for official documents.",
+    summary: "Sworn translation support for official documents.",
+    verified: true,
+    verifiedNote: "Verified in Germany",
   },
   {
     countryCode: "DE",
     category: "Tax",
     name: "Tax Advisor Finder",
     summary: "Help with Steuerklasse and annual returns.",
+    verified: true,
+    verifiedNote: "Verified in Germany",
+  },
+  {
+    countryCode: "DE",
+    category: "Housing",
+    name: "Tenant Advisory Hotline",
+    summary: "Guidance on tenant rights, deposits, and contracts.",
+    verified: true,
+    verifiedNote: "Verified in Germany",
+  },
+  {
+    countryCode: "DE",
+    category: "Mental Health",
+    name: "Persian-Speaking Counselors",
+    summary: "Find Farsi-speaking therapists and counselors.",
+    verified: false,
+    verifiedNote: "Verification in progress",
   },
 ];
 
@@ -348,6 +387,71 @@ export const deadlineItems: DeadlineItem[] = [
   },
 ];
 
+export const residencyReminders: ReminderItem[] = [
+  {
+    countryCode: "DE",
+    title: "Register address (Anmeldung)",
+    dueInDays: 14,
+    notes: "Book appointment and bring landlord confirmation.",
+  },
+  {
+    countryCode: "DE",
+    title: "Health insurance confirmation",
+    dueInDays: 30,
+    notes: "Pick public/private insurance and request confirmation.",
+  },
+  {
+    countryCode: "DE",
+    title: "Residence permit appointment",
+    dueInDays: 60,
+    notes: "Schedule Ausländerbehörde appointment if needed.",
+  },
+  {
+    countryCode: "GLOBAL",
+    title: "Local address registration",
+    dueInDays: 14,
+    notes: "Register your address or residency locally.",
+  },
+  {
+    countryCode: "GLOBAL",
+    title: "Health coverage setup",
+    dueInDays: 30,
+    notes: "Secure insurance or coverage.",
+  },
+];
+
+export const schoolGuides: SchoolGuide[] = [
+  {
+    countryCode: "DE",
+    title: "School Enrollment (Children 6-16)",
+    summary: "Public school enrollment steps for Germany.",
+    steps: [
+      "Register your address (Anmeldung).",
+      "Contact the local Schulamt (education office).",
+      "Schedule placement or language assessment if needed.",
+      "Submit enrollment forms and documents.",
+    ],
+    documents: [
+      "Child passport or ID",
+      "Residence permit (if applicable)",
+      "Anmeldung certificate",
+      "Vaccination record (Impfpass)",
+      "Previous school records (if any)",
+    ],
+  },
+  {
+    countryCode: "GLOBAL",
+    title: "School Enrollment Basics",
+    summary: "Common steps for enrolling children in public schools.",
+    steps: [
+      "Check local school district rules.",
+      "Prepare identification and residency proofs.",
+      "Ask about language support programs.",
+    ],
+    documents: ["Child ID/passport", "Proof of address", "Vaccination records"],
+  },
+];
+
 export const phrasebook: PhraseEntry[] = [
   {
     countryCode: "DE",
@@ -435,9 +539,23 @@ export function getFormGuides(countryCode: string): FormGuide[] {
   return items.length ? items : formGuides.filter((g) => g.countryCode === "GLOBAL");
 }
 
+export function getResidencyReminders(countryCode: string): ReminderItem[] {
+  const items = residencyReminders.filter((item) => item.countryCode === countryCode);
+  return items.length
+    ? items
+    : residencyReminders.filter((item) => item.countryCode === "GLOBAL");
+}
+
 export function getDeadlines(countryCode: string): DeadlineItem[] {
   const items = deadlineItems.filter((item) => item.countryCode === countryCode);
   return items.length ? items : deadlineItems.filter((item) => item.countryCode === "GLOBAL");
+}
+
+export function getSchoolGuide(countryCode: string): SchoolGuide {
+  return (
+    schoolGuides.find((guide) => guide.countryCode === countryCode) ||
+    schoolGuides.find((guide) => guide.countryCode === "GLOBAL")!
+  );
 }
 
 export function getPhrasebook(countryCode: string): PhraseEntry[] {

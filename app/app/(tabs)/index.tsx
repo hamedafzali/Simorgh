@@ -137,6 +137,18 @@ export default function HomeTab() {
       onPress: () => router.push("/phrasebook" as any),
     },
     {
+      key: "residency-reminders",
+      label: "Reminders",
+      icon: "bell" as const,
+      onPress: () => router.push("/residency-reminders" as any),
+    },
+    {
+      key: "school",
+      label: "School",
+      icon: "bookmark" as const,
+      onPress: () => router.push("/school" as any),
+    },
+    {
       key: "forms",
       label: "Form Helper",
       icon: "clipboard" as const,

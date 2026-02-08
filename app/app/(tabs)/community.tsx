@@ -65,6 +65,18 @@ export default function CommunityTab() {
         right={<Chevron />}
       />
       <ListItem
+        title="Residency Reminders"
+        subtitle="Important deadlines"
+        onPress={() => router.push("/residency-reminders" as any)}
+        right={<Chevron />}
+      />
+      <ListItem
+        title="School Enrollment"
+        subtitle="Guide for children"
+        onPress={() => router.push("/school" as any)}
+        right={<Chevron />}
+      />
+      <ListItem
         title="Phrasebook"
         subtitle="Emergency and daily phrases"
         onPress={() => router.push("/phrasebook" as any)}

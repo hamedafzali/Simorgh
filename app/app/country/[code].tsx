@@ -111,6 +111,18 @@ export default function CountryScreen() {
         variant="secondary"
         onPress={() => router.push(`/phrasebook?country=${code}` as any)}
       />
+      <View style={{ height: Spacing.sm }} />
+      <Button
+        title="Residency Reminders"
+        variant="secondary"
+        onPress={() => router.push(`/residency-reminders?country=${code}` as any)}
+      />
+      <View style={{ height: Spacing.sm }} />
+      <Button
+        title="School Enrollment"
+        variant="secondary"
+        onPress={() => router.push(`/school?country=${code}` as any)}
+      />
 
       <View style={{ height: Spacing.lg }} />
 

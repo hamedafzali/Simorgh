@@ -1,5 +1,5 @@
 import React from "react";
-import { Text } from "react-native";
+import { Text, View } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import { Colors, Spacing, Typography } from "../constants/theme";
 import { useColorScheme } from "../hooks/use-color-scheme";
@@ -40,16 +40,39 @@ export default function ServicesScreen() {
 
       {services.map((service) => (
         <Card key={`${service.category}-${service.name}`}>
-          <Text
-            style={{
-              fontSize: Typography.sizes.headingM,
-              fontWeight: Typography.fontWeight.bold,
-              color: palette.textPrimary,
-              marginBottom: Spacing.xs,
-            }}
-          >
-            {service.name}
-          </Text>
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <Text
+              style={{
+                fontSize: Typography.sizes.headingM,
+                fontWeight: Typography.fontWeight.bold,
+                color: palette.textPrimary,
+                marginBottom: Spacing.xs,
+              }}
+            >
+              {service.name}
+            </Text>
+            {service.verified ? (
+              <View
+                style={{
+                  marginLeft: Spacing.sm,
+                  backgroundColor: palette.primary,
+                  paddingHorizontal: 8,
+                  paddingVertical: 2,
+                  borderRadius: 10,
+                }}
+              >
+                <Text
+                  style={{
+                    color: palette.textOnPrimary,
+                    fontSize: 12,
+                    fontWeight: Typography.fontWeight.semibold,
+                  }}
+                >
+                  Verified
+                </Text>
+              </View>
+            ) : null}
+          </View>
           <Text
             style={{
               fontSize: Typography.sizes.bodySecondary,
@@ -61,6 +84,7 @@ export default function ServicesScreen() {
             {service.city ? ` · ${service.city}` : ""}
             {"\n"}{service.summary}
             {service.contact ? `\nContact: ${service.contact}` : ""}
+            {service.verifiedNote ? `\n${service.verifiedNote}` : ""}
           </Text>
         </Card>
       ))}
