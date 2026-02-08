@@ -408,7 +408,9 @@ class DatabaseService {
       const result = await response.json();
       return result;
     } catch (error) {
-      console.error("Failed to check for database updates:", error);
+      const message =
+        error instanceof Error ? error.message : "Unknown error";
+      console.warn("Database update check failed:", message);
 
       // Handle different types of network errors
       if (

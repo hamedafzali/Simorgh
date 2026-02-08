@@ -552,7 +552,9 @@ class SyncService {
         APP_VERSION
       );
     } catch (error) {
-      console.error("Failed to check for database updates:", error);
+      const message =
+        error instanceof Error ? error.message : "Unknown error";
+      console.warn("Database update check failed:", message);
 
       // Provide more specific error messages
       if (

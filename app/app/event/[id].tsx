@@ -7,7 +7,7 @@ import { Button } from "../../components/ui/Button";
 import { Card } from "../../components/ui/Card";
 import { Header } from "../../components/ui/Header";
 import { Screen } from "../../components/ui/Screen";
-import { mockEvents } from "../../services/mock-data";
+import { germanyEvents } from "../../services/germany-data";
 
 export default function EventDetailScreen() {
   const router = useRouter();
@@ -17,7 +17,7 @@ export default function EventDetailScreen() {
   const colorScheme = useColorScheme();
   const palette = colorScheme === "dark" ? Colors.dark : Colors.light;
 
-  const event = useMemo(() => mockEvents.find((e) => e.id === id), [id]);
+  const event = useMemo(() => germanyEvents.find((e) => e.id === id), [id]);
 
   return (
     <Screen>
@@ -61,7 +61,7 @@ export default function EventDetailScreen() {
                 lineHeight: 22,
               }}
             >
-              {event.city} · {event.date}
+              {event.city} · {event.date} · {event.time}
             </Text>
           </Card>
 
@@ -84,6 +84,18 @@ export default function EventDetailScreen() {
               }}
             >
               {event.description}
+            </Text>
+            <View style={{ height: Spacing.sm }} />
+            <Text
+              style={{
+                fontSize: Typography.sizes.bodySecondary,
+                color: palette.textSecondary,
+                lineHeight: 22,
+              }}
+            >
+              Venue: {event.venue}
+              {"\n"}Language: {event.language}
+              {"\n"}Price: {event.price}
             </Text>
           </Card>
 

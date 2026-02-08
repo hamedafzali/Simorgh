@@ -95,6 +95,18 @@ export default function HomeTab() {
       onPress: () => router.push("/documents" as any),
     },
     {
+      key: "guides",
+      label: "Guides",
+      icon: "map" as const,
+      onPress: () => router.push("/guides" as any),
+    },
+    {
+      key: "locations",
+      label: "Locations",
+      icon: "map-pin" as const,
+      onPress: () => router.push("/locations" as any),
+    },
+    {
       key: "chat",
       label: "Chat",
       icon: "message-circle" as const,
@@ -285,6 +297,22 @@ export default function HomeTab() {
             subtitle="Chat"
             icon="message-circle"
             onPress={() => router.push("/(tabs)/community" as any)}
+            style={homeStyles.quickItem}
+          />
+        </View>
+        <View style={homeStyles.quickRow}>
+          <GlassWidget
+            title="Guides"
+            subtitle="Essentials"
+            icon="map"
+            onPress={() => router.push("/guides" as any)}
+            style={homeStyles.quickItem}
+          />
+          <GlassWidget
+            title="Locations"
+            subtitle="Nearby"
+            icon="map-pin"
+            onPress={() => router.push("/locations" as any)}
             style={homeStyles.quickItem}
           />
         </View>

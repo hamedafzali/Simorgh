@@ -9,7 +9,7 @@ import { PageHeader } from "../../components/ui/PageHeader";
 import { Screen } from "../../components/ui/Screen";
 import { ListItem } from "../../components/ui/ListItem";
 import { Chevron } from "../../components/ui/Chevron";
-import { mockJobs } from "../../services/mock-data";
+import { documentGuides, germanyJobs } from "../../services/germany-data";
 
 export default function JobsTab() {
   const router = useRouter();
@@ -33,15 +33,15 @@ export default function JobsTab() {
             lineHeight: 22,
           }}
         >
-          Jobs list (mock). Next step: wire to backend `GET /api/jobs`.
+          Germany-focused opportunities and job tools for newcomers.
         </Text>
         <View style={{ height: Spacing.md }} />
-        <Button title="Refresh" onPress={() => {}} />
+        <Button title="Refresh list" onPress={() => {}} />
         <View style={{ height: Spacing.sm }} />
         <Button title="Create alert" variant="secondary" onPress={() => {}} />
       </Card>
 
-      {mockJobs.map((job) => (
+      {germanyJobs.map((job) => (
         <ListItem
           key={job.id}
           title={`${job.title}`}
@@ -60,7 +60,7 @@ export default function JobsTab() {
             marginBottom: Spacing.sm,
           }}
         >
-          Suggested next steps
+          CV & Applications
         </Text>
         <Text
           style={{
@@ -69,10 +69,20 @@ export default function JobsTab() {
             lineHeight: 22,
           }}
         >
-          1) Implement backend jobs endpoints.
-          {"\n"}2) Add filters (city, category, level).
-          {"\n"}3) Add job detail + apply flow.
+          Create a German-style application pack. Start with these guides:
         </Text>
+        <View style={{ height: Spacing.sm }} />
+        {documentGuides
+          .filter((g) => g.category === "Work & Jobcenter")
+          .map((guide) => (
+            <ListItem
+              key={guide.id}
+              title={guide.title}
+              subtitle={guide.summary}
+              onPress={() => router.push(`/document/${guide.id}` as any)}
+              right={<Chevron />}
+            />
+          ))}
       </Card>
     </Screen>
   );

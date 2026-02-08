@@ -3,13 +3,13 @@ import { Text, View } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Colors, Spacing, Typography } from "../../constants/theme";
 import { useColorScheme } from "../../hooks/use-color-scheme";
-import { Button } from "../../components/ui/Button";
 import { Card } from "../../components/ui/Card";
 import { Header } from "../../components/ui/Header";
 import { Screen } from "../../components/ui/Screen";
-import { documentGuides } from "../../services/germany-data";
+import { Button } from "../../components/ui/Button";
+import { germanyGuides } from "../../services/germany-data";
 
-export default function DocumentDetailScreen() {
+export default function GuideDetailScreen() {
   const router = useRouter();
   const params = useLocalSearchParams<{ id?: string }>();
   const id = params.id;
@@ -17,13 +17,16 @@ export default function DocumentDetailScreen() {
   const colorScheme = useColorScheme();
   const palette = colorScheme === "dark" ? Colors.dark : Colors.light;
 
-  const doc = useMemo(() => documentGuides.find((d) => d.id === id), [id]);
+  const guide = useMemo(
+    () => germanyGuides.find((g) => g.id === id),
+    [id]
+  );
 
   return (
     <Screen>
-      <Header title="Document" subtitle={doc ? doc.title : "Not found"} />
+      <Header title="Guide" subtitle={guide ? guide.title : "Not found"} />
 
-      {!doc ? (
+      {!guide ? (
         <Card>
           <Text
             style={{
@@ -32,7 +35,7 @@ export default function DocumentDetailScreen() {
               lineHeight: 22,
             }}
           >
-            Document not found.
+            Guide not found.
           </Text>
           <View style={{ height: Spacing.md }} />
           <Button
@@ -52,7 +55,7 @@ export default function DocumentDetailScreen() {
                 marginBottom: Spacing.xs,
               }}
             >
-              {doc.title}
+              {guide.title}
             </Text>
             <Text
               style={{
@@ -61,17 +64,7 @@ export default function DocumentDetailScreen() {
                 lineHeight: 22,
               }}
             >
-              Category: {doc.category}
-            </Text>
-            <View style={{ height: Spacing.sm }} />
-            <Text
-              style={{
-                fontSize: Typography.sizes.bodySecondary,
-                color: palette.textSecondary,
-                lineHeight: 22,
-              }}
-            >
-              {doc.summary}
+              {guide.summary}
             </Text>
           </Card>
 
@@ -86,7 +79,7 @@ export default function DocumentDetailScreen() {
             >
               Steps
             </Text>
-            {doc.steps.map((step) => (
+            {guide.steps.map((step) => (
               <Text
                 key={step}
                 style={{
@@ -111,7 +104,7 @@ export default function DocumentDetailScreen() {
             >
               Checklist
             </Text>
-            {doc.checklist.map((item) => (
+            {guide.checklist.map((item) => (
               <Text
                 key={item}
                 style={{
@@ -125,7 +118,34 @@ export default function DocumentDetailScreen() {
             ))}
           </Card>
 
-          {doc.resources && doc.resources.length > 0 ? (
+          {guide.sections?.map((section) => (
+            <Card key={section.title}>
+              <Text
+                style={{
+                  fontSize: Typography.sizes.headingM,
+                  fontWeight: Typography.fontWeight.bold,
+                  color: palette.textPrimary,
+                  marginBottom: Spacing.sm,
+                }}
+              >
+                {section.title}
+              </Text>
+              {section.bullets.map((bullet) => (
+                <Text
+                  key={bullet}
+                  style={{
+                    fontSize: Typography.sizes.bodySecondary,
+                    color: palette.textSecondary,
+                    lineHeight: 22,
+                  }}
+                >
+                  • {bullet}
+                </Text>
+              ))}
+            </Card>
+          ))}
+
+          {guide.resources && guide.resources.length > 0 ? (
             <Card>
               <Text
                 style={{
@@ -137,7 +157,7 @@ export default function DocumentDetailScreen() {
               >
                 Resources
               </Text>
-              {doc.resources.map((resource) => (
+              {guide.resources.map((resource) => (
                 <Text
                   key={resource.url}
                   style={{
@@ -151,14 +171,6 @@ export default function DocumentDetailScreen() {
               ))}
             </Card>
           ) : null}
-
-          <Button title="Save checklist (mock)" onPress={() => {}} />
-          <View style={{ height: Spacing.sm }} />
-          <Button
-            title="Back"
-            variant="secondary"
-            onPress={() => router.back()}
-          />
         </>
       )}
     </Screen>

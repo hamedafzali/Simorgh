@@ -8,7 +8,7 @@ import { PageHeader } from "../components/ui/PageHeader";
 import { Screen } from "../components/ui/Screen";
 import { ListItem } from "../components/ui/ListItem";
 import { Chevron } from "../components/ui/Chevron";
-import { mockEvents } from "../services/mock-data";
+import { germanyEvents } from "../services/germany-data";
 
 export default function EventsScreen() {
   const router = useRouter();
@@ -30,15 +30,15 @@ export default function EventsScreen() {
             lineHeight: 22,
           }}
         >
-          Event list (mock). Next step: wire to backend events service.
+          Germany-first community events and workshops.
         </Text>
       </Card>
 
-      {mockEvents.map((e) => (
+      {germanyEvents.map((e) => (
         <ListItem
           key={e.id}
           title={e.title}
-          subtitle={`${e.city} · ${e.date}`}
+          subtitle={`${e.city} · ${e.date} · ${e.time}`}
           onPress={() => router.push(`/event/${e.id}` as any)}
           right={<Chevron />}
         />

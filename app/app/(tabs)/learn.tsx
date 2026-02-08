@@ -62,6 +62,12 @@ export default function LearnTab() {
         right={<Chevron />}
       />
       <ListItem
+        title="Survival Phrases"
+        subtitle="Everyday German with Persian/English"
+        onPress={() => router.push("/learn/phrases" as any)}
+        right={<Chevron />}
+      />
+      <ListItem
         title="Exams"
         subtitle="Mock tests and assessments"
         onPress={() => router.push("/learn/exams" as any)}
@@ -75,7 +81,8 @@ export default function LearnTab() {
           Tip
         </Text>
         <Text style={[styles.tip, { color: palette.textSecondary }]}>
-          Add offline caching (SQLite) later as described in PROJECT_SUMMARY.md.
+          Focus on survival phrases first. They help in appointments, housing,
+          and daily tasks.
         </Text>
       </Card>
     </Screen>

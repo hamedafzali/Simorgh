@@ -18,7 +18,7 @@ export default function CommunityTab() {
     <Screen>
       <Header
         title="Community"
-        subtitle="Chat, events, documents, and local information"
+        subtitle="Guides, events, documents, and local help"
       />
 
       <Card>
@@ -29,10 +29,29 @@ export default function CommunityTab() {
             lineHeight: 22,
           }}
         >
-          This is a scaffold. The backend has placeholder endpoints for chat and
-          jobs.
+          Germany-first help hub for Iranian newcomers. More countries can be
+          added later.
         </Text>
       </Card>
+
+      <ListItem
+        title="Guides"
+        subtitle="Residency, registration, banking, health"
+        onPress={() => router.push("/guides" as any)}
+        right={<Chevron />}
+      />
+      <ListItem
+        title="Locations"
+        subtitle="Find local services and offices"
+        onPress={() => router.push("/locations" as any)}
+        right={<Chevron />}
+      />
+      <ListItem
+        title="FAQ"
+        subtitle="Quick answers to common questions"
+        onPress={() => router.push("/faq" as any)}
+        right={<Chevron />}
+      />
 
       <ListItem
         title="Chat"
@@ -52,36 +71,7 @@ export default function CommunityTab() {
         onPress={() => router.push("/documents" as any)}
         right={<Chevron />}
       />
-      <ListItem
-        title="Locations"
-        subtitle="Find helpful services near you"
-        onPress={() => {}}
-        right={<Chevron />}
-      />
-
       <View style={{ height: Spacing.lg }} />
-
-      <Card>
-        <Text
-          style={{
-            fontSize: Typography.sizes.headingM,
-            fontWeight: Typography.fontWeight.bold,
-            color: palette.textPrimary,
-            marginBottom: Spacing.xs,
-          }}
-        >
-          RTL / LTR
-        </Text>
-        <Text
-          style={{
-            fontSize: Typography.sizes.bodySecondary,
-            color: palette.textSecondary,
-            lineHeight: 22,
-          }}
-        >
-          Next step: hook up i18next and ensure true RTL layout mirroring.
-        </Text>
-      </Card>
     </Screen>
   );
 }

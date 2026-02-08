@@ -8,7 +8,7 @@ import { PageHeader } from "../components/ui/PageHeader";
 import { ListItem } from "../components/ui/ListItem";
 import { Screen } from "../components/ui/Screen";
 import { Chevron } from "../components/ui/Chevron";
-import { mockDocuments } from "../services/mock-data";
+import { documentGuides } from "../services/germany-data";
 
 export default function DocumentsScreen() {
   const router = useRouter();
@@ -27,11 +27,11 @@ export default function DocumentsScreen() {
             lineHeight: 22,
           }}
         >
-          Document guides (mock). Next step: implement real document form flows.
+          Document checklists and step-by-step guidance for Germany.
         </Text>
       </Card>
 
-      {mockDocuments.map((d) => (
+      {documentGuides.map((d) => (
         <ListItem
           key={d.id}
           title={d.title}

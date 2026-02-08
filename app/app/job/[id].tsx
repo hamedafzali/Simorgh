@@ -7,7 +7,7 @@ import { Button } from "../../components/ui/Button";
 import { Card } from "../../components/ui/Card";
 import { PageHeader } from "../../components/ui/PageHeader";
 import { Screen } from "../../components/ui/Screen";
-import { mockJobs } from "../../services/mock-data";
+import { germanyJobs } from "../../services/germany-data";
 
 export default function JobDetailScreen() {
   const router = useRouter();
@@ -17,7 +17,7 @@ export default function JobDetailScreen() {
   const colorScheme = useColorScheme();
   const palette = colorScheme === "dark" ? Colors.dark : Colors.light;
 
-  const job = useMemo(() => mockJobs.find((j) => j.id === id), [id]);
+  const job = useMemo(() => germanyJobs.find((j) => j.id === id), [id]);
 
   return (
     <Screen>
@@ -81,6 +81,81 @@ export default function JobDetailScreen() {
             >
               {job.description}
             </Text>
+          </Card>
+
+          <Card>
+            <Text
+              style={{
+                fontSize: Typography.sizes.headingM,
+                fontWeight: Typography.fontWeight.bold,
+                color: palette.textPrimary,
+                marginBottom: Spacing.sm,
+              }}
+            >
+              Requirements
+            </Text>
+            {job.requirements.map((req) => (
+              <Text
+                key={req}
+                style={{
+                  fontSize: Typography.sizes.bodySecondary,
+                  color: palette.textSecondary,
+                  lineHeight: 22,
+                }}
+              >
+                • {req}
+              </Text>
+            ))}
+          </Card>
+
+          <Card>
+            <Text
+              style={{
+                fontSize: Typography.sizes.headingM,
+                fontWeight: Typography.fontWeight.bold,
+                color: palette.textPrimary,
+                marginBottom: Spacing.sm,
+              }}
+            >
+              Benefits
+            </Text>
+            {job.benefits.map((benefit) => (
+              <Text
+                key={benefit}
+                style={{
+                  fontSize: Typography.sizes.bodySecondary,
+                  color: palette.textSecondary,
+                  lineHeight: 22,
+                }}
+              >
+                • {benefit}
+              </Text>
+            ))}
+          </Card>
+
+          <Card>
+            <Text
+              style={{
+                fontSize: Typography.sizes.headingM,
+                fontWeight: Typography.fontWeight.bold,
+                color: palette.textPrimary,
+                marginBottom: Spacing.sm,
+              }}
+            >
+              How to apply
+            </Text>
+            {job.howToApply.map((step) => (
+              <Text
+                key={step}
+                style={{
+                  fontSize: Typography.sizes.bodySecondary,
+                  color: palette.textSecondary,
+                  lineHeight: 22,
+                }}
+              >
+                • {step}
+              </Text>
+            ))}
           </Card>
 
           <Button title="Apply (mock)" onPress={() => {}} />
