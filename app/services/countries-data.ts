@@ -49,6 +49,21 @@ export type FormGuide = {
   tips: string[];
 };
 
+export type DeadlineItem = {
+  countryCode: string;
+  title: string;
+  dueInDays: number;
+  notes: string;
+};
+
+export type PhraseEntry = {
+  countryCode: string;
+  category: string;
+  phrase: string;
+  persian: string;
+  romanized?: string;
+};
+
 export const supportedCountries: Country[] = [
   {
     code: "DE",
@@ -300,6 +315,91 @@ export const formGuides: FormGuide[] = [
   },
 ];
 
+export const deadlineItems: DeadlineItem[] = [
+  {
+    countryCode: "DE",
+    title: "Anmeldung (address registration)",
+    dueInDays: 14,
+    notes: "Register your address at Bürgeramt within 14 days.",
+  },
+  {
+    countryCode: "DE",
+    title: "Health insurance proof",
+    dueInDays: 30,
+    notes: "Pick public or private insurance and get confirmation.",
+  },
+  {
+    countryCode: "DE",
+    title: "Residence permit appointment",
+    dueInDays: 60,
+    notes: "Book Ausländerbehörde appointment if needed.",
+  },
+  {
+    countryCode: "GLOBAL",
+    title: "Local address registration",
+    dueInDays: 14,
+    notes: "Register your address or residency locally.",
+  },
+  {
+    countryCode: "GLOBAL",
+    title: "Health coverage",
+    dueInDays: 30,
+    notes: "Secure health insurance or coverage.",
+  },
+];
+
+export const phrasebook: PhraseEntry[] = [
+  {
+    countryCode: "DE",
+    category: "Emergency",
+    phrase: "I need help.",
+    persian: "من به کمک نیاز دارم.",
+    romanized: "man be komak niaz daram",
+  },
+  {
+    countryCode: "DE",
+    category: "Emergency",
+    phrase: "Call the police.",
+    persian: "با پلیس تماس بگیرید.",
+    romanized: "ba polis tamas begirid",
+  },
+  {
+    countryCode: "DE",
+    category: "Medical",
+    phrase: "I feel sick.",
+    persian: "حالم خوب نیست.",
+    romanized: "halam khub nist",
+  },
+  {
+    countryCode: "DE",
+    category: "Medical",
+    phrase: "I need a doctor.",
+    persian: "به دکتر نیاز دارم.",
+    romanized: "be doktor niaz daram",
+  },
+  {
+    countryCode: "DE",
+    category: "Police",
+    phrase: "I lost my documents.",
+    persian: "مدارکم را گم کرده‌ام.",
+    romanized: "madarek-am ra gom karde-am",
+  },
+  {
+    countryCode: "GLOBAL",
+    category: "Emergency",
+    phrase: "Please help me.",
+    persian: "لطفاً کمک کنید.",
+    romanized: "lotfan komak konid",
+  },
+  {
+    countryCode: "GLOBAL",
+    category: "Medical",
+    phrase: "I need a hospital.",
+    persian: "به بیمارستان نیاز دارم.",
+    romanized: "be bimarstan niaz daram",
+  },
+];
+
 export function getStarterPack(countryCode: string): StarterPack {
   return (
     starterPacks.find((pack) => pack.countryCode === countryCode) ||
@@ -333,4 +433,14 @@ export function getEmergencyContacts(countryCode: string): EmergencyContact[] {
 export function getFormGuides(countryCode: string): FormGuide[] {
   const items = formGuides.filter((guide) => guide.countryCode === countryCode);
   return items.length ? items : formGuides.filter((g) => g.countryCode === "GLOBAL");
+}
+
+export function getDeadlines(countryCode: string): DeadlineItem[] {
+  const items = deadlineItems.filter((item) => item.countryCode === countryCode);
+  return items.length ? items : deadlineItems.filter((item) => item.countryCode === "GLOBAL");
+}
+
+export function getPhrasebook(countryCode: string): PhraseEntry[] {
+  const items = phrasebook.filter((item) => item.countryCode === countryCode);
+  return items.length ? items : phrasebook.filter((item) => item.countryCode === "GLOBAL");
 }

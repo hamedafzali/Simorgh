@@ -93,6 +93,24 @@ export default function CountryScreen() {
         variant="secondary"
         onPress={() => router.push(`/services?country=${code}` as any)}
       />
+      <View style={{ height: Spacing.sm }} />
+      <Button
+        title="Deadlines"
+        variant="secondary"
+        onPress={() => router.push(`/deadlines?country=${code}` as any)}
+      />
+      <View style={{ height: Spacing.sm }} />
+      <Button
+        title="Document Tracker"
+        variant="secondary"
+        onPress={() => router.push(`/documents-tracker?country=${code}` as any)}
+      />
+      <View style={{ height: Spacing.sm }} />
+      <Button
+        title="Phrasebook"
+        variant="secondary"
+        onPress={() => router.push(`/phrasebook?country=${code}` as any)}
+      />
 
       <View style={{ height: Spacing.lg }} />
 

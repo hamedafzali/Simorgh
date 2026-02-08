@@ -119,6 +119,24 @@ export default function HomeTab() {
       onPress: () => router.push("/checklist" as any),
     },
     {
+      key: "deadlines",
+      label: "Deadlines",
+      icon: "calendar" as const,
+      onPress: () => router.push("/deadlines" as any),
+    },
+    {
+      key: "documents-tracker",
+      label: "Doc Tracker",
+      icon: "file-text" as const,
+      onPress: () => router.push("/documents-tracker" as any),
+    },
+    {
+      key: "phrasebook",
+      label: "Phrasebook",
+      icon: "message-square" as const,
+      onPress: () => router.push("/phrasebook" as any),
+    },
+    {
       key: "forms",
       label: "Form Helper",
       icon: "clipboard" as const,
