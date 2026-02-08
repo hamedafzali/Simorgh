@@ -1,7 +1,7 @@
 Simorgh German Learning App - Structure
 Database Architecture
 Backend: MongoDB (content management, user data)
-Mobile: SQLite (offline storage, local cache)
+Mobile: SQLite (offline storage, local cache) implemented
 Sync: API-based synchronization
 Key Components
 Backend API (Express + MongoDB)
@@ -21,7 +21,7 @@ Backend API (Express + MongoDB)
 - Build admin: cd backend && npm run admin:build
 - Access API: http://localhost:3001/api
 - Access Admin: http://localhost:3001/admin
-  Next Steps
-  Implement SQLite integration
+Next Steps
+  Finish SQLite sync/update flow
   Add database content management to admin panel
-  Create sync service between MongoDB and SQLite
+  Create robust sync service between MongoDB and SQLite

@@ -22,7 +22,7 @@
 - **Routing**: Expo Router (~6.0.19)
 - **State Management**: React Context API
 - **Internationalization**: i18next (Persian, German, English)
-- **Storage**: SQLite (offline storage, local cache)
+- **Storage**: SQLite (offline storage, local cache) via `expo-sqlite`
 - **UI Libraries**: Custom themed components with modern European design aesthetic
 
 #### Backend
@@ -51,7 +51,7 @@ Simorgh/
 │   ├── components/              # Reusable UI components
 │   │   └── ui/                  # Modern UI components (cards, buttons, inputs)
 │   ├── services/                # Business logic and API services
-│   ├── database/                # Local database (AsyncStorage-based)
+│   ├── database/                # Local database (SQLite)
 │   ├── hooks/                   # Custom React hooks
 │   ├── contexts/                # React Context providers
 │   ├── constants/               # Constants and theme definitions
@@ -219,7 +219,7 @@ Simorgh/
 
 #### SQLite Database
 
-- **Storage**: SQLite database for offline storage and local cache
+- **Storage**: SQLite database for offline storage and local cache (implemented)
 - **Schema**:
   - Exams table
   - Flashcards table
@@ -367,7 +367,7 @@ Simorgh/
 - **Slug**: simorgh-connect
 - **Scheme**: simorghconnect
 - **New Architecture**: Enabled
-- **Platforms**: iOS, Android, Web
+- **Platforms**: iOS, Android (Web disabled)
 
 ---
 
@@ -396,7 +396,7 @@ Simorgh/
 - `npm start` - Start Expo
 - `npm run android` - Start on Android
 - `npm run ios` - Start on iOS
-- `npm run web` - Start on web
+- `npm run web` - Removed (web disabled)
 
 ---
 
@@ -487,7 +487,7 @@ Simorgh/
 
 ### Frontend
 
-- [ ] SQLite integration for offline storage (currently using AsyncStorage)
+- [ ] SQLite sync/update flow fully implemented (local SQLite exists; update/download flow still partial)
 - [ ] Complete sync service implementation
 - [ ] Conflict resolution UI
 - [ ] Audio playback for word pronunciation
@@ -734,7 +734,7 @@ The following pages are **NOT IMPLEMENTED** but referenced in project summary:
   - Daily phrases (German, Persian, English)
   - Vocabulary items by category
   - Bilingual reading materials
-  - AsyncStorage-based local caching
+  - SQLite-based local caching
 
 #### Other Services
 
@@ -750,7 +750,7 @@ The following pages are **NOT IMPLEMENTED** but referenced in project summary:
 
 1. **API Integration**: Connect frontend to backend services
 2. **State Management**: Implement proper React Context for learning progress
-3. **Offline Support**: SQLite integration for local caching
+3. **Offline Support**: SQLite implemented; sync/update flow pending
 4. **RTL/LTR Support**: Full bidirectional language support
 5. **Design System**: Follow Style.md specifications
 6. **Navigation**: Implement bottom navigation and routing
