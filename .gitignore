@@ -2,3 +2,11 @@ node_modules/
 .expo/
 .DS_Store
 tsconfig.json
+*.log
+*.db
+backend/admin/build/
+backend/admin/node_modules/.cache/
+backend/admin/dist/
+backend/raw_data/
+backend/scripts/
+*_backup.js
