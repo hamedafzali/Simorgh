@@ -2,9 +2,15 @@ import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useRouter } from "expo-router";
 import { Feather } from "@expo/vector-icons";
-import { Colors, Spacing, Typography } from "../../constants/theme";
+import {
+  Colors,
+  Spacing,
+  Typography,
+  getTextFontFamily,
+} from "../../constants/theme";
 import { useColorScheme } from "../../hooks/use-color-scheme";
 import { usePreferences } from "../../contexts/PreferencesContext";
+import { t } from "../../services/i18n";
 
 type Props = {
   title: string;
@@ -17,7 +23,9 @@ export function PageHeader({ title, subtitle, onBackPress, showBack }: Props) {
   const router = useRouter();
   const colorScheme = useColorScheme();
   const palette = colorScheme === "dark" ? Colors.dark : Colors.light;
-  const { isRTL } = usePreferences();
+  const { isRTL, language } = usePreferences();
+  const regularFont = getTextFontFamily(language, "normal");
+  const boldFont = getTextFontFamily(language, "bold");
 
   const backIcon = !isRTL
     ? ("chevron-right" as const)
@@ -50,7 +58,7 @@ export function PageHeader({ title, subtitle, onBackPress, showBack }: Props) {
         <Pressable
           onPress={handleBack}
           accessibilityRole="button"
-          accessibilityLabel="Back"
+          accessibilityLabel={t(language, "common.back")}
           style={({ pressed }) => [
             styles.back,
             {
@@ -69,11 +77,24 @@ export function PageHeader({ title, subtitle, onBackPress, showBack }: Props) {
         <View style={styles.backSpacer} />
       )}
       <View style={styles.headerText}>
-        <Text style={[styles.title, { color: palette.textPrimary }]}>
+        <Text style={[styles.kicker, { color: palette.textMuted }]}>
+          {t(language, "common.simorgh")}
+        </Text>
+        <Text
+          style={[
+            styles.title,
+            { color: palette.textPrimary, fontFamily: boldFont },
+          ]}
+        >
           {title}
         </Text>
         {subtitle ? (
-          <Text style={[styles.subtitle, { color: palette.textSecondary }]}>
+          <Text
+            style={[
+              styles.subtitle,
+              { color: palette.textSecondary, fontFamily: regularFont },
+            ]}
+          >
             {subtitle}
           </Text>
         ) : null}
@@ -104,14 +125,21 @@ const styles = StyleSheet.create({
   headerText: {
     flex: 1,
   },
+  kicker: {
+    fontSize: Typography.sizes.caption,
+    fontWeight: Typography.fontWeight.semibold,
+    textTransform: "uppercase",
+    letterSpacing: 0.8,
+    marginBottom: 4,
+  },
   title: {
-    fontSize: Typography.sizes.headingL,
+    fontSize: Typography.sizes.headingXl,
     fontWeight: Typography.fontWeight.bold,
-    lineHeight: 26,
+    lineHeight: 30,
   },
   subtitle: {
-    marginTop: 2,
+    marginTop: 4,
     fontSize: Typography.sizes.bodySecondary,
-    lineHeight: 20,
+    lineHeight: 22,
   },
 });

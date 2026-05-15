@@ -5,6 +5,7 @@ import { Colors, Spacing, Typography } from "../constants/theme";
 import { useColorScheme } from "../hooks/use-color-scheme";
 import { Card } from "../components/ui/Card";
 import { PageHeader } from "../components/ui/PageHeader";
+import FeatureGate from "../components/FeatureGate";
 import { Screen } from "../components/ui/Screen";
 import { ListItem } from "../components/ui/ListItem";
 import { Chevron } from "../components/ui/Chevron";
@@ -16,7 +17,8 @@ export default function EventsScreen() {
   const palette = colorScheme === "dark" ? Colors.dark : Colors.light;
 
   return (
-    <Screen>
+    <FeatureGate feature="events">
+      <Screen>
       <PageHeader
         title="Events"
         subtitle="Community gatherings and workshops"
@@ -43,6 +45,7 @@ export default function EventsScreen() {
           right={<Chevron />}
         />
       ))}
-    </Screen>
+      </Screen>
+    </FeatureGate>
   );
 }

@@ -5,6 +5,7 @@ import { Colors, Spacing, Typography } from "../constants/theme";
 import { useColorScheme } from "../hooks/use-color-scheme";
 import { Card } from "../components/ui/Card";
 import { PageHeader } from "../components/ui/PageHeader";
+import FeatureGate from "../components/FeatureGate";
 import { Screen } from "../components/ui/Screen";
 import { getTimeline, supportedCountries } from "../services/countries-data";
 
@@ -18,7 +19,8 @@ export default function TimelineScreen() {
   const timeline = getTimeline(code);
 
   return (
-    <Screen>
+    <FeatureGate feature="timeline">
+      <Screen>
       <PageHeader
         title="Arrival Timeline"
         subtitle={country ? country.name : "Global"}
@@ -50,6 +52,7 @@ export default function TimelineScreen() {
           ))}
         </Card>
       ))}
-    </Screen>
+      </Screen>
+    </FeatureGate>
   );
 }

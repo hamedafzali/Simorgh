@@ -5,6 +5,7 @@ import { Colors, Spacing, Typography } from "../constants/theme";
 import { useColorScheme } from "../hooks/use-color-scheme";
 import { Card } from "../components/ui/Card";
 import { PageHeader } from "../components/ui/PageHeader";
+import FeatureGate from "../components/FeatureGate";
 import { Screen } from "../components/ui/Screen";
 import {
   getPhrasebook,
@@ -29,7 +30,8 @@ export default function PhrasebookScreen() {
   }, [phrases]);
 
   return (
-    <Screen>
+    <FeatureGate feature="phrasebook">
+      <Screen>
       <PageHeader
         title="Phrasebook"
         subtitle={country ? country.name : "Global"}
@@ -82,6 +84,7 @@ export default function PhrasebookScreen() {
           ))}
         </Card>
       ))}
-    </Screen>
+      </Screen>
+    </FeatureGate>
   );
 }

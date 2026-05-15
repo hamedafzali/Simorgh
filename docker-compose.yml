@@ -1,0 +1,41 @@
+services:
+  mongo:
+    image: mongo:7
+    container_name: simorgh-mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: simorgh-backend
+    restart: unless-stopped
+    depends_on:
+      - mongo
+    environment:
+      PORT: 3001
+      MONGODB_URI: mongodb://mongo:27017/simorgh
+      NODE_ENV: production
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./admin/dist/sqlite:/app/admin/dist/sqlite
+      - ./admin/dist/admin-data:/app/admin/dist/admin-data
+
+  admin:
+    build:
+      context: .
+      dockerfile: admin/Dockerfile
+    container_name: simorgh-admin
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "3000:3000"
+
+volumes:
+  mongo_data:

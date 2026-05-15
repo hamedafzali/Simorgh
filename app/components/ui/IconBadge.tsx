@@ -27,7 +27,9 @@ export function IconBadge({
       style={[
         styles.base,
         {
-          backgroundColor: backgroundColor ?? palette.accentGreenSoft,
+          backgroundColor:
+            backgroundColor ??
+            (colorScheme === "dark" ? "rgba(125,219,57,0.18)" : "#EAF8D8"),
         },
         style,
       ]}

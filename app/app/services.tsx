@@ -5,6 +5,7 @@ import { Colors, Spacing, Typography } from "../constants/theme";
 import { useColorScheme } from "../hooks/use-color-scheme";
 import { Card } from "../components/ui/Card";
 import { PageHeader } from "../components/ui/PageHeader";
+import FeatureGate from "../components/FeatureGate";
 import { Screen } from "../components/ui/Screen";
 import { getServices, supportedCountries } from "../services/countries-data";
 
@@ -18,7 +19,8 @@ export default function ServicesScreen() {
   const services = getServices(code);
 
   return (
-    <Screen>
+    <FeatureGate feature="services">
+      <Screen>
       <PageHeader
         title="Trusted Services"
         subtitle={country ? country.name : "Global"}
@@ -88,6 +90,7 @@ export default function ServicesScreen() {
           </Text>
         </Card>
       ))}
-    </Screen>
+      </Screen>
+    </FeatureGate>
   );
 }

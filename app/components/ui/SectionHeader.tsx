@@ -7,7 +7,12 @@ import {
   View,
   ViewStyle,
 } from "react-native";
-import { Colors, Spacing, Typography } from "../../constants/theme";
+import {
+  Colors,
+  Spacing,
+  Typography,
+  getTextFontFamily,
+} from "../../constants/theme";
 import { useColorScheme } from "../../hooks/use-color-scheme";
 import { usePreferences } from "../../contexts/PreferencesContext";
 
@@ -28,20 +33,28 @@ export function SectionHeader({
 }: Props) {
   const colorScheme = useColorScheme();
   const palette = colorScheme === "dark" ? Colors.dark : Colors.light;
-  const { isRTL } = usePreferences();
+  const { isRTL, language } = usePreferences();
+  const regularFont = getTextFontFamily(language, "normal");
+  const boldFont = getTextFontFamily(language, "bold");
+  const semiboldFont = getTextFontFamily(language, "semibold");
   const textAlign = isRTL ? ("right" as const) : ("left" as const);
 
   return (
     <View style={[styles.container, style]}>
       <View style={styles.textCol}>
-        <Text style={[styles.title, { color: palette.textPrimary, textAlign }]}>
+        <Text
+          style={[
+            styles.title,
+            { color: palette.textPrimary, textAlign, fontFamily: boldFont },
+          ]}
+        >
           {title}
         </Text>
         {subtitle ? (
           <Text
             style={[
               styles.subtitle,
-              { color: palette.textSecondary, textAlign },
+              { color: palette.textSecondary, textAlign, fontFamily: regularFont },
             ]}
           >
             {subtitle}
@@ -59,7 +72,12 @@ export function SectionHeader({
             },
           ]}
         >
-          <Text style={[styles.actionText, { color: palette.primary }]}>
+          <Text
+            style={[
+              styles.actionText,
+              { color: palette.primary, fontFamily: semiboldFont },
+            ]}
+          >
             {actionLabel}
           </Text>
         </Pressable>
@@ -86,9 +104,9 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     marginTop: Spacing.xs,
-    fontSize: Typography.sizes.bodySecondary,
+    fontSize: Typography.sizes.bodySmall,
     fontWeight: Typography.fontWeight.normal,
-    lineHeight: 22,
+    lineHeight: 20,
   },
   action: {
     paddingVertical: Spacing.xs,

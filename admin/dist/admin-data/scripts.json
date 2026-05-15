@@ -1,0 +1,24 @@
+[
+  {
+    "id": "script_seed_sqlite",
+    "name": "Generate SQLite Database",
+    "description": "Generate the mobile SQLite database from MongoDB content.",
+    "category": "seed",
+    "content": "// Generates the mobile SQLite database\nPOST /api/admin/database/generate-sqlite",
+    "createdAt": "2026-04-01T14:07:28.837Z",
+    "updatedAt": "2026-04-01T14:07:28.838Z",
+    "status": "ready",
+    "lastRun": null
+  },
+  {
+    "id": "script_package_sqlite",
+    "name": "Package SQLite Artifact",
+    "description": "Create a packaged SQLite artifact for distribution.",
+    "category": "backup",
+    "content": "// Packages the current SQLite database\nPOST /api/admin/database/package-sqlite",
+    "createdAt": "2026-04-01T14:07:28.838Z",
+    "updatedAt": "2026-04-01T14:07:28.838Z",
+    "status": "ready",
+    "lastRun": null
+  }
+]

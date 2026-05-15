@@ -13,11 +13,15 @@ import { Chevron } from "../../components/ui/Chevron";
 import { StatCard } from "../../components/ui/StatCard";
 import { useDatabase } from "../../contexts/DatabaseContext";
 import learningService, { LearningStats } from "../../services/learningService";
+import { usePreferences } from "../../contexts/PreferencesContext";
+import { t } from "../../services/i18n";
+import FeatureGate from "../../components/FeatureGate";
 
 export default function LearnTab() {
   const router = useRouter();
   const colorScheme = useColorScheme();
   const palette = colorScheme === "dark" ? Colors.dark : Colors.light;
+  const { language } = usePreferences();
   const { isInitialized } = useDatabase();
   const [stats, setStats] = useState<LearningStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -49,18 +53,23 @@ export default function LearnTab() {
       : 0;
 
   return (
-    <Screen>
+    <FeatureGate
+      feature="learning"
+      title={t(language, "learn.title")}
+      subtitle={t(language, "learn.subtitle")}
+    >
+      <Screen>
       <PageHeader
-        title="Learning"
-        subtitle="Vocabulary, flashcards, practice, and exams"
+        title={t(language, "learn.title")}
+        subtitle={t(language, "learn.subtitle")}
       />
 
       <Card>
         <Text style={[styles.kpiTitle, { color: palette.textPrimary }]}>
-          Progress
+          {t(language, "learn.progress")}
         </Text>
         <Text style={[styles.kpiSub, { color: palette.textSecondary }]}>
-          Your offline progress from the local database.
+          {t(language, "learn.progressSub")}
         </Text>
         <View style={{ height: Spacing.md }} />
         <Text style={[styles.kpiValue, { color: palette.primary }]}>
@@ -71,25 +80,25 @@ export default function LearnTab() {
             <View style={{ height: Spacing.md }} />
             <View style={styles.statsRow}>
               <StatCard
-                label="Accuracy"
+                label={t(language, "learn.accuracy")}
                 value={`${stats.accuracy}%`}
                 icon="check"
               />
               <StatCard
-                label="Streak"
-                value={`${stats.streakDays} days`}
+                label={t(language, "learn.streak")}
+                value={`${stats.streakDays} ${t(language, "learn.days")}`}
                 icon="zap"
               />
             </View>
             <View style={{ height: Spacing.sm }} />
             <View style={styles.statsRow}>
               <StatCard
-                label="Reviews"
+                label={t(language, "learn.reviews")}
                 value={`${stats.totalReviews}`}
                 icon="repeat"
               />
               <StatCard
-                label="Level"
+                label={t(language, "learn.level")}
                 value={stats.currentLevel}
                 icon="award"
               />
@@ -98,7 +107,7 @@ export default function LearnTab() {
         ) : null}
         <View style={{ height: Spacing.md }} />
         <Button
-          title="Open Learn Hub"
+          title={t(language, "learn.openHub")}
           variant="secondary"
           onPress={() => router.push("/learn" as any)}
         />
@@ -107,9 +116,9 @@ export default function LearnTab() {
       {!isLoading && stats?.totalWords === 0 ? (
         <Card>
           <EmptyState
-            message="No learning data yet. Sync to download the word list."
+            message={t(language, "learn.empty")}
             action={{
-              title: "Open Sync",
+              title: t(language, "learn.openSync"),
               onPress: () => router.push("/(tabs)/sync" as any),
             }}
           />
@@ -117,36 +126,36 @@ export default function LearnTab() {
       ) : null}
 
       <Text style={[styles.sectionTitle, { color: palette.textPrimary }]}>
-        Modules
+        {t(language, "learn.modules")}
       </Text>
 
       <ListItem
-        title="Vocabulary"
-        subtitle="Browse words by level and category"
+        title={t(language, "learn.vocabulary")}
+        subtitle={t(language, "learn.vocabularySub")}
         onPress={() => router.push("/learn/vocabulary" as any)}
         right={<Chevron />}
       />
       <ListItem
-        title="Flashcards"
-        subtitle="Spaced repetition reviews"
+        title={t(language, "learn.flashcards")}
+        subtitle={t(language, "learn.flashcardsSub")}
         onPress={() => router.push("/learn/flashcards" as any)}
         right={<Chevron />}
       />
       <ListItem
-        title="Practice"
-        subtitle="Multiple-choice, translation, fill-in"
+        title={t(language, "learn.practice")}
+        subtitle={t(language, "learn.practiceSub")}
         onPress={() => router.push("/learn/practice" as any)}
         right={<Chevron />}
       />
       <ListItem
-        title="Survival Phrases"
-        subtitle="Everyday German with Persian/English"
+        title={t(language, "learn.phrases")}
+        subtitle={t(language, "learn.phrasesSub")}
         onPress={() => router.push("/learn/phrases" as any)}
         right={<Chevron />}
       />
       <ListItem
-        title="Exams"
-        subtitle="Mock tests and assessments"
+        title={t(language, "learn.exams")}
+        subtitle={t(language, "learn.examsSub")}
         onPress={() => router.push("/learn/exams" as any)}
         right={<Chevron />}
       />
@@ -155,14 +164,14 @@ export default function LearnTab() {
 
       <Card>
         <Text style={[styles.sectionTitle, { color: palette.textPrimary }]}>
-          Tip
+          {t(language, "learn.focusTip")}
         </Text>
         <Text style={[styles.tip, { color: palette.textSecondary }]}>
-          Focus on survival phrases first. They help in appointments, housing,
-          and daily tasks.
+          {t(language, "learn.focusTipBody")}
         </Text>
       </Card>
-    </Screen>
+      </Screen>
+    </FeatureGate>
   );
 }
 

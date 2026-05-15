@@ -4,6 +4,7 @@ import { Colors, Spacing, Typography } from "../constants/theme";
 import { useColorScheme } from "../hooks/use-color-scheme";
 import { Card } from "../components/ui/Card";
 import { PageHeader } from "../components/ui/PageHeader";
+import FeatureGate from "../components/FeatureGate";
 import { Screen } from "../components/ui/Screen";
 import { germanyLocations } from "../services/germany-data";
 
@@ -23,7 +24,8 @@ export default function LocationsScreen() {
   }, []);
 
   return (
-    <Screen>
+    <FeatureGate feature="locations">
+      <Screen>
       <PageHeader
         title="Locations"
         subtitle="Offices and support centers"
@@ -83,6 +85,7 @@ export default function LocationsScreen() {
           ))}
         </View>
       ))}
-    </Screen>
+      </Screen>
+    </FeatureGate>
   );
 }

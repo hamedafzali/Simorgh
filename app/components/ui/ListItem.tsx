@@ -10,6 +10,7 @@ import {
 import {
   BorderRadius,
   Colors,
+  getTextFontFamily,
   Spacing,
   Typography,
 } from "../../constants/theme";
@@ -35,7 +36,9 @@ export function ListItem({
 }: Props) {
   const colorScheme = useColorScheme();
   const palette = colorScheme === "dark" ? Colors.dark : Colors.light;
-  const { isRTL } = usePreferences();
+  const { isRTL, language } = usePreferences();
+  const regularFont = getTextFontFamily(language, "normal");
+  const semiboldFont = getTextFontFamily(language, "semibold");
   const textAlign = isRTL ? ("right" as const) : ("left" as const);
 
   return (
@@ -49,7 +52,12 @@ export function ListItem({
         {
           backgroundColor: palette.surface,
           borderColor: palette.borderLight,
-          opacity: pressed && onPress ? 0.92 : 1,
+          opacity: pressed && onPress ? 0.94 : 1,
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: 6 },
+          shadowOpacity: colorScheme === "dark" ? 0.12 : 0.04,
+          shadowRadius: 18,
+          elevation: 1,
         },
         pressed && onPress ? styles.pressed : null,
         style,
@@ -59,14 +67,19 @@ export function ListItem({
         <View style={[styles.left, isRTL ? styles.leftRTL : null]}>{left}</View>
       ) : null}
       <View style={styles.text}>
-        <Text style={[styles.title, { color: palette.textPrimary, textAlign }]}>
+        <Text
+          style={[
+            styles.title,
+            { color: palette.textPrimary, textAlign, fontFamily: semiboldFont },
+          ]}
+        >
           {title}
         </Text>
         {subtitle ? (
           <Text
             style={[
               styles.subtitle,
-              { color: palette.textSecondary, textAlign },
+              { color: palette.textSecondary, textAlign, fontFamily: regularFont },
             ]}
           >
             {subtitle}
@@ -87,7 +100,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: Spacing.md,
-    paddingVertical: 12,
+    paddingVertical: 14,
     borderWidth: 1,
     borderRadius: BorderRadius.lg,
     marginBottom: Spacing.sm,
@@ -112,13 +125,15 @@ const styles = StyleSheet.create({
   title: {
     fontSize: Typography.sizes.body,
     fontWeight: Typography.fontWeight.semibold,
+    lineHeight: 22,
   },
   subtitle: {
-    marginTop: 2,
+    marginTop: 4,
     fontSize: Typography.sizes.bodySecondary,
     fontWeight: Typography.fontWeight.normal,
+    lineHeight: 20,
   },
   pressed: {
-    transform: [{ scale: 0.995 }],
+    transform: [{ scale: 0.996 }],
   },
 });

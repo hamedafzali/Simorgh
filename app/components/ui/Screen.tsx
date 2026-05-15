@@ -29,8 +29,8 @@ export function Screen({
 
   const gradientColors =
     colorScheme === "dark"
-      ? (["#0B1220", "#0F172A", "#0B1220"] as const)
-      : (["#F7F9FC", "#F3F7FF", "#F7F9FC"] as const);
+      ? (["#111827", "#152033", "#111827"] as const)
+      : (["#F7F7F3", "#F2FAE8", "#F7F7F3"] as const);
 
   return (
     <SafeAreaView
@@ -50,39 +50,26 @@ export function Screen({
       <View
         pointerEvents="none"
         style={[
-          styles.blob,
-          styles.blobTop,
+          styles.plane,
+          styles.planeTop,
           {
             backgroundColor:
               colorScheme === "dark"
-                ? "rgba(47,93,138,0.25)"
-                : "rgba(47,93,138,0.18)",
+                ? "rgba(76,201,255,0.06)"
+                : "rgba(88,204,2,0.08)",
           },
         ]}
       />
       <View
         pointerEvents="none"
         style={[
-          styles.blob,
-          styles.blobMid,
+          styles.plane,
+          styles.planeBottom,
           {
             backgroundColor:
               colorScheme === "dark"
-                ? "rgba(47,163,107,0.14)"
-                : "rgba(47,163,107,0.12)",
-          },
-        ]}
-      />
-      <View
-        pointerEvents="none"
-        style={[
-          styles.blob,
-          styles.blobBottom,
-          {
-            backgroundColor:
-              colorScheme === "dark"
-                ? "rgba(59,130,246,0.12)"
-                : "rgba(59,130,246,0.10)",
+                ? "rgba(125,219,57,0.05)"
+                : "rgba(28,176,246,0.06)",
           },
         ]}
       />
@@ -124,23 +111,21 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
   },
-  blob: {
+  plane: {
     position: "absolute",
-    width: 420,
-    height: 420,
-    borderRadius: 9999,
+    borderRadius: 48,
   },
-  blobTop: {
-    top: -240,
-    left: -220,
+  planeTop: {
+    top: 18,
+    left: -24,
+    right: 80,
+    height: 180,
   },
-  blobMid: {
-    top: 140,
-    right: -260,
-  },
-  blobBottom: {
-    bottom: -260,
-    left: -180,
+  planeBottom: {
+    bottom: 80,
+    left: 120,
+    right: -18,
+    height: 220,
   },
   content: {
     flexGrow: 1,

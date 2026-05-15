@@ -114,7 +114,7 @@ export const homeShortcuts: HomeShortcut[] = [
   },
   {
     key: "forms",
-    title: "Form Helper",
+    title: "Forms",
     subtitle: "Guided",
     icon: "clipboard",
     route: "/forms",

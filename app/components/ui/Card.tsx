@@ -19,6 +19,7 @@ export function Card({ children, style }: Props) {
         {
           backgroundColor: palette.surface,
           borderColor: palette.borderLight,
+          shadowOpacity: colorScheme === "dark" ? 0.14 : 0.06,
         },
         style,
       ]}
@@ -31,7 +32,7 @@ export function Card({ children, style }: Props) {
 const styles = StyleSheet.create({
   card: {
     borderRadius: BorderRadius.lg,
-    padding: Spacing.md,
+    padding: Spacing.lg,
     marginBottom: Spacing.md,
     borderWidth: 1,
     ...Shadows.card,

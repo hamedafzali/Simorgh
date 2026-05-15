@@ -13,6 +13,7 @@ import { useColorScheme } from "../hooks/use-color-scheme";
 import { Card } from "../components/ui/Card";
 import { PageHeader } from "../components/ui/PageHeader";
 import { Button } from "../components/ui/Button";
+import FeatureGate from "../components/FeatureGate";
 import { Screen } from "../components/ui/Screen";
 
 type Message = {

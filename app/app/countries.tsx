@@ -5,6 +5,7 @@ import { Colors, Typography } from "../constants/theme";
 import { useColorScheme } from "../hooks/use-color-scheme";
 import { PageHeader } from "../components/ui/PageHeader";
 import { ListItem } from "../components/ui/ListItem";
+import FeatureGate from "../components/FeatureGate";
 import { Screen } from "../components/ui/Screen";
 import { Chevron } from "../components/ui/Chevron";
 import { supportedCountries } from "../services/countries-data";
@@ -15,7 +16,8 @@ export default function CountriesScreen() {
   const palette = colorScheme === "dark" ? Colors.dark : Colors.light;
 
   return (
-    <Screen>
+    <FeatureGate feature="countries">
+      <Screen>
       <PageHeader title="Countries" subtitle="Pick your country to begin" />
 
       {supportedCountries.map((country) => (
@@ -39,6 +41,7 @@ export default function CountriesScreen() {
         We are adding more countries continuously. Germany is fully populated
         right now.
       </Text>
-    </Screen>
+      </Screen>
+    </FeatureGate>
   );
 }

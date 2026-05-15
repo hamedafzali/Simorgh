@@ -5,6 +5,7 @@ import { Colors, Spacing, Typography } from "../constants/theme";
 import { useColorScheme } from "../hooks/use-color-scheme";
 import { Card } from "../components/ui/Card";
 import { PageHeader } from "../components/ui/PageHeader";
+import FeatureGate from "../components/FeatureGate";
 import { Screen } from "../components/ui/Screen";
 import { getSchoolGuide, supportedCountries } from "../services/countries-data";
 
@@ -18,7 +19,8 @@ export default function SchoolGuideScreen() {
   const guide = getSchoolGuide(code);
 
   return (
-    <Screen>
+    <FeatureGate feature="school">
+      <Screen>
       <PageHeader
         title="School Enrollment"
         subtitle={country ? country.name : "Global"}
@@ -95,6 +97,7 @@ export default function SchoolGuideScreen() {
           </Text>
         ))}
       </Card>
-    </Screen>
+      </Screen>
+    </FeatureGate>
   );
 }

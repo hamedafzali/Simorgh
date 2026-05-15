@@ -6,6 +6,7 @@ import { useColorScheme } from "../hooks/use-color-scheme";
 import { Card } from "../components/ui/Card";
 import { PageHeader } from "../components/ui/PageHeader";
 import { ListItem } from "../components/ui/ListItem";
+import FeatureGate from "../components/FeatureGate";
 import { Screen } from "../components/ui/Screen";
 import { Chevron } from "../components/ui/Chevron";
 import { germanyGuides } from "../services/germany-data";
@@ -27,7 +28,8 @@ export default function GuidesScreen() {
   }, []);
 
   return (
-    <Screen>
+    <FeatureGate feature="guides">
+      <Screen>
       <PageHeader
         title="Guides"
         subtitle="Germany essentials for newcomers"
@@ -70,6 +72,7 @@ export default function GuidesScreen() {
           ))}
         </View>
       ))}
-    </Screen>
+      </Screen>
+    </FeatureGate>
   );
 }

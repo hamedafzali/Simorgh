@@ -1,8 +1,44 @@
 const express = require("express");
 const router = express.Router();
+const fs = require("fs").promises;
 const Exam = require("../../database/models/Exam");
 const Flashcard = require("../../database/models/Flashcard");
 const Word = require("../../database/models/Word");
+const {
+  createArtifact,
+  listArtifacts,
+  deleteArtifact,
+  getArtifactFile,
+  getArtifact,
+  getArtifactTables,
+  getArtifactTableRows,
+  restoreArtifact,
+} = require("../services/database-artifacts");
+const {
+  listScripts,
+  saveScript,
+  deleteScript,
+  getScript,
+  listRuns,
+  startRun,
+  stopRun,
+  finishRun,
+  updateScriptLastRun,
+  appendLog,
+} = require("../services/script-registry");
+const SQLiteGenerator = require("../../../admin/src/scripts/sqlite-generator");
+const {
+  getSettings,
+  saveSettings,
+} = require("../services/admin-settings-store");
+
+function getUserModel() {
+  try {
+    return require("../../database/models/User");
+  } catch {
+    return null;
+  }
+}
 
 // Dashboard stats
 router.get("/dashboard", async (req, res) => {
@@ -13,10 +49,10 @@ router.get("/dashboard", async (req, res) => {
       Word.countDocuments(),
     ]);
 
-    // Get real user data from database (assuming User model exists)
     let totalUsers = 0,
       onlineUsers = 0,
-      activeToday = 0;
+      activeToday = 0,
+      usersAvailable = false;
     try {
       const User = require("../../database/models/User");
       const now = new Date();
@@ -33,9 +69,16 @@ router.get("/dashboard", async (req, res) => {
       activeToday = await User.countDocuments({
         lastSeen: { $gte: todayStart },
       });
+      usersAvailable = true;
     } catch (userError) {
-      console.log("User model not found, using default values");
+      console.log("User model not found for dashboard");
     }
+
+    const runs = await listRuns();
+    const runningScripts = runs.filter((run) => run.status === "running");
+    const failedScripts = runs.filter((run) => run.status === "failed");
+    const memory = process.memoryUsage();
+    const cpu = process.cpuUsage();
 
     res.json({
       stats: {
@@ -48,19 +91,29 @@ router.get("/dashboard", async (req, res) => {
           total: totalUsers,
           online: onlineUsers,
           activeToday: activeToday,
+          available: usersAvailable,
         },
         scripts: {
-          total: 8,
-          running: 2,
-          failed: 0,
+          total: (await listScripts()).length,
+          running: runningScripts.length,
+          failed: failedScripts.length,
         },
         system: {
           uptime: process.uptime(),
-          memory: Math.round(process.memoryUsage().heapUsed / 1024 / 1024),
-          cpu: 25,
+          memoryMb: Math.round(memory.heapUsed / 1024 / 1024),
+          rssMb: Math.round(memory.rss / 1024 / 1024),
+          cpuMicros: cpu.user + cpu.system,
         },
       },
-      recentActivity: [],
+      recentActivity: runningScripts
+        .concat(failedScripts)
+        .slice(0, 10)
+        .map((run) => ({
+          user: "system",
+          action: run.name,
+          status: run.status === "failed" ? "error" : "success",
+          time: new Date(run.startedAt).toLocaleString(),
+        })),
     });
   } catch (error) {
     console.error("Dashboard error:", error);
@@ -71,25 +124,8 @@ router.get("/dashboard", async (req, res) => {
 // Database management
 router.get("/database/backups", async (req, res) => {
   try {
-    // Mock backup data - in real implementation, this would fetch from storage
-    res.json({
-      backups: [
-        {
-          id: "backup_1",
-          name: "Daily Backup - 2024-01-15",
-          size: 1024 * 1024 * 50, // 50MB
-          createdAt: new Date("2024-01-15T02:00:00Z"),
-          status: "completed",
-        },
-        {
-          id: "backup_2",
-          name: "Weekly Backup - 2024-01-14",
-          size: 1024 * 1024 * 45, // 45MB
-          createdAt: new Date("2024-01-14T02:00:00Z"),
-          status: "completed",
-        },
-      ],
-    });
+    const backups = await listArtifacts();
+    res.json({ backups });
   } catch (error) {
     console.error("Backups error:", error);
     res.status(500).json({ error: "Failed to fetch backups" });
@@ -99,18 +135,12 @@ router.get("/database/backups", async (req, res) => {
 router.post("/database/backup", async (req, res) => {
   try {
     const { name, description, type } = req.body;
-
-    // Create backup logic here
-    console.log(`Creating backup: ${name} (${type})`);
-
-    res.json({
-      id: `backup_${Date.now()}`,
+    const artifact = await createArtifact({
       name,
       description,
-      type,
-      status: "in-progress",
-      createdAt: new Date().toISOString(),
+      type: type || "backup",
     });
+    res.json(artifact);
   } catch (error) {
     console.error("Backup error:", error);
     res.status(500).json({ error: "Failed to create backup" });
@@ -120,10 +150,7 @@ router.post("/database/backup", async (req, res) => {
 router.post("/database/restore/:backupId", async (req, res) => {
   try {
     const { backupId } = req.params;
-
-    // Restore logic here
-    console.log(`Restoring backup: ${backupId}`);
-
+    const artifact = await restoreArtifact(backupId);
     res.json({ message: "Database restored successfully" });
   } catch (error) {
     console.error("Restore error:", error);
@@ -134,10 +161,7 @@ router.post("/database/restore/:backupId", async (req, res) => {
 router.delete("/database/backup/:backupId", async (req, res) => {
   try {
     const { backupId } = req.params;
-
-    // Delete backup logic here
-    console.log(`Deleting backup: ${backupId}`);
-
+    await deleteArtifact(backupId);
     res.json({ message: "Backup deleted successfully" });
   } catch (error) {
     console.error("Delete backup error:", error);
@@ -148,47 +172,69 @@ router.delete("/database/backup/:backupId", async (req, res) => {
 router.get("/database/backup/:backupId/download", async (req, res) => {
   try {
     const { backupId } = req.params;
+    const kind = req.query.kind === "package" ? "package" : "db";
+    const { artifact, filePath } = await getArtifactFile(backupId, kind);
+    const stat = await fs.stat(filePath);
 
-    // Download backup logic here
-    console.log(`Downloading backup: ${backupId}`);
+    res.setHeader(
+      "Content-Type",
+      kind === "package" ? "application/json" : "application/x-sqlite3"
+    );
+    res.setHeader("Content-Length", stat.size);
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename="${artifact.name.replace(/[^a-z0-9-_]+/gi, "_")}.${kind === "package" ? "json" : "db"}"`
+    );
 
-    res.json({ message: "Backup download started" });
+    require("fs").createReadStream(filePath).pipe(res);
   } catch (error) {
     console.error("Download backup error:", error);
     res.status(500).json({ error: "Failed to download backup" });
   }
 });
 
+router.get("/database/backup/:backupId", async (req, res) => {
+  try {
+    const artifact = await getArtifact(req.params.backupId);
+    const tables = await getArtifactTables(req.params.backupId);
+    res.json({ artifact, tables });
+  } catch (error) {
+    console.error("Get backup details error:", error);
+    res.status(500).json({ error: "Failed to fetch backup details" });
+  }
+});
+
+router.get("/database/backup/:backupId/table/:tableName", async (req, res) => {
+  try {
+    const { backupId, tableName } = req.params;
+    const { page = 1, limit = 25 } = req.query;
+    const pageNumber = Number(page);
+    const pageSize = Number(limit);
+    const result = await getArtifactTableRows(backupId, tableName, {
+      limit: pageSize,
+      offset: (pageNumber - 1) * pageSize,
+    });
+
+    res.json({
+      table: tableName,
+      rows: result.rows,
+      pagination: {
+        current: pageNumber,
+        pageSize,
+        total: result.total,
+        totalPages: Math.ceil(result.total / pageSize),
+      },
+    });
+  } catch (error) {
+    console.error("Get backup table rows error:", error);
+    res.status(500).json({ error: "Failed to fetch backup table rows" });
+  }
+});
+
 // Script management
 router.get("/scripts", async (req, res) => {
   try {
-    // Mock script data
-    res.json({
-      scripts: [
-        {
-          id: "script_1",
-          name: "Generate 5000 Exams",
-          description: "Generate comprehensive exam database",
-          category: "seed",
-          content: 'console.log("Generating exams...");',
-          createdAt: new Date("2024-01-10T10:00:00Z"),
-          updatedAt: new Date("2024-01-10T10:00:00Z"),
-          status: "ready",
-          lastRun: new Date("2024-01-14T15:30:00Z"),
-        },
-        {
-          id: "script_2",
-          name: "Database Cleanup",
-          description: "Clean up old data and optimize performance",
-          category: "maintenance",
-          content: 'console.log("Cleaning database...");',
-          createdAt: new Date("2024-01-08T14:00:00Z"),
-          updatedAt: new Date("2024-01-08T14:00:00Z"),
-          status: "ready",
-          lastRun: new Date("2024-01-13T02:00:00Z"),
-        },
-      ],
-    });
+    res.json({ scripts: await listScripts() });
   } catch (error) {
     console.error("Scripts error:", error);
     res.status(500).json({ error: "Failed to fetch scripts" });
@@ -198,14 +244,9 @@ router.get("/scripts", async (req, res) => {
 router.get("/scripts/:scriptId", async (req, res) => {
   try {
     const { scriptId } = req.params;
-
-    // Get script logic here
-    res.json({
-      id: scriptId,
-      name: "Sample Script",
-      content: 'console.log("Hello, World!");',
-      category: "general",
-    });
+    const script = await getScript(scriptId);
+    if (!script) return res.status(404).json({ error: "Script not found" });
+    res.json(script);
   } catch (error) {
     console.error("Get script error:", error);
     res.status(500).json({ error: "Failed to fetch script" });
@@ -215,12 +256,8 @@ router.get("/scripts/:scriptId", async (req, res) => {
 router.put("/scripts/:scriptId", async (req, res) => {
   try {
     const { scriptId } = req.params;
-    const { content } = req.body;
-
-    // Update script logic here
-    console.log(`Updating script ${scriptId}`);
-
-    res.json({ message: "Script updated successfully" });
+    const script = await saveScript(scriptId, req.body);
+    res.json({ message: "Script updated successfully", script });
   } catch (error) {
     console.error("Update script error:", error);
     res.status(500).json({ error: "Failed to update script" });
@@ -230,16 +267,36 @@ router.put("/scripts/:scriptId", async (req, res) => {
 router.post("/scripts/:scriptId/run", async (req, res) => {
   try {
     const { scriptId } = req.params;
+    const script = await getScript(scriptId);
+    if (!script) return res.status(404).json({ error: "Script not found" });
+    const run = await startRun(script);
 
-    // Run script logic here
-    console.log(`Running script ${scriptId}`);
+    setTimeout(async () => {
+      try {
+        await appendLog(scriptId, "info", "Executing script action");
+        if (scriptId === "script_seed_sqlite") {
+          const generator = new SQLiteGenerator();
+          await generator.generateDatabase();
+          await appendLog(scriptId, "success", "SQLite database generated");
+        } else if (scriptId === "script_package_sqlite") {
+          const generator = new SQLiteGenerator();
+          await generator.packageDatabase();
+          await appendLog(scriptId, "success", "SQLite package created");
+        } else {
+          await appendLog(scriptId, "info", "Custom script recorded");
+        }
+        await updateScriptLastRun(scriptId);
+        await finishRun(scriptId, true, "Script completed successfully");
+      } catch (err) {
+        await finishRun(
+          scriptId,
+          false,
+          err instanceof Error ? err.message : "Script failed"
+        );
+      }
+    }, 50);
 
-    res.json({
-      id: `run_${Date.now()}`,
-      scriptId,
-      status: "running",
-      startedAt: new Date().toISOString(),
-    });
+    res.json(run);
   } catch (error) {
     console.error("Run script error:", error);
     res.status(500).json({ error: "Failed to run script" });
@@ -249,10 +306,7 @@ router.post("/scripts/:scriptId/run", async (req, res) => {
 router.post("/scripts/:scriptId/stop", async (req, res) => {
   try {
     const { scriptId } = req.params;
-
-    // Stop script logic here
-    console.log(`Stopping script ${scriptId}`);
-
+    await stopRun(scriptId);
     res.json({ message: "Script stopped successfully" });
   } catch (error) {
     console.error("Stop script error:", error);
@@ -260,30 +314,22 @@ router.post("/scripts/:scriptId/stop", async (req, res) => {
   }
 });
 
+router.delete("/scripts/:scriptId", async (req, res) => {
+  try {
+    await deleteScript(req.params.scriptId);
+    res.json({ message: "Script deleted successfully" });
+  } catch (error) {
+    console.error("Delete script error:", error);
+    res.status(500).json({ error: "Failed to delete script" });
+  }
+});
+
 router.get("/scripts/:scriptId/logs", async (req, res) => {
   try {
     const { scriptId } = req.params;
-
-    // Get script logs here
-    res.json({
-      logs: [
-        {
-          timestamp: new Date().toISOString(),
-          level: "info",
-          message: "Script started",
-        },
-        {
-          timestamp: new Date().toISOString(),
-          level: "info",
-          message: "Processing data...",
-        },
-        {
-          timestamp: new Date().toISOString(),
-          level: "success",
-          message: "Script completed successfully",
-        },
-      ],
-    });
+    const runs = await listRuns();
+    const run = runs.find((item) => item.scriptId === scriptId);
+    res.json({ logs: run?.logs || [] });
   } catch (error) {
     console.error("Get script logs error:", error);
     res.status(500).json({ error: "Failed to fetch script logs" });
@@ -292,18 +338,8 @@ router.get("/scripts/:scriptId/logs", async (req, res) => {
 
 router.get("/scripts/running", async (req, res) => {
   try {
-    // Get running scripts
-    res.json({
-      running: [
-        {
-          id: "run_1",
-          scriptId: "script_1",
-          name: "Generate 5000 Exams",
-          startedAt: new Date(Date.now() - 5 * 60 * 1000).toISOString(),
-          progress: 65,
-        },
-      ],
-    });
+    const runs = await listRuns();
+    res.json({ running: runs.filter((item) => item.status === "running") });
   } catch (error) {
     console.error("Get running scripts error:", error);
     res.status(500).json({ error: "Failed to fetch running scripts" });
@@ -406,13 +442,23 @@ router.get("/users/stats", async (req, res) => {
 router.get("/users/:userId", async (req, res) => {
   try {
     const { userId } = req.params;
-
-    // Get user logic here
+    const User = getUserModel();
+    if (!User) {
+      return res.status(501).json({ error: "User model is not implemented" });
+    }
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
     res.json({
-      id: userId,
-      name: "John Doe",
-      email: "john@example.com",
-      status: "active",
+      id: user._id.toString(),
+      name: user.name || "Unknown",
+      email: user.email || "unknown@example.com",
+      status: user.status || "active",
+      appVersion: user.appVersion || "1.0.0",
+      dbVersion: user.dbVersion || "1.0.0",
+      lastActive: user.lastSeen || user.createdAt,
+      progress: user.progress || { exams: 0, flashcards: 0 },
     });
   } catch (error) {
     console.error("Get user error:", error);
@@ -424,10 +470,24 @@ router.put("/users/:userId", async (req, res) => {
   try {
     const { userId } = req.params;
     const userData = req.body;
-
-    // Update user logic here
-    console.log(`Updating user ${userId}`);
-
+    const User = getUserModel();
+    if (!User) {
+      return res.status(501).json({ error: "User model is not implemented" });
+    }
+    const user = await User.findByIdAndUpdate(
+      userId,
+      {
+        $set: {
+          name: userData.name,
+          email: userData.email,
+          status: userData.status,
+        },
+      },
+      { new: true }
+    );
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
     res.json({ message: "User updated successfully" });
   } catch (error) {
     console.error("Update user error:", error);
@@ -438,10 +498,14 @@ router.put("/users/:userId", async (req, res) => {
 router.delete("/users/:userId", async (req, res) => {
   try {
     const { userId } = req.params;
-
-    // Delete user logic here
-    console.log(`Deleting user ${userId}`);
-
+    const User = getUserModel();
+    if (!User) {
+      return res.status(501).json({ error: "User model is not implemented" });
+    }
+    const deleted = await User.findByIdAndDelete(userId);
+    if (!deleted) {
+      return res.status(404).json({ error: "User not found" });
+    }
     res.json({ message: "User deleted successfully" });
   } catch (error) {
     console.error("Delete user error:", error);
@@ -452,10 +516,18 @@ router.delete("/users/:userId", async (req, res) => {
 router.post("/users/:userId/ban", async (req, res) => {
   try {
     const { userId } = req.params;
-
-    // Ban user logic here
-    console.log(`Banning user ${userId}`);
-
+    const User = getUserModel();
+    if (!User) {
+      return res.status(501).json({ error: "User model is not implemented" });
+    }
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { $set: { status: "banned" } },
+      { new: true }
+    );
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
     res.json({ message: "User banned successfully" });
   } catch (error) {
     console.error("Ban user error:", error);
@@ -466,17 +538,21 @@ router.post("/users/:userId/ban", async (req, res) => {
 router.get("/users/:userId/activity", async (req, res) => {
   try {
     const { userId } = req.params;
-
-    // Get user activity logic here
+    const User = getUserModel();
+    if (!User) {
+      return res.status(501).json({ error: "User model is not implemented" });
+    }
+    const user = await User.findById(userId).select("lastSeen createdAt");
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
     res.json({
       activity: [
         {
-          id: "activity_1",
-          action: "Completed exam",
-          details: "Vocabulary Test - Score: 85%",
-          device: { type: "mobile", name: "iPhone 12" },
-          location: { city: "Berlin", country: "Germany" },
-          timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+          id: "activity_last_seen",
+          action: "Last seen",
+          details: "Most recent backend activity timestamp",
+          timestamp: user.lastSeen || user.createdAt,
         },
       ],
     });
@@ -493,7 +569,8 @@ router.get("/analytics/users", async (req, res) => {
     let dailyActive = [],
       totalUsers = 0,
       newUsers = 0,
-      retention = 0;
+      retention = 0,
+      dataAvailable = false;
 
     try {
       const User = require("../../database/models/User");
@@ -540,9 +617,9 @@ router.get("/analytics/users", async (req, res) => {
 
       retention =
         totalUsers > 0 ? Math.round((activeUsers / totalUsers) * 100) : 0;
+      dataAvailable = true;
     } catch (userError) {
-      console.log("User model not found for analytics, using defaults");
-      // Generate sample data based on period
+      console.log("User model not found for analytics");
       const days =
         period === "24h"
           ? 1
@@ -555,7 +632,7 @@ router.get("/analytics/users", async (req, res) => {
         const date = new Date(Date.now() - i * 24 * 60 * 60 * 1000);
         dailyActive.push({
           date: date.toISOString().split("T")[0],
-          users: Math.floor(Math.random() * 50) + 10,
+          users: 0,
         });
       }
     }
@@ -565,6 +642,7 @@ router.get("/analytics/users", async (req, res) => {
       totalUsers,
       newUsers,
       retention,
+      dataAvailable,
     });
   } catch (error) {
     console.error("User analytics error:", error);
@@ -576,33 +654,31 @@ router.get("/analytics/performance", async (req, res) => {
   try {
     const { period = "7d" } = req.query;
 
-    // Real performance metrics
     const memoryUsage = process.memoryUsage();
     const uptime = process.uptime();
-
-    // Generate response time data based on system load
     let responseTime = [];
     const hours = period === "24h" ? 24 : 168; // 1 week max
 
     for (let i = 0; i < hours; i += 4) {
-      // Every 4 hours
       const time = `${String(Math.floor(i / 4)).padStart(2, "0")}:00`;
-      const baseTime = 100 + Math.random() * 100;
       responseTime.push({
         time,
-        avg: Math.round(baseTime),
-        max: Math.round(baseTime + Math.random() * 100),
+        avg: Math.round(memoryUsage.heapUsed / 1024 / 1024),
+        max: Math.round(memoryUsage.rss / 1024 / 1024),
       });
     }
 
     res.json({
       responseTime,
-      errorRate: 0.5, // Would be calculated from actual error logs
-      uptime: 99.9, // Would be calculated from actual uptime monitoring
+      errorRate: 0,
+      uptime: Number(((uptime / Math.max(uptime, 1)) * 100).toFixed(1)),
+      memoryMb: Math.round(memoryUsage.heapUsed / 1024 / 1024),
+      cpuMicros: process.cpuUsage().user + process.cpuUsage().system,
       requests: responseTime.map((rt) => ({
         time: rt.time,
-        count: Math.floor(Math.random() * 1000) + 200,
+        count: 0,
       })),
+      dataAvailable: true,
     });
   } catch (error) {
     console.error("Performance analytics error:", error);
@@ -612,9 +688,6 @@ router.get("/analytics/performance", async (req, res) => {
 
 router.get("/analytics/usage", async (req, res) => {
   try {
-    const { period = "7d" } = req.query;
-
-    // Real exam completion stats
     let examStats = [];
     const categories = [
       "vocabulary",
@@ -630,10 +703,9 @@ router.get("/analytics/usage", async (req, res) => {
           topicCategory: category,
           isActive: true,
         });
-        // In a real implementation, you'd track actual completions
         examStats.push({
           category: category.charAt(0).toUpperCase() + category.slice(1),
-          completed: Math.floor(total * 0.7), // Mock completion rate
+          completed: 0,
           attempted: total,
         });
       } catch (error) {
@@ -645,33 +717,32 @@ router.get("/analytics/usage", async (req, res) => {
       }
     }
 
-    // Flashcard review activity (would come from user activity logs)
     const flashcardStats = [
-      { day: "Mon", reviews: 450 },
-      { day: "Tue", reviews: 520 },
-      { day: "Wed", reviews: 480 },
-      { day: "Thu", reviews: 590 },
-      { day: "Fri", reviews: 650 },
-      { day: "Sat", reviews: 420 },
-      { day: "Sun", reviews: 380 },
+      { day: "Mon", reviews: 0 },
+      { day: "Tue", reviews: 0 },
+      { day: "Wed", reviews: 0 },
+      { day: "Thu", reviews: 0 },
+      { day: "Fri", reviews: 0 },
+      { day: "Sat", reviews: 0 },
+      { day: "Sun", reviews: 0 },
     ];
 
     // Category distribution based on actual exam counts
+    const totalAttempted = examStats.reduce((sum, s) => sum + s.attempted, 0);
     const categoryDistribution = examStats.map((stat) => ({
       name: stat.category,
-      value: Math.round(
-        (stat.attempted / examStats.reduce((sum, s) => sum + s.attempted, 0)) *
-          100
-      ),
+      value:
+        totalAttempted > 0
+          ? Math.round((stat.attempted / totalAttempted) * 100)
+          : 0,
     }));
 
-    // Time spent data (would come from user sessions)
     const timeSpent = [];
     for (let i = 6; i >= 0; i--) {
       const date = new Date(Date.now() - i * 24 * 60 * 60 * 1000);
       timeSpent.push({
         date: date.toISOString().split("T")[0],
-        minutes: Math.floor(Math.random() * 60) + 20,
+        minutes: 0,
       });
     }
 
@@ -680,6 +751,7 @@ router.get("/analytics/usage", async (req, res) => {
       flashcardStats,
       categoryDistribution,
       timeSpent,
+      dataAvailable: totalAttempted > 0,
     });
   } catch (error) {
     console.error("Usage analytics error:", error);
@@ -690,48 +762,7 @@ router.get("/analytics/usage", async (req, res) => {
 // Settings
 router.get("/settings", async (req, res) => {
   try {
-    res.json({
-      settings: {
-        general: {
-          appName: "Simorgh",
-          version: "1.0.0",
-          maintenance: false,
-          debugMode: false,
-          maxUsers: 10000,
-        },
-        database: {
-          host: "localhost",
-          port: 27017,
-          name: "simorgh",
-          autoBackup: true,
-          backupInterval: 24,
-          maxBackups: 10,
-        },
-        security: {
-          jwtSecret: "your-secret-key",
-          jwtExpiry: 24,
-          rateLimit: true,
-          maxRequests: 100,
-          corsEnabled: true,
-          allowedOrigins: ["http://localhost:3000"],
-        },
-        notifications: {
-          emailEnabled: false,
-          smtpHost: "",
-          smtpPort: 587,
-          smtpUser: "",
-          smtpPass: "",
-          pushEnabled: true,
-          pushKey: "",
-        },
-        analytics: {
-          enabled: true,
-          trackingCode: "",
-          anonymizeData: true,
-          retentionDays: 90,
-        },
-      },
-    });
+    res.json({ settings: await getSettings() });
   } catch (error) {
     console.error("Get settings error:", error);
     res.status(500).json({ error: "Failed to fetch settings" });
@@ -740,11 +771,7 @@ router.get("/settings", async (req, res) => {
 
 router.put("/settings", async (req, res) => {
   try {
-    const settings = req.body;
-
-    // Update settings logic here
-    console.log("Updating settings:", settings);
-
+    await saveSettings(req.body);
     res.json({ message: "Settings updated successfully" });
   } catch (error) {
     console.error("Update settings error:", error);

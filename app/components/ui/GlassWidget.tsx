@@ -1,9 +1,15 @@
 import React from "react";
 import { StyleProp, StyleSheet, Text, View, ViewStyle } from "react-native";
 import { Feather } from "@expo/vector-icons";
-import { Colors, Spacing, Typography } from "../../constants/theme";
+import {
+  Colors,
+  Spacing,
+  Typography,
+  getTextFontFamily,
+} from "../../constants/theme";
 import { useColorScheme } from "../../hooks/use-color-scheme";
 import { GlassCard } from "./GlassCard";
+import { usePreferences } from "../../contexts/PreferencesContext";
 
 type Props = {
   title: string;
@@ -24,22 +30,53 @@ export function GlassWidget({
 }: Props) {
   const colorScheme = useColorScheme();
   const palette = colorScheme === "dark" ? Colors.dark : Colors.light;
+  const { language } = usePreferences();
+  const regularFont = getTextFontFamily(language, "normal");
+  const semiboldFont = getTextFontFamily(language, "semibold");
+  const boldFont = getTextFontFamily(language, "bold");
 
   return (
     <GlassCard onPress={onPress} style={[styles.card, style]}>
       <View style={styles.topRow}>
-        <Text style={[styles.title, { color: palette.textMuted }]}>
+        <Text
+          style={[
+            styles.title,
+            { color: palette.textMuted, fontFamily: semiboldFont },
+          ]}
+        >
           {title}
         </Text>
-        <Feather name={icon} size={18} color={palette.primary} />
+        <View
+          style={[
+            styles.iconWrap,
+            {
+              backgroundColor:
+                colorScheme === "dark"
+                  ? "rgba(143,176,167,0.12)"
+                  : "rgba(39,76,70,0.08)",
+            },
+          ]}
+        >
+          <Feather name={icon} size={16} color={palette.primary} />
+        </View>
       </View>
       {value ? (
-        <Text style={[styles.value, { color: palette.textPrimary }]}>
+        <Text
+          style={[
+            styles.value,
+            { color: palette.textPrimary, fontFamily: boldFont },
+          ]}
+        >
           {value}
         </Text>
       ) : null}
       {subtitle ? (
-        <Text style={[styles.subtitle, { color: palette.textSecondary }]}>
+        <Text
+          style={[
+            styles.subtitle,
+            { color: palette.textSecondary, fontFamily: regularFont },
+          ]}
+        >
           {subtitle}
         </Text>
       ) : null}
@@ -56,11 +93,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
   },
+  iconWrap: {
+    width: 32,
+    height: 32,
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   title: {
     fontSize: Typography.sizes.caption,
     fontWeight: Typography.fontWeight.semibold,
-    textTransform: "uppercase",
-    letterSpacing: 0.8,
+    letterSpacing: 0.3,
   },
   value: {
     marginTop: Spacing.sm,
@@ -69,8 +112,8 @@ const styles = StyleSheet.create({
     lineHeight: 26,
   },
   subtitle: {
-    marginTop: 2,
-    fontSize: Typography.sizes.bodySecondary,
-    lineHeight: 22,
+    marginTop: 8,
+    fontSize: Typography.sizes.bodySmall,
+    lineHeight: 20,
   },
 });

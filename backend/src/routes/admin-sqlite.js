@@ -2,18 +2,27 @@ const express = require("express");
 const router = express.Router();
 const path = require("path");
 const fs = require("fs").promises;
-const SQLiteGenerator = require("../../admin/src/scripts/sqlite-generator");
+const SQLiteGenerator = require("../../../admin/src/scripts/sqlite-generator");
+const {
+  createArtifact,
+} = require("../services/database-artifacts");
 
 // Generate SQLite database
 router.post("/database/generate-sqlite", async (req, res) => {
   try {
     const generator = new SQLiteGenerator();
-    const stats = await generator.generateDatabase();
+    const result = await generator.generateDatabase();
+    const artifact = await createArtifact({
+      type: "generated",
+      description: "Generated from Admin SQLite Generator",
+    });
 
     res.json({
       success: true,
       message: "SQLite database generated successfully",
-      stats,
+      stats: result.sqlite,
+      source: result.source,
+      artifact,
     });
   } catch (error) {
     console.error("SQLite generation error:", error);
@@ -29,19 +38,27 @@ router.get("/database/sqlite-stats", async (req, res) => {
   try {
     const sqlitePath = path.join(
       __dirname,
-      "../../admin/dist/sqlite/simorgh_app.db"
+      "../../../admin/dist/sqlite/simorgh_app.db"
     );
     const packagePath = path.join(
       __dirname,
-      "../../admin/dist/sqlite/simorgh-app-package.json"
+      "../../../admin/dist/sqlite/simorgh-app-package.json"
     );
 
     let stats = { exams: 0, flashcards: 0, words: 0 };
+    let sourceStats = { exams: 0, flashcards: 0, words: 0 };
     let version = { version: "1.0.0", timestamp: null };
     let packageSize = 0;
+    let databaseExists = false;
+
+    const generator = new SQLiteGenerator();
+    sourceStats = await generator.getSourceStats();
 
     // Check if database exists
     try {
+      await fs.access(sqlitePath);
+      databaseExists = true;
+
       const db = require("sqlite3").Database;
       const dbInstance = new db(sqlitePath);
 
@@ -100,9 +117,11 @@ router.get("/database/sqlite-stats", async (req, res) => {
     res.json({
       success: true,
       stats,
+      sourceStats,
       version,
       packageSize,
-      databaseExists: stats.exams > 0,
+      databaseExists,
+      hasContent: Object.values(stats).some((count) => count > 0),
     });
   } catch (error) {
     console.error("SQLite stats error:", error);
@@ -118,11 +137,16 @@ router.post("/database/package-sqlite", async (req, res) => {
   try {
     const generator = new SQLiteGenerator();
     const packageInfo = await generator.packageDatabase();
+    const artifact = await createArtifact({
+      type: "backup",
+      description: "Packaged from Admin SQLite Generator",
+    });
 
     res.json({
       success: true,
       message: "SQLite database packaged successfully",
       packageInfo,
+      artifact,
     });
   } catch (error) {
     console.error("SQLite packaging error:", error);
@@ -138,7 +162,7 @@ router.get("/database/download-sqlite", async (req, res) => {
   try {
     const sqlitePath = path.join(
       __dirname,
-      "../../admin/dist/sqlite/simorgh_app.db"
+      "../../../admin/dist/sqlite/simorgh_app.db"
     );
 
     // Check if file exists
@@ -172,7 +196,7 @@ router.get("/database/download-package", async (req, res) => {
   try {
     const packagePath = path.join(
       __dirname,
-      "../../admin/dist/sqlite/simorgh-app-package.json"
+      "../../../admin/dist/sqlite/simorgh-app-package.json"
     );
 
     // Check if file exists

@@ -109,6 +109,7 @@ export interface DatabaseVersion {
     exams: number;
     exercises: number;
   };
+  featureFlags?: Record<string, boolean>;
 }
 
 export interface UpdateCheckResult {
@@ -169,10 +170,18 @@ class DatabaseService {
         releaseDate TEXT,
         minAppVersion TEXT,
         dataStats TEXT,
+        featureFlags TEXT,
         createdAt TEXT NOT NULL,
         updatedAt TEXT NOT NULL
       );
     `);
+    try {
+      await this.db.execAsync(
+        `ALTER TABLE database_version ADD COLUMN featureFlags TEXT;`
+      );
+    } catch {
+      // Column already exists.
+    }
 
     // Words table
     await this.db.execAsync(`
@@ -344,6 +353,7 @@ class DatabaseService {
         releaseDate: result.releaseDate,
         minAppVersion: result.minAppVersion,
         dataStats: JSON.parse(result.dataStats || "{}"),
+        featureFlags: JSON.parse(result.featureFlags || "{}"),
       };
     } catch (error) {
       console.error("Failed to get current database version:", error);
@@ -358,8 +368,8 @@ class DatabaseService {
       `
       INSERT OR REPLACE INTO database_version (
         id, version, buildNumber, isPublished, isForced, description, changelog,
-        releaseDate, minAppVersion, dataStats, createdAt, updatedAt
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        releaseDate, minAppVersion, dataStats, featureFlags, createdAt, updatedAt
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `,
       [
         `version_${version.version}`,
@@ -372,8 +382,97 @@ class DatabaseService {
         version.releaseDate,
         version.minAppVersion,
         JSON.stringify(version.dataStats),
+        JSON.stringify(version.featureFlags || {}),
         new Date().toISOString(),
         new Date().toISOString(),
+      ]
+    );
+  }
+
+  async getExams(
+    level?: string,
+    category?: string,
+    isActive?: boolean,
+    limit?: number
+  ): Promise<any[]> {
+    if (!this.db) throw new Error("Database not initialized");
+
+    let query = "SELECT * FROM exams WHERE 1=1";
+    const params: Array<string | number> = [];
+
+    if (level) {
+      query += " AND level = ?";
+      params.push(level);
+    }
+
+    if (category) {
+      query += " AND category = ?";
+      params.push(category);
+    }
+
+    if (typeof isActive === "boolean") {
+      query += " AND isActive = ?";
+      params.push(isActive ? 1 : 0);
+    }
+
+    query += " ORDER BY createdAt DESC";
+
+    if (typeof limit === "number") {
+      query += " LIMIT ?";
+      params.push(limit);
+    }
+
+    return ((await this.db.getAllAsync(query, params)) as any[]).map((row) => ({
+      ...row,
+      questions: JSON.parse(row.questions || "[]"),
+    }));
+  }
+
+  async getExamById(id: string): Promise<any | null> {
+    if (!this.db) throw new Error("Database not initialized");
+
+    const row = (await this.db.getFirstAsync(
+      "SELECT * FROM exams WHERE id = ? LIMIT 1",
+      [id]
+    )) as any;
+
+    if (!row) {
+      return null;
+    }
+
+    return {
+      ...row,
+      questions: JSON.parse(row.questions || "[]"),
+    };
+  }
+
+  async saveExamResult(
+    examId: string,
+    score: number,
+    totalPoints: number,
+    answers: unknown[]
+  ): Promise<void> {
+    if (!this.db) throw new Error("Database not initialized");
+
+    const now = new Date().toISOString();
+    const passed = score >= totalPoints * 0.6 ? 1 : 0;
+
+    await this.db.runAsync(
+      `
+        INSERT INTO exam_results (
+          id, examId, score, totalPoints, passed, answers, startedAt, completedAt, createdAt
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `,
+      [
+        `exam_result_${examId}_${Date.now()}`,
+        examId,
+        score,
+        totalPoints,
+        passed,
+        JSON.stringify(answers || []),
+        now,
+        now,
+        now,
       ]
     );
   }
@@ -447,6 +546,7 @@ class DatabaseService {
                 exams: 10,
                 exercises: 25,
               },
+              featureFlags: {},
             },
             appVersionCompatible: true,
             reason: "Mock update for testing",

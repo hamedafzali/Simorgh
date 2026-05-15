@@ -1,4 +1,4 @@
-const SQLiteGenerator = require("../../admin/src/scripts/sqlite-generator");
+const SQLiteGenerator = require("../../../admin/src/scripts/sqlite-generator");
 const path = require("path");
 
 async function main() {

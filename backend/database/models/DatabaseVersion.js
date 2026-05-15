@@ -16,6 +16,11 @@ const databaseVersionSchema = new mongoose.Schema(
       exams: { type: Number, default: 0 },
       exercises: { type: Number, default: 0 },
     },
+    featureFlags: {
+      type: Map,
+      of: Boolean,
+      default: {},
+    },
   },
   {
     timestamps: true,

@@ -39,16 +39,16 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/admin", adminSQLiteRoutes);
 
 // Serve admin panel static files
-app.use(express.static(path.join(__dirname, "../admin/build")));
+app.use(express.static(path.join(__dirname, "../../admin/build")));
 
 // Admin panel route - serve React app
 app.get("/admin", (req, res) => {
-  res.sendFile(path.join(__dirname, "../admin/build/index.html"));
+  res.sendFile(path.join(__dirname, "../../admin/build/index.html"));
 });
 
 // Catch all handler for admin panel routes
 app.get("/admin/*", (req, res) => {
-  res.sendFile(path.join(__dirname, "../admin/build/index.html"));
+  res.sendFile(path.join(__dirname, "../../admin/build/index.html"));
 });
 
 app.listen(PORT, "0.0.0.0", async () => {

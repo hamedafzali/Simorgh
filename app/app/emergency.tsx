@@ -5,6 +5,7 @@ import { Colors, Spacing, Typography } from "../constants/theme";
 import { useColorScheme } from "../hooks/use-color-scheme";
 import { Card } from "../components/ui/Card";
 import { PageHeader } from "../components/ui/PageHeader";
+import FeatureGate from "../components/FeatureGate";
 import { Screen } from "../components/ui/Screen";
 import {
   getEmergencyContacts,
@@ -21,7 +22,8 @@ export default function EmergencyScreen() {
   const contacts = getEmergencyContacts(code);
 
   return (
-    <Screen>
+    <FeatureGate feature="emergency">
+      <Screen>
       <PageHeader
         title="Emergency Kit"
         subtitle={country ? country.name : "Global"}
@@ -65,6 +67,7 @@ export default function EmergencyScreen() {
           number and say you need help in English or Persian.
         </Text>
       </Card>
-    </Screen>
+      </Screen>
+    </FeatureGate>
   );
 }

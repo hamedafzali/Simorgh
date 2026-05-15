@@ -18,8 +18,8 @@ import { PageHeader } from "../components/ui/PageHeader";
 import { SyncButton } from "../components/ui/SyncButton";
 import { usePreferences } from "../contexts/PreferencesContext";
 import { useDatabase } from "../contexts/DatabaseContext";
-import { homeShortcuts } from "../services/homeShortcuts";
-import { getJson, setJson } from "../services/localStore";
+import { useFeatureFlags } from "../contexts/FeatureFlagsContext";
+import { t } from "../services/i18n";
 
 const GERMAN_STATES = [
   "Baden-Württemberg",
@@ -82,14 +82,21 @@ export default function SettingsScreen() {
   const router = useRouter();
   const colorScheme = useColorScheme();
   const palette = colorScheme === "dark" ? Colors.dark : Colors.light;
-  const { location, setLocation, useDeviceLocation, setUseDeviceLocation } =
-    usePreferences();
+  const {
+    language,
+    direction,
+    setLanguage,
+    setDirection,
+    location,
+    setLocation,
+    useDeviceLocation,
+    setUseDeviceLocation,
+  } = usePreferences();
   const {
     isOnline,
     isSyncing,
     lastSync,
     isInitialized,
-    getSyncStatus,
     getWords,
     getFlashcards,
     getExams,
@@ -98,6 +105,7 @@ export default function SettingsScreen() {
     checkForDatabaseUpdates,
     syncDatabaseVersion,
   } = useDatabase();
+  const { featureFlags } = useFeatureFlags();
 
   const [selectedState, setSelectedState] = useState<string>(
     location?.state ?? ""
@@ -112,78 +120,72 @@ export default function SettingsScreen() {
   const [dbVersion, setDbVersion] = useState<any>(null);
   const [updateAvailable, setUpdateAvailable] = useState(false);
   const [updateCheckResult, setUpdateCheckResult] = useState<any>(null);
-  const [homeShortcutState, setHomeShortcutState] = useState<Record<
-    string,
-    boolean
-  >>({});
+  const [syncIssue, setSyncIssue] = useState<string | null>(null);
+  const [isCheckingBackend, setIsCheckingBackend] = useState(false);
 
-  React.useEffect(() => {
-    const load = async () => {
-      const defaults = homeShortcuts.reduce<Record<string, boolean>>(
-        (acc, item) => {
-          acc[item.key] = true;
-          return acc;
-        },
-        {}
-      );
-      const stored = await getJson<Record<string, boolean>>(
-        "home_shortcuts",
-        defaults
-      );
-      setHomeShortcutState(stored);
-    };
+  const refreshDatabaseStatus = React.useCallback(async () => {
+    if (!isInitialized) {
+      return;
+    }
 
-    load();
-  }, []);
+    setIsCheckingBackend(true);
 
-  // Load database stats when initialized
-  React.useEffect(() => {
-    if (isInitialized && isOnline) {
-      const loadData = async () => {
-        try {
-          const [words, flashcards, exams, currentVersion] = await Promise.all([
-            getWords(undefined, undefined, 1000), // Get count up to 1000
-            getFlashcards(undefined, undefined, false, 1000),
-            getExams(undefined, undefined, true, 1000),
-            getCurrentDatabaseVersion(),
-          ]);
+    try {
+      const [words, flashcards, exams, currentVersion] = await Promise.all([
+        getWords(undefined, undefined, 1000),
+        getFlashcards(undefined, undefined, false, 1000),
+        getExams(undefined, undefined, true, 1000),
+        getCurrentDatabaseVersion(),
+      ]);
 
-          setDbStats({
-            words: words.length,
-            flashcards: flashcards.length,
-            exams: exams.length,
-          });
+      setDbStats({
+        words: words.length,
+        flashcards: flashcards.length,
+        exams: exams.length,
+      });
 
-          setDbVersion(currentVersion);
+      setDbVersion(currentVersion);
 
-          // Check for updates
-          const updateResult = await checkForDatabaseUpdates();
-          setUpdateCheckResult(updateResult);
-          setUpdateAvailable(updateResult.hasUpdate);
+      const updateResult = await checkForDatabaseUpdates();
+      setUpdateCheckResult(updateResult);
+      setUpdateAvailable(updateResult.hasUpdate);
 
-          // Log the reason for debugging
-          if (
-            !updateResult.hasUpdate &&
-            updateResult.reason !== "Already up to date"
-          ) {
-            console.log("Update check reason:", updateResult.reason);
-          }
-        } catch (err) {
-          console.error("Failed to load database data:", err);
-        }
-      };
-
-      loadData();
+      if (updateResult.reason === "Backend server unavailable") {
+        setSyncIssue(t(language, "settings.backendUnavailable"));
+      } else if (updateResult.reason === "Connection timeout") {
+        setSyncIssue(t(language, "settings.connectionTimeout"));
+      } else {
+        setSyncIssue(null);
+      }
+    } catch {
+      setSyncIssue(t(language, "settings.backendUnavailable"));
+    } finally {
+      setIsCheckingBackend(false);
     }
   }, [
     isInitialized,
-    isOnline,
     getWords,
     getFlashcards,
     getExams,
     getCurrentDatabaseVersion,
     checkForDatabaseUpdates,
+    language,
   ]);
+
+  React.useEffect(() => {
+    if (!isInitialized) {
+      return;
+    }
+
+    void refreshDatabaseStatus();
+  }, [isInitialized, isOnline, refreshDatabaseStatus]);
+
+  const enabledFeatureKeys = useMemo(() =>
+    Object.entries(featureFlags)
+      .filter(([, enabled]) => enabled)
+      .map(([key]) => key),
+    [featureFlags]
+  );
 
   const stateOptions = useMemo(() => GERMAN_STATES.slice(), []);
 
@@ -202,7 +204,7 @@ export default function SettingsScreen() {
         r.filter((x) => x.address?.country?.toLowerCase() === "germany")
       );
     } catch {
-      setError("Search failed. Please try again.");
+      setError(t(language, "settings.searchFailed"));
     } finally {
       setLoading(false);
     }
@@ -232,7 +234,7 @@ export default function SettingsScreen() {
 
       const perm = await Location.requestForegroundPermissionsAsync();
       if (perm.status !== "granted") {
-        setError("Location permission was not granted.");
+        setError(t(language, "settings.locationPermissionDenied"));
         setUseDeviceLocation(false);
         return;
       }
@@ -265,7 +267,7 @@ export default function SettingsScreen() {
 
       setUseDeviceLocation(true);
     } catch {
-      setError("Could not read your location. Please try again.");
+      setError(t(language, "settings.locationReadFailed"));
       setUseDeviceLocation(false);
     } finally {
       setLoading(false);
@@ -279,34 +281,98 @@ export default function SettingsScreen() {
     }
   }
 
-  function toggleHomeShortcut(key: string) {
-    const next = {
-      ...homeShortcutState,
-      [key]: homeShortcutState[key] === false ? true : !homeShortcutState[key],
-    };
-    setHomeShortcutState(next);
-    void setJson("home_shortcuts", next);
+  function selectLanguage(nextLanguage: "fa" | "de" | "en") {
+    setLanguage(nextLanguage);
+    setDirection(nextLanguage === "fa" ? "rtl" : "ltr");
   }
 
   return (
     <Screen>
       <PageHeader
-        title="Settings"
-        subtitle="Location in Germany"
+        title={t(language, "settings.title")}
+        subtitle={t(language, "settings.subtitle")}
         onBackPress={() => router.back()}
       />
 
       <GlassCard>
         <Text style={[styles.sectionTitle, { color: palette.textPrimary }]}>
-          Use phone location
+          {t(language, "settings.language")}
         </Text>
         <Text style={[styles.sectionHint, { color: palette.textSecondary }]}>
-          Enable to show local jobs, events, and documents near you.
+          {t(language, "settings.languageSub")}
+        </Text>
+
+        <View style={styles.languageGrid}>
+          {[
+            { key: "fa", label: "فارسی" },
+            { key: "de", label: "Deutsch" },
+            { key: "en", label: "English" },
+          ].map((item) => {
+            const active = language === item.key;
+            return (
+              <Pressable
+                key={item.key}
+                onPress={() =>
+                  selectLanguage(item.key as "fa" | "de" | "en")
+                }
+                accessibilityRole="button"
+                accessibilityLabel={item.label}
+                style={({ pressed }) => [
+                  styles.languageChip,
+                  {
+                    borderColor: active ? palette.primary : palette.borderLight,
+                    backgroundColor: active
+                      ? colorScheme === "dark"
+                        ? "rgba(143,176,167,0.18)"
+                        : "rgba(39,76,70,0.10)"
+                      : colorScheme === "dark"
+                      ? "rgba(255,255,255,0.04)"
+                      : "rgba(255,255,255,0.30)",
+                    opacity: pressed ? 0.82 : 1,
+                  },
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.languageChipText,
+                    { color: active ? palette.primary : palette.textPrimary },
+                  ]}
+                >
+                  {item.label}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </View>
+
+        <View style={styles.currentBox}>
+          <Text style={[styles.currentTitle, { color: palette.textPrimary }]}>
+            {t(language, "common.current")}
+          </Text>
+          <Text style={[styles.currentValue, { color: palette.textSecondary }]}>
+            {language === "fa"
+              ? "فارسی"
+              : language === "de"
+              ? "Deutsch"
+              : "English"}
+          </Text>
+          <Text style={[styles.currentMeta, { color: palette.textMuted }]}>
+            {t(language, "settings.direction")}: {direction.toUpperCase()}
+          </Text>
+        </View>
+      </GlassCard>
+
+      <GlassCard>
+        <Text style={[styles.sectionTitle, { color: palette.textPrimary }]}>
+          {t(language, "settings.usePhoneLocation")}
+        </Text>
+        <Text style={[styles.sectionHint, { color: palette.textSecondary }]}>
+          {t(language, "settings.usePhoneLocationSub")}
         </Text>
 
         <View style={styles.toggleRow}>
           <Text style={[styles.toggleLabel, { color: palette.textPrimary }]}>
-            Use device location
+            {t(language, "settings.useDeviceLocation")}
           </Text>
           <Pressable
             onPress={() => {
@@ -349,7 +415,7 @@ export default function SettingsScreen() {
             <Text
               style={[styles.loadingText, { color: palette.textSecondary }]}
             >
-              Working…
+              {t(language, "common.working")}
             </Text>
           </View>
         ) : null}
@@ -357,7 +423,7 @@ export default function SettingsScreen() {
         {location ? (
           <View style={styles.currentBox}>
             <Text style={[styles.currentTitle, { color: palette.textPrimary }]}>
-              Current
+              {t(language, "settings.currentLocation")}
             </Text>
             <Text
               style={[styles.currentValue, { color: palette.textSecondary }]}
@@ -368,7 +434,7 @@ export default function SettingsScreen() {
               {location.postalCode ? ` · ${location.postalCode}` : ""}
             </Text>
             <Text style={[styles.currentMeta, { color: palette.textMuted }]}>
-              Source: {location.source}
+              {t(language, "settings.source")}: {location.source}
             </Text>
           </View>
         ) : null}
@@ -380,15 +446,15 @@ export default function SettingsScreen() {
 
       <GlassCard>
         <Text style={[styles.sectionTitle, { color: palette.textPrimary }]}>
-          Set my city
+          {t(language, "settings.setMyCity")}
         </Text>
         <Text style={[styles.sectionHint, { color: palette.textSecondary }]}>
-          Choose your Bundesland, then search by city name or postal code (PLZ).
+          {t(language, "settings.setMyCitySub")}
         </Text>
 
         <View style={styles.stateRow}>
           <Text style={[styles.fieldLabel, { color: palette.textSecondary }]}>
-            State
+            {t(language, "settings.state")}
           </Text>
           <View style={styles.stateGrid}>
             {stateOptions.map((st) => {
@@ -429,7 +495,7 @@ export default function SettingsScreen() {
         </View>
 
         <Text style={[styles.fieldLabel, { color: palette.textSecondary }]}>
-          City / postal code
+          {t(language, "settings.cityPostal")}
         </Text>
         <View
           style={[
@@ -447,7 +513,7 @@ export default function SettingsScreen() {
           <TextInput
             value={query}
             onChangeText={setQuery}
-            placeholder="e.g. Berlin, 10115"
+            placeholder={t(language, "settings.searchPlaceholder")}
             placeholderTextColor={palette.textMuted}
             style={[styles.input, { color: palette.textPrimary }]}
             autoCapitalize="none"
@@ -458,14 +524,14 @@ export default function SettingsScreen() {
           <Pressable
             onPress={() => void runSearch()}
             accessibilityRole="button"
-            accessibilityLabel="Search"
+            accessibilityLabel={t(language, "common.search")}
             style={({ pressed }) => [
               styles.searchBtn,
               { opacity: pressed ? 0.75 : 1 },
             ]}
           >
             <Text style={[styles.searchText, { color: palette.primary }]}>
-              Search
+              {t(language, "common.search")}
             </Text>
           </Pressable>
         </View>
@@ -527,77 +593,46 @@ export default function SettingsScreen() {
         ) : null}
       </GlassCard>
 
-      <GlassCard>
-        <Text style={[styles.sectionTitle, { color: palette.textPrimary }]}>
-          Home screen shortcuts
-        </Text>
-        <Text style={[styles.sectionHint, { color: palette.textSecondary }]}>
-          Choose which features show on the Home page.
-        </Text>
-
-        <View style={styles.shortcutList}>
-          {homeShortcuts.map((item) => {
-            const enabled = homeShortcutState[item.key] !== false;
-            return (
-              <View key={item.key} style={styles.shortcutRow}>
-                <View style={styles.shortcutText}>
-                  <Text
-                    style={[
-                      styles.shortcutTitle,
-                      { color: palette.textPrimary },
-                    ]}
-                  >
-                    {item.title}
-                  </Text>
-                  <Text
-                    style={[
-                      styles.shortcutSubtitle,
-                      { color: palette.textSecondary },
-                    ]}
-                  >
-                    {item.subtitle}
-                  </Text>
-                </View>
-                <Pressable
-                  onPress={() => toggleHomeShortcut(item.key)}
-                  accessibilityRole="switch"
-                  accessibilityState={{ checked: enabled }}
-                  style={({ pressed }) => [
-                    styles.toggle,
-                    {
-                      backgroundColor: enabled
-                        ? palette.accentGreen
-                        : "rgba(255,255,255,0.20)",
-                      borderColor: enabled
-                        ? palette.accentGreen
-                        : palette.borderLight,
-                      opacity: pressed ? 0.85 : 1,
-                    },
-                  ]}
-                >
-                  <View
-                    style={[
-                      styles.knob,
-                      {
-                        transform: [{ translateX: enabled ? 18 : 0 }],
-                        backgroundColor: palette.white,
-                      },
-                    ]}
-                  />
-                </Pressable>
-              </View>
-            );
-          })}
+      <GlassCard style={{ marginTop: Spacing.md }}>
+        <Text style={[styles.sectionTitle, { color: palette.textPrimary }]}>Feature rollout</Text>
+        <Text style={[styles.sectionHint, { color: palette.textSecondary }]}>Enabled features from backend sync: {enabledFeatureKeys.length}</Text>
+        <View style={styles.stateGrid}>
+          {enabledFeatureKeys.map((key) => (
+            <View
+              key={key}
+              style={[
+                styles.stateChip,
+                {
+                  borderColor: palette.borderLight,
+                  backgroundColor:
+                    colorScheme === "dark"
+                      ? "rgba(255,255,255,0.04)"
+                      : "rgba(255,255,255,0.22)",
+                },
+              ]}
+            >
+              <Text
+                style={{
+                  fontSize: Typography.sizes.caption,
+                  fontWeight: Typography.fontWeight.semibold,
+                  color: palette.textPrimary,
+                }}
+                numberOfLines={1}
+              >
+                {key}
+              </Text>
+            </View>
+          ))}
         </View>
       </GlassCard>
 
       {/* Database Information Section */}
       <GlassCard style={{ marginTop: Spacing.md }}>
         <Text style={[styles.sectionTitle, { color: palette.textPrimary }]}>
-          Database & Sync
+          {t(language, "settings.database")}
         </Text>
         <Text style={[styles.sectionHint, { color: palette.textSecondary }]}>
-          Manage your offline content and sync with the server.
+          {t(language, "settings.databaseSub")}
         </Text>
 
         {/* Sync Status */}
@@ -606,12 +641,14 @@ export default function SettingsScreen() {
             <Text
               style={[styles.dbStatusLabel, { color: palette.textPrimary }]}
             >
-              Connection
+              {t(language, "settings.connection")}
             </Text>
             <Text
               style={[styles.dbStatusValue, { color: palette.textSecondary }]}
             >
-              {isOnline ? "Online" : "Offline"}
+              {isOnline
+                ? t(language, "common.online")
+                : t(language, "common.offline")}
             </Text>
           </View>
           <View
@@ -630,14 +667,14 @@ export default function SettingsScreen() {
             <Text
               style={[styles.dbStatusLabel, { color: palette.textPrimary }]}
             >
-              Database Version
+              {t(language, "settings.databaseVersion")}
             </Text>
             <Text
               style={[styles.dbStatusValue, { color: palette.textSecondary }]}
             >
               {dbVersion
                 ? `v${dbVersion.version} (Build ${dbVersion.buildNumber})`
-                : "Unknown"}
+                : t(language, "settings.unknown")}
             </Text>
           </View>
           <View
@@ -664,7 +701,7 @@ export default function SettingsScreen() {
                       fontWeight: "600",
                     }}
                   >
-                    Offline
+                    {t(language, "common.offline")}
                   </Text>
                 </View>
               )}
@@ -683,18 +720,18 @@ export default function SettingsScreen() {
                     color: palette.white,
                     fontWeight: "600",
                   }}
-                >
-                  Update
-                </Text>
-              </View>
-            )}
+                  >
+                    {t(language, "common.update")}
+                  </Text>
+                </View>
+              )}
           </View>
         </View>
 
         {/* Database Stats */}
         <View style={styles.dbStatsRow}>
           <Text style={[styles.dbStatsLabel, { color: palette.textPrimary }]}>
-            Local Content
+            {t(language, "settings.localContent")}
           </Text>
           <View style={styles.dbStatsNumbers}>
             <Text style={[styles.dbStatNumber, { color: palette.primary }]}>
@@ -705,7 +742,7 @@ export default function SettingsScreen() {
             <Text
               style={[styles.dbStatLabel, { color: palette.textSecondary }]}
             >
-              items
+              {t(language, "settings.items")}
             </Text>
           </View>
         </View>
@@ -716,12 +753,14 @@ export default function SettingsScreen() {
             <Text
               style={[styles.dbStatusLabel, { color: palette.textPrimary }]}
             >
-              Last Sync
+              {t(language, "settings.lastSync")}
             </Text>
             <Text
               style={[styles.dbStatusValue, { color: palette.textSecondary }]}
             >
-              {lastSync > 0 ? formatTimestamp(lastSync) : "Never"}
+              {lastSync > 0
+                ? formatTimestamp(lastSync, language)
+                : t(language, "common.never")}
             </Text>
           </View>
           <SyncButton size="small" />
@@ -737,12 +776,12 @@ export default function SettingsScreen() {
             }}
           >
             <Text style={[styles.sectionTitle, { color: palette.primary }]}>
-              Database Update Available
+              {t(language, "settings.updateAvailable")}
             </Text>
             <Text
               style={[styles.sectionHint, { color: palette.textSecondary }]}
             >
-              New version {updateCheckResult.latestVersion.version} is available
+              {`${t(language, "common.update")} ${updateCheckResult.latestVersion.version}`}
             </Text>
 
             {updateCheckResult.latestVersion.changelog.length > 0 && (
@@ -750,7 +789,7 @@ export default function SettingsScreen() {
                 <Text
                   style={[styles.dbStatusLabel, { color: palette.textPrimary }]}
                 >
-                  What's new:
+                  {t(language, "settings.whatsNew")}
                 </Text>
                 {updateCheckResult.latestVersion.changelog.map(
                   (item: string, index: number) => (
@@ -774,11 +813,11 @@ export default function SettingsScreen() {
                   if (isOnline && !isSyncing) {
                     const success = await syncDatabaseVersion();
                     if (success) {
-                      // Refresh data
-                      const currentVersion = await getCurrentDatabaseVersion();
-                      setDbVersion(currentVersion);
+                      await refreshDatabaseStatus();
                       setUpdateAvailable(false);
                       setUpdateCheckResult(null);
+                    } else {
+                      setSyncIssue(t(language, "settings.backendUnavailable"));
                     }
                   }
                 }}
@@ -794,7 +833,9 @@ export default function SettingsScreen() {
                 <Text
                   style={[styles.updateButtonText, { color: palette.white }]}
                 >
-                  {isSyncing ? "Updating..." : "Update Now"}
+                  {isSyncing
+                    ? t(language, "settings.updating")
+                    : t(language, "settings.updateNow")}
                 </Text>
               </Pressable>
 
@@ -819,7 +860,7 @@ export default function SettingsScreen() {
                     { color: palette.textSecondary },
                   ]}
                 >
-                  Dismiss
+                  {t(language, "common.dismiss")}
                 </Text>
               </Pressable>
             </View>
@@ -868,7 +909,9 @@ export default function SettingsScreen() {
                 { color: isOnline ? palette.white : palette.textSecondary },
               ]}
             >
-              {isSyncing ? "Syncing..." : "Manual Sync"}
+              {isSyncing
+                ? t(language, "settings.syncing")
+                : t(language, "settings.manualSync")}
             </Text>
           </Pressable>
         </View>
@@ -917,7 +960,7 @@ export default function SettingsScreen() {
               ]}
             >
               <Text style={[styles.syncButtonText, { color: palette.white }]}>
-                Test Update UI
+                {t(language, "settings.testUpdate")}
               </Text>
             </Pressable>
           </View>
@@ -928,8 +971,11 @@ export default function SettingsScreen() {
 }
 
 // Helper function to format timestamp
-function formatTimestamp(timestamp: number): string {
-  if (timestamp === 0) return "Never";
+function formatTimestamp(
+  timestamp: number,
+  language: "fa" | "de" | "en"
+): string {
+  if (timestamp === 0) return t(language, "common.never");
 
   const date = new Date(timestamp);
   const now = new Date();
@@ -937,12 +983,12 @@ function formatTimestamp(timestamp: number): string {
   const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
 
   if (diffHours < 1) {
-    return "Just now";
+    return t(language, "settings.justNow");
   } else if (diffHours < 24) {
-    return `${diffHours}h ago`;
+    return t(language, "settings.hoursAgo", { count: diffHours });
   } else {
     const diffDays = Math.floor(diffHours / 24);
-    return `${diffDays}d ago`;
+    return t(language, "settings.daysAgo", { count: diffDays });
   }
 }
 
@@ -1028,32 +1074,27 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     gap: Spacing.sm,
   },
+  languageGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: Spacing.sm,
+  },
+  languageChip: {
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderRadius: 999,
+    borderWidth: 1,
+  },
+  languageChipText: {
+    fontSize: Typography.sizes.bodySecondary,
+    fontWeight: Typography.fontWeight.semibold,
+  },
   stateChip: {
     paddingVertical: 8,
     paddingHorizontal: 12,
     borderRadius: 999,
     borderWidth: 1,
     maxWidth: "100%",
-  },
-  shortcutList: {
-    gap: Spacing.sm,
-  },
-  shortcutRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: Spacing.md,
-  },
-  shortcutText: {
-    flex: 1,
-  },
-  shortcutTitle: {
-    fontSize: Typography.sizes.bodySecondary,
-    fontWeight: Typography.fontWeight.semibold,
-  },
-  shortcutSubtitle: {
-    marginTop: 2,
-    fontSize: Typography.sizes.bodySmall,
   },
   inputRow: {
     flexDirection: "row",

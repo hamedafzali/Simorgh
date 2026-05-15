@@ -8,9 +8,11 @@ import {
   UpdateCheckResult,
 } from "../database";
 import { NetInfoState } from "@react-native-community/netinfo";
+import { API_BASE_URL } from "../config/api";
+import { saveFeatureFlags } from "./features";
 
 // Backend API configuration
-const BACKEND_BASE_URL = "http://192.168.178.78:3001/api";
+const BACKEND_BASE_URL = API_BASE_URL;
 
 // App version (should match package.json)
 const APP_VERSION = "1.0.0";
@@ -36,6 +38,13 @@ export interface SyncProgress {
   processed: number;
   total: number;
   percentage: number;
+}
+
+function isNetworkError(error: unknown): boolean {
+  return (
+    error instanceof TypeError ||
+    (error instanceof Error && (error.name === "AbortError" || /network request failed|network request timed out|aborted/i.test(error.message)))
+  );
 }
 
 class SyncService {
@@ -556,11 +565,17 @@ class SyncService {
         error instanceof Error ? error.message : "Unknown error";
       console.warn("Database update check failed:", message);
 
-      // Provide more specific error messages
-      if (
-        error instanceof TypeError &&
-        error.message.includes("Network request failed")
-      ) {
+      if (error instanceof Error && error.name === "AbortError") {
+        return {
+          hasUpdate: false,
+          isForced: false,
+          currentVersion: "1.0.0",
+          appVersionCompatible: true,
+          reason: "Connection timeout",
+        };
+      }
+
+      if (isNetworkError(error)) {
         return {
           hasUpdate: false,
           isForced: false,
@@ -587,23 +602,36 @@ class SyncService {
     }
 
     try {
-      // Get latest version from backend
-      const response = await fetch(
-        `${BACKEND_BASE_URL}/database-version/current`
-      );
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+      const response = await fetch(`${BACKEND_BASE_URL}/database-version/current`, {
+        signal: controller.signal,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      clearTimeout(timeoutId);
+
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 
       const latestVersion = await response.json();
 
-      // Save to local database
       await database.saveDatabaseVersion(latestVersion);
+      await saveFeatureFlags(latestVersion.featureFlags);
 
       console.log(`Database version updated to ${latestVersion.version}`);
       return true;
     } catch (error) {
-      console.error("Failed to sync database version:", error);
+      const message = error instanceof Error ? error.message : "Unknown error";
+      if (isNetworkError(error)) {
+        console.warn("Database version sync skipped:", message);
+      } else {
+        console.error("Failed to sync database version:", error);
+      }
       return false;
     }
   }
@@ -640,11 +668,7 @@ class SyncService {
       }
     }
 
-    // Get current database version
     const dbVersion = await database.getCurrentDatabaseVersion();
-
-    // Check for updates
-    const updateCheck = await this.checkForDatabaseUpdates();
 
     return {
       lastSync: config.lastSyncTimestamp,
@@ -652,7 +676,6 @@ class SyncService {
       isSyncing: this.isSyncing,
       entityStatus,
       databaseVersion: dbVersion || undefined,
-      hasUpdate: updateCheck.hasUpdate,
     };
   }
 }

@@ -5,6 +5,7 @@ import { Colors, Spacing, Typography } from "../constants/theme";
 import { useColorScheme } from "../hooks/use-color-scheme";
 import { Card } from "../components/ui/Card";
 import { PageHeader } from "../components/ui/PageHeader";
+import FeatureGate from "../components/FeatureGate";
 import { Screen } from "../components/ui/Screen";
 import { getFormGuides, supportedCountries } from "../services/countries-data";
 
@@ -18,7 +19,8 @@ export default function FormsScreen() {
   const guides = getFormGuides(code);
 
   return (
-    <Screen>
+    <FeatureGate feature="forms">
+      <Screen>
       <PageHeader
         title="Form Helper"
         subtitle={country ? country.name : "Global"}
@@ -92,6 +94,7 @@ export default function FormsScreen() {
           ))}
         </Card>
       ))}
-    </Screen>
+      </Screen>
+    </FeatureGate>
   );
 }

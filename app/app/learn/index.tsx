@@ -6,6 +6,7 @@ import { useColorScheme } from "../../hooks/use-color-scheme";
 import { Card } from "../../components/ui/Card";
 import { PageHeader } from "../../components/ui/PageHeader";
 import { ListItem } from "../../components/ui/ListItem";
+import FeatureGate from "../../components/FeatureGate";
 import { Screen } from "../../components/ui/Screen";
 import { Chevron } from "../../components/ui/Chevron";
 
@@ -15,7 +16,8 @@ export default function LearnHubScreen() {
   const palette = colorScheme === "dark" ? Colors.dark : Colors.light;
 
   return (
-    <Screen>
+    <FeatureGate feature="learning">
+      <Screen>
       <PageHeader title="Learn" subtitle="Choose a module" />
 
       <Card>
@@ -82,6 +84,7 @@ export default function LearnHubScreen() {
           {"\n"}- /api/exams
         </Text>
       </Card>
-    </Screen>
+      </Screen>
+    </FeatureGate>
   );
 }

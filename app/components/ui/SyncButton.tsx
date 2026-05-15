@@ -129,9 +129,17 @@ export function SyncButton({
     return (
       <View style={{ alignItems: "center" }}>
         <GlassCard
+          showAccentBar={false}
           style={[
             sizeStyles.button,
-            { alignItems: "center", justifyContent: "center" },
+            {
+              alignItems: "center",
+              justifyContent: "center",
+              backgroundColor:
+                colorScheme === "dark"
+                  ? "rgba(24,33,47,0.94)"
+                  : "#FFFFFF",
+            },
           ]}
         >
           <ActivityIndicator size="small" color={palette.textMuted} />
@@ -155,9 +163,17 @@ export function SyncButton({
   if (!isOnline) {
     return (
       <GlassCard
+        showAccentBar={false}
         style={[
           sizeStyles.button,
-          { alignItems: "center", justifyContent: "center" },
+          {
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor:
+              colorScheme === "dark"
+                ? "rgba(24,33,47,0.94)"
+                : "#FFFFFF",
+          },
         ]}
       >
         <Feather
@@ -172,9 +188,17 @@ export function SyncButton({
   if (isSyncing) {
     return (
       <GlassCard
+        showAccentBar={false}
         style={[
           sizeStyles.button,
-          { alignItems: "center", justifyContent: "center" },
+          {
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor:
+              colorScheme === "dark"
+                ? "rgba(24,33,47,0.94)"
+                : "#FFFFFF",
+          },
         ]}
       >
         <ActivityIndicator size="small" color={palette.primary} />
@@ -197,9 +221,22 @@ export function SyncButton({
         ]}
       >
         <GlassCard
+          showAccentBar={false}
           style={[
             sizeStyles.button,
-            { alignItems: "center", justifyContent: "center" },
+            {
+              alignItems: "center",
+              justifyContent: "center",
+              backgroundColor:
+                colorScheme === "dark"
+                  ? "rgba(24,33,47,0.94)"
+                  : "#FFFFFF",
+              borderColor: syncNeeded
+                ? palette.primary
+                : colorScheme === "dark"
+                ? "rgba(76,201,255,0.14)"
+                : "rgba(88,204,2,0.16)",
+            },
           ]}
         >
           <View style={{ position: "relative" }}>

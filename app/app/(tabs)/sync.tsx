@@ -1,11 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Text, View, ScrollView, Alert } from "react-native";
-import { router } from "expo-router";
 import { useDatabase } from "../../contexts/DatabaseContext";
 import { PageHeader } from "../../components/ui/PageHeader";
 import { GlassCard } from "../../components/ui/GlassCard";
 import { SyncButton } from "../../components/ui/SyncButton";
-import { Button } from "../../components/ui/Button";
 import { Colors, Spacing, Typography } from "../../constants/theme";
 import { useColorScheme } from "../../hooks/use-color-scheme";
 import { Screen } from "../../components/ui/Screen";
@@ -22,13 +20,9 @@ export default function SyncScreen() {
   const {
     isOnline,
     isSyncing,
-    fullSync,
     getSyncStatus,
     onSyncProgress,
     offSyncProgress,
-    getWords,
-    getFlashcards,
-    getExams,
   } = useDatabase();
 
   const colorScheme = useColorScheme();
@@ -46,12 +40,6 @@ export default function SyncScreen() {
     percentage: number;
   } | null>(null);
 
-  // Load initial data
-  useEffect(() => {
-    loadSyncStatus();
-    loadLocalStats();
-  }, []);
-
   const loadSyncStatus = async () => {
     try {
       const status = await getSyncStatus();
@@ -61,30 +49,38 @@ export default function SyncScreen() {
     }
   };
 
-  const loadLocalStats = async () => {
+  const loadLocalStats = useCallback(async () => {
     try {
-      const [words, flashcards, exams] = await Promise.all([
-        getWords(undefined, undefined, 1), // Just get count
-        getFlashcards(undefined, undefined, false, 1),
-        getExams(undefined, undefined, true, 1),
-      ]);
+      const status = await getSyncStatus();
+      const words = status.entityStatus.words?.count ?? 0;
+      const flashcards = status.entityStatus.flashcards?.count ?? 0;
+      const exams = status.entityStatus.exams?.count ?? 0;
 
-      setLocalStats({
-        words: words.length,
-        flashcards: flashcards.length,
-        exams: exams.length,
-      });
+      setLocalStats({ words, flashcards, exams });
     } catch (error) {
       console.error("Failed to load local stats:", error);
     }
-  };
+  }, [getSyncStatus]);
 
-  const handleSyncProgress = (progress: any) => {
+  const handleSyncProgress = useCallback((nextProgress: any) => {
     setProgress({
-      entity: progress.entity,
-      percentage: progress.percentage,
+      entity: nextProgress.entity,
+      percentage: nextProgress.percentage,
     });
-  };
+  }, []);
+
+  // Load initial data
+  useEffect(() => {
+    void loadSyncStatus();
+    void loadLocalStats();
+  }, [loadLocalStats]);
+
+  useEffect(() => {
+    onSyncProgress(handleSyncProgress);
+    return () => {
+      offSyncProgress(handleSyncProgress);
+    };
+  }, [handleSyncProgress, offSyncProgress, onSyncProgress]);
 
   const handleSyncComplete = async (
     success: boolean,
@@ -131,7 +127,7 @@ export default function SyncScreen() {
 
   return (
     <Screen>
-      <PageHeader title="Data Sync" subtitle="Manage offline content" />
+      <PageHeader title="Data Sync" subtitle="Refresh local learning content from the backend" />
 
       <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
         {/* Connection Status */}
@@ -191,7 +187,7 @@ export default function SyncScreen() {
                   fontWeight: "600",
                 }}
               >
-                Manual Sync
+                Sync now
               </Text>
               <Text
                 style={{
@@ -250,7 +246,7 @@ export default function SyncScreen() {
               marginBottom: Spacing.sm,
             }}
           >
-            Local Database
+            Local content
           </Text>
 
           <View
@@ -329,7 +325,7 @@ export default function SyncScreen() {
                 marginBottom: Spacing.sm,
               }}
             >
-              Entity Sync Status
+              Synced entities
             </Text>
 
             {Object.entries(syncStatus.entityStatus).map(([entity, status]) => {
@@ -405,7 +401,7 @@ export default function SyncScreen() {
                 marginBottom: Spacing.sm,
               }}
             >
-              Last Sync Results
+              Latest sync results
             </Text>
 
             {lastSyncResults.map((result, index) => (
@@ -484,7 +480,7 @@ export default function SyncScreen() {
               marginBottom: Spacing.sm,
             }}
           >
-            How Sync Works
+            How sync works
           </Text>
 
           <Text
@@ -494,10 +490,7 @@ export default function SyncScreen() {
               lineHeight: 22,
             }}
           >
-            • The app stores content locally for offline use{"\n"}• When online,
-            sync downloads the latest content from the server{"\n"}• Sync
-            includes words, flashcards, and exams{"\n"}• Your progress and
-            settings are always saved locally
+            • The app keeps learning content locally for offline use{"\n"}• When online, sync downloads the latest words, flashcards, and exams{"\n"}• The backend controls what content is available in this release{"\n"}• Your local progress stays on the device
           </Text>
         </GlassCard>
 

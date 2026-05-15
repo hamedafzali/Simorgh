@@ -2,9 +2,15 @@ import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useRouter } from "expo-router";
 import { Feather } from "@expo/vector-icons";
-import { Colors, Spacing, Typography } from "../../constants/theme";
+import {
+  Colors,
+  Spacing,
+  Typography,
+  getTextFontFamily,
+} from "../../constants/theme";
 import { useColorScheme } from "../../hooks/use-color-scheme";
 import { usePreferences } from "../../contexts/PreferencesContext";
+import { t } from "../../services/i18n";
 
 type Props = {
   title: string;
@@ -17,7 +23,9 @@ export function Header({ title, subtitle, onBackPress, showBack }: Props) {
   const router = useRouter();
   const colorScheme = useColorScheme();
   const palette = colorScheme === "dark" ? Colors.dark : Colors.light;
-  const { isRTL } = usePreferences();
+  const { isRTL, language } = usePreferences();
+  const regularFont = getTextFontFamily(language, "normal");
+  const boldFont = getTextFontFamily(language, "bold");
   const textAlign = isRTL ? ("right" as const) : ("left" as const);
 
   const backIcon = !isRTL
@@ -51,7 +59,7 @@ export function Header({ title, subtitle, onBackPress, showBack }: Props) {
         <Pressable
           onPress={handleBack}
           accessibilityRole="button"
-          accessibilityLabel="Back"
+          accessibilityLabel={t(language, "common.back")}
           style={({ pressed }) => [
             styles.back,
             {
@@ -67,12 +75,20 @@ export function Header({ title, subtitle, onBackPress, showBack }: Props) {
           <Feather name={backIcon} size={18} color={palette.textPrimary} />
         </Pressable>
       ) : null}
-      <Text style={[styles.title, { color: palette.textPrimary, textAlign }]}>
+      <Text
+        style={[
+          styles.title,
+          { color: palette.textPrimary, textAlign, fontFamily: boldFont },
+        ]}
+      >
         {title}
       </Text>
       {subtitle ? (
         <Text
-          style={[styles.subtitle, { color: palette.textSecondary, textAlign }]}
+          style={[
+            styles.subtitle,
+            { color: palette.textSecondary, textAlign, fontFamily: regularFont },
+          ]}
         >
           {subtitle}
         </Text>

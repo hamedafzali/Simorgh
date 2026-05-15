@@ -1,38 +1,42 @@
+import type { AppLanguage } from "../contexts/PreferencesContext";
+
 // Basic theme for splash screen
 export const Colors = {
   light: {
-    primary: "#1F3A5F",
-    primaryLight: "#2F5D8A",
-    accentGreen: "#2FA36B",
-    accentGreenSoft: "#E6F4EE",
-    background: "#F7F9FC",
+    primary: "#58CC02",
+    primaryLight: "#7DDB39",
+    accentGreen: "#58CC02",
+    accentGreenSoft: "#EAF8D8",
+    background: "#F7F7F3",
     surface: "#FFFFFF",
-    borderLight: "#E3E8EF",
-    textPrimary: "#1E293B",
-    textSecondary: "#64748B",
-    textMuted: "#94A3B8",
+    borderLight: "#E5E7EB",
+    textPrimary: "#1F2937",
+    textSecondary: "#6B7280",
+    textMuted: "#9CA3AF",
     white: "#FFFFFF",
+    textOnPrimary: "#FFFFFF",
     success: "#22C55E",
     warning: "#F59E0B",
     error: "#EF4444",
-    info: "#3B82F6",
+    info: "#1CB0F6",
   },
   dark: {
-    primary: "#2F5D8A",
-    primaryLight: "#1F3A5F",
-    accentGreen: "#2FA36B",
-    accentGreenSoft: "#163427",
-    background: "#0F172A",
-    surface: "#111B2E",
-    borderLight: "#22304A",
-    textPrimary: "#F8FAFC",
+    primary: "#7DDB39",
+    primaryLight: "#9EEA66",
+    accentGreen: "#7DDB39",
+    accentGreenSoft: "#22351A",
+    background: "#111827",
+    surface: "#18212F",
+    borderLight: "#2C3748",
+    textPrimary: "#F9FAFB",
     textSecondary: "#CBD5E1",
     textMuted: "#94A3B8",
     white: "#FFFFFF",
+    textOnPrimary: "#0F172A",
     success: "#22C55E",
     warning: "#F59E0B",
     error: "#EF4444",
-    info: "#3B82F6",
+    info: "#4CC9FF",
   },
 };
 
@@ -63,8 +67,30 @@ export const Typography = {
   fontFamily: {
     primary: "Inter",
     system: "system-ui",
+    faRegular: "Vazirmatn_400Regular",
+    faSemiBold: "Vazirmatn_600SemiBold",
+    faBold: "Vazirmatn_700Bold",
   },
 };
+
+export function getTextFontFamily(
+  language: AppLanguage,
+  weight: "normal" | "semibold" | "bold" = "normal"
+) {
+  if (language !== "fa") {
+    return undefined;
+  }
+
+  if (weight === "bold") {
+    return Typography.fontFamily.faBold;
+  }
+
+  if (weight === "semibold") {
+    return Typography.fontFamily.faSemiBold;
+  }
+
+  return Typography.fontFamily.faRegular;
+}
 
 export const BorderRadius = {
   full: 9999,
@@ -77,15 +103,15 @@ export const BorderRadius = {
 export const Shadows = {
   card: {
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 8 },
+    shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.05,
-    shadowRadius: 24,
+    shadowRadius: 14,
     elevation: 2,
   },
   button: {
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
-    shadowRadius: 12,
+    shadowOpacity: 0.14,
+    shadowRadius: 10,
     elevation: 2,
   },
 };

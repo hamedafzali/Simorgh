@@ -1,10 +1,13 @@
 const express = require("express");
 const router = express.Router();
 const DatabaseVersion = require("../../database/models/DatabaseVersion");
+const { getSettings } = require("../services/admin-settings-store");
 
 // Get current database version
 router.get("/current", async (req, res) => {
   try {
+    const settings = await getSettings();
+    const featureFlags = settings.featureFlags || {};
     const currentVersion = await DatabaseVersion.getLatestPublished();
 
     if (!currentVersion) {
@@ -17,6 +20,7 @@ router.get("/current", async (req, res) => {
         releaseDate: new Date(),
         minAppVersion: "1.0.0",
         dataStats: { words: 0, flashcards: 0, exams: 0, exercises: 0 },
+        featureFlags,
       });
     }
 
@@ -30,6 +34,10 @@ router.get("/current", async (req, res) => {
       releaseDate: currentVersion.releaseDate,
       minAppVersion: currentVersion.minAppVersion,
       dataStats: currentVersion.dataStats,
+      featureFlags:
+        Object.keys(currentVersion.featureFlags || {}).length > 0
+          ? currentVersion.featureFlags
+          : featureFlags,
     });
   } catch (error) {
     console.error("Error getting current database version:", error);
@@ -63,6 +71,7 @@ router.post("/create", async (req, res) => {
       changelog,
       minAppVersion,
       dataStats,
+      featureFlags,
     } = req.body;
 
     // Validate required fields
@@ -98,6 +107,7 @@ router.post("/create", async (req, res) => {
         exams: 0,
         exercises: 0,
       },
+      featureFlags: featureFlags || (await getSettings()).featureFlags || {},
       isPublished: false, // Default to unpublished
       isForced: false,
     });
@@ -117,6 +127,7 @@ router.post("/create", async (req, res) => {
         releaseDate: newVersion.releaseDate,
         minAppVersion: newVersion.minAppVersion,
         dataStats: newVersion.dataStats,
+        featureFlags: newVersion.featureFlags,
       },
     });
   } catch (error) {
@@ -158,6 +169,7 @@ router.post("/publish/:versionId", async (req, res) => {
         releaseDate: version.releaseDate,
         minAppVersion: version.minAppVersion,
         dataStats: version.dataStats,
+        featureFlags: version.featureFlags,
       },
     });
   } catch (error) {
@@ -171,6 +183,7 @@ router.get("/check-update/:currentVersion", async (req, res) => {
   try {
     const { currentVersion } = req.params;
     const { appVersion } = req.query; // Optional: current app version
+    const settings = await getSettings();
 
     // Get latest published version
     const latestVersion = await DatabaseVersion.getLatestPublished();
@@ -211,6 +224,10 @@ router.get("/check-update/:currentVersion", async (req, res) => {
         releaseDate: latestVersion.releaseDate,
         minAppVersion: latestVersion.minAppVersion,
         dataStats: latestVersion.dataStats,
+        featureFlags:
+          Object.keys(latestVersion.featureFlags || {}).length > 0
+            ? latestVersion.featureFlags
+            : settings.featureFlags || {},
       },
       appVersionCompatible,
       reason: !hasUpdate

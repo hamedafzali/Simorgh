@@ -11,11 +11,13 @@ import {
 import {
   BorderRadius,
   Colors,
+  getTextFontFamily,
   Shadows,
   Spacing,
   Typography,
 } from "../../constants/theme";
 import { useColorScheme } from "../../hooks/use-color-scheme";
+import { usePreferences } from "../../contexts/PreferencesContext";
 
 type Variant = "primary" | "secondary";
 
@@ -40,6 +42,8 @@ export function Button({
 }: Props) {
   const colorScheme = useColorScheme();
   const palette = colorScheme === "dark" ? Colors.dark : Colors.light;
+  const { language } = usePreferences();
+  const semiboldFont = getTextFontFamily(language, "semibold");
 
   const isDisabled = disabled || loading;
 
@@ -51,7 +55,10 @@ export function Button({
           shadowColor: palette.primary,
         }
       : {
-          backgroundColor: "transparent",
+          backgroundColor:
+            colorScheme === "dark"
+              ? "rgba(255,255,255,0.03)"
+              : "rgba(255,255,255,0.72)",
           borderColor: palette.borderLight,
           shadowColor: "transparent",
         };
@@ -79,7 +86,9 @@ export function Button({
       {loading ? (
         <ActivityIndicator color={labelStyle.color} />
       ) : (
-        <Text style={[styles.label, labelStyle, textStyle]}>{title}</Text>
+        <Text style={[styles.label, labelStyle, { fontFamily: semiboldFont }, textStyle]}>
+          {title}
+        </Text>
       )}
     </Pressable>
   );
@@ -104,7 +113,7 @@ const styles = StyleSheet.create({
     transform: [{ scale: 0.98 }],
   },
   secondaryPressed: {
-    opacity: 0.9,
+    opacity: 0.95,
   },
   disabled: {
     opacity: 0.5,

@@ -1,5 +1,5 @@
-import React from "react";
-import { Text, View } from "react-native";
+import React, { useState } from "react";
+import { Pressable, Text, View } from "react-native";
 import { useRouter } from "expo-router";
 import { Colors, Spacing, Typography } from "../../constants/theme";
 import { useColorScheme } from "../../hooks/use-color-scheme";
@@ -10,14 +10,67 @@ import { Screen } from "../../components/ui/Screen";
 import { ListItem } from "../../components/ui/ListItem";
 import { Chevron } from "../../components/ui/Chevron";
 import { documentGuides, germanyJobs } from "../../services/germany-data";
+import { usePreferences } from "../../contexts/PreferencesContext";
+import FeatureGate from "../../components/FeatureGate";
+
+// Translate function
+const translate = async (text: string, from = "en", to = "de") => {
+  const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(
+    text,
+  )}&langpair=${from}|${to}`;
+
+  const res = await fetch(url);
+  const data = await res.json();
+
+  return data.responseData.translatedText;
+};
+
+type JobTranslation = {
+  title: string;
+  subtitle: string;
+};
 
 export default function JobsTab() {
   const router = useRouter();
   const colorScheme = useColorScheme();
   const palette = colorScheme === "dark" ? Colors.dark : Colors.light;
+  const { language } = usePreferences();
+  const [jobTranslations, setJobTranslations] = useState<
+    Record<string, JobTranslation>
+  >({});
+  const [translatingJobIds, setTranslatingJobIds] = useState<
+    Record<string, true>
+  >({});
+
+  const translateJob = async (job: (typeof germanyJobs)[number]) => {
+    if (language !== "fa") return;
+    if (translatingJobIds[job.id]) return;
+
+    setTranslatingJobIds((prev) => ({ ...prev, [job.id]: true }));
+    try {
+      const translatedTitle = await translate(job.title, "en", "fa");
+      const originalSubtitle = `${job.company} · ${job.city} · ${job.type} · ${job.level}`;
+      const translatedSubtitle = await translate(originalSubtitle, "en", "fa");
+
+      setJobTranslations((prev) => ({
+        ...prev,
+        [job.id]: {
+          title: translatedTitle,
+          subtitle: translatedSubtitle,
+        },
+      }));
+    } finally {
+      setTranslatingJobIds((prev) => {
+        const next = { ...prev };
+        delete next[job.id];
+        return next;
+      });
+    }
+  };
 
   return (
-    <Screen>
+    <FeatureGate feature="jobs" title="Jobs" subtitle="Find opportunities in Germany">
+      <Screen>
       <PageHeader
         title="Jobs"
         subtitle="Find opportunities in Germany"
@@ -41,15 +94,58 @@ export default function JobsTab() {
         <Button title="Create alert" variant="secondary" onPress={() => {}} />
       </Card>
 
-      {germanyJobs.map((job) => (
-        <ListItem
-          key={job.id}
-          title={`${job.title}`}
-          subtitle={`${job.company} · ${job.city} · ${job.type} · ${job.level}`}
-          onPress={() => router.push(`/job/${job.id}` as any)}
-          right={<Chevron />}
-        />
-      ))}
+      {germanyJobs.map((job) =>
+        (() => {
+          const translated = jobTranslations[job.id];
+          const title = translated?.title ?? job.title;
+          const subtitle =
+            translated?.subtitle ??
+            `${job.company} · ${job.city} · ${job.type} · ${job.level}`;
+          const isTranslating = !!translatingJobIds[job.id];
+
+          return (
+            <ListItem
+              key={job.id}
+              title={title}
+              subtitle={subtitle}
+              onPress={() => router.push(`/job/${job.id}` as any)}
+              right={
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  {language === "fa" ? (
+                    <Pressable
+                      onPress={(e: any) => {
+                        e?.stopPropagation?.();
+                        void translateJob(job);
+                      }}
+                      style={({ pressed }) => ({
+                        paddingHorizontal: 10,
+                        paddingVertical: 6,
+                        borderRadius: 10,
+                        borderWidth: 1,
+                        borderColor: palette.borderLight,
+                        backgroundColor: palette.surface,
+                        opacity: pressed ? 0.78 : 1,
+                        marginRight: Spacing.sm,
+                      })}
+                    >
+                      <Text
+                        style={{
+                          fontSize: 12,
+                          color: palette.textPrimary,
+                          fontWeight: "600",
+                        }}
+                      >
+                        {isTranslating ? "..." : "ترجمه"}
+                      </Text>
+                    </Pressable>
+                  ) : null}
+                  <Chevron />
+                </View>
+              }
+            />
+          );
+        })(),
+      )}
 
       <Card>
         <Text
@@ -84,6 +180,7 @@ export default function JobsTab() {
             />
           ))}
       </Card>
-    </Screen>
+      </Screen>
+    </FeatureGate>
   );
 }

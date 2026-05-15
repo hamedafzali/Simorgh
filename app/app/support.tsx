@@ -5,6 +5,7 @@ import { Colors, Spacing, Typography } from "../constants/theme";
 import { useColorScheme } from "../hooks/use-color-scheme";
 import { Card } from "../components/ui/Card";
 import { PageHeader } from "../components/ui/PageHeader";
+import FeatureGate from "../components/FeatureGate";
 import { Screen } from "../components/ui/Screen";
 import {
   getSupportResources,
@@ -21,7 +22,8 @@ export default function SupportScreen() {
   const resources = getSupportResources(code);
 
   return (
-    <Screen>
+    <FeatureGate feature="support">
+      <Screen>
       <PageHeader
         title="Support Resources"
         subtitle={country ? country.name : "Global"}
@@ -52,6 +54,7 @@ export default function SupportScreen() {
           </Text>
         </Card>
       ))}
-    </Screen>
+      </Screen>
+    </FeatureGate>
   );
 }

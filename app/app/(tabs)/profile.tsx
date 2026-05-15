@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Text, View } from "react-native";
 import { useRouter } from "expo-router";
 import { Colors, Spacing, Typography } from "../../constants/theme";
@@ -7,28 +7,28 @@ import { Card } from "../../components/ui/Card";
 import { Header } from "../../components/ui/Header";
 import { ListItem } from "../../components/ui/ListItem";
 import { Screen } from "../../components/ui/Screen";
-import { usePreferences } from "../../contexts/PreferencesContext";
 import { Chevron } from "../../components/ui/Chevron";
+import { usePreferences } from "../../contexts/PreferencesContext";
+import { useFeatureFlags } from "../../contexts/FeatureFlagsContext";
 
 export default function ProfileTab() {
   const router = useRouter();
   const colorScheme = useColorScheme();
   const palette = colorScheme === "dark" ? Colors.dark : Colors.light;
-  const { language, direction, setLanguage, setDirection } = usePreferences();
+  const { language, direction, location } = usePreferences();
+  const { featureFlags } = useFeatureFlags();
 
-  function cycleLanguage() {
-    const next = language === "fa" ? "de" : language === "de" ? "en" : "fa";
-    setLanguage(next);
-    setDirection(next === "fa" ? "rtl" : "ltr");
-  }
+  const enabledFeatures = useMemo(
+    () => Object.entries(featureFlags).filter(([, enabled]) => enabled).length,
+    [featureFlags]
+  );
 
-  function toggleDirection() {
-    setDirection(direction === "rtl" ? "ltr" : "rtl");
-  }
+  const languageLabel =
+    language === "fa" ? "فارسی" : language === "de" ? "Deutsch" : "English";
 
   return (
     <Screen>
-      <Header title="Profile" subtitle="Settings and learning overview" />
+      <Header title="Profile" subtitle="Your preferences and rollout status" />
 
       <Card>
         <Text
@@ -38,7 +38,7 @@ export default function ProfileTab() {
             color: palette.textPrimary,
           }}
         >
-          Guest
+          Simorgh account
         </Text>
         <Text
           style={{
@@ -48,44 +48,38 @@ export default function ProfileTab() {
             lineHeight: 22,
           }}
         >
-          Authentication is planned but not fully implemented.
+          This MVP currently runs in guest mode. Preferences, rollout flags, and offline content stay available locally.
         </Text>
       </Card>
 
       <ListItem
+        title="Settings"
+        subtitle="Language, location, sync, and enabled features"
+        onPress={() => router.push("/settings" as any)}
+        right={<Chevron />}
+      />
+      <ListItem
         title="Language"
-        subtitle={
-          language === "fa"
-            ? "فارسی"
-            : language === "de"
-            ? "Deutsch"
-            : "English"
-        }
-        onPress={cycleLanguage}
+        subtitle={languageLabel}
+        onPress={() => router.push("/settings" as any)}
         right={<Chevron />}
       />
       <ListItem
         title="Direction"
         subtitle={direction.toUpperCase()}
-        onPress={toggleDirection}
-        right={<Chevron />}
-      />
-      <ListItem
-        title="Location"
-        subtitle="City and local content"
         onPress={() => router.push("/settings" as any)}
         right={<Chevron />}
       />
       <ListItem
-        title="Notifications"
-        subtitle="Study reminders and achievements"
-        onPress={() => {}}
+        title="Location"
+        subtitle={location?.city ? `${location.city}${location.state ? `, ${location.state}` : ""}` : "Set your city in Settings"}
+        onPress={() => router.push("/settings" as any)}
         right={<Chevron />}
       />
       <ListItem
-        title="Offline storage"
-        subtitle="SQLite sync (planned)"
-        onPress={() => {}}
+        title="Enabled features"
+        subtitle={`${enabledFeatures} features currently enabled from backend sync`}
+        onPress={() => router.push("/settings" as any)}
         right={<Chevron />}
       />
 
@@ -99,7 +93,7 @@ export default function ProfileTab() {
             lineHeight: 22,
           }}
         >
-          Next step: persist preferences (AsyncStorage) and connect i18n.
+          Use Settings as the main control panel. Profile is now a quick overview of your current app state.
         </Text>
       </Card>
     </Screen>

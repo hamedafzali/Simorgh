@@ -85,6 +85,29 @@ const DatabaseContext = createContext<DatabaseContextType | undefined>(
   undefined
 );
 
+function parseJsonArray(value: unknown): any[] {
+  if (Array.isArray(value)) {
+    return value;
+  }
+
+  if (typeof value !== "string" || !value.trim()) {
+    return [];
+  }
+
+  try {
+    const parsed = JSON.parse(value);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    // Some legacy rows store plain text instead of JSON.
+    return [value];
+  }
+}
+
+function parseJsonObjectArray<T>(value: unknown): T[] {
+  const parsed = parseJsonArray(value);
+  return parsed as T[];
+}
+
 // Provider props
 interface DatabaseProviderProps {
   children: ReactNode;
@@ -224,10 +247,10 @@ export function DatabaseProvider({ children }: DatabaseProviderProps) {
 
     return results.map((row) => ({
       ...row,
-      examples: JSON.parse(row.examples || "[]"),
-      translations: JSON.parse(row.translations || "[]"),
-      definitions: JSON.parse(row.definitions || "[]"),
-      tags: JSON.parse(row.tags || "[]"),
+      examples: parseJsonArray(row.examples),
+      translations: parseJsonObjectArray(row.translations),
+      definitions: parseJsonObjectArray(row.definitions),
+      tags: parseJsonArray(row.tags),
     }));
   };
 
@@ -303,7 +326,7 @@ export function DatabaseProvider({ children }: DatabaseProviderProps) {
 
     return results.map((row) => ({
       ...row,
-      questions: JSON.parse(row.questions || "[]"),
+      questions: parseJsonArray(row.questions),
       isActive: row.isActive === 1,
     }));
   };
@@ -319,10 +342,10 @@ export function DatabaseProvider({ children }: DatabaseProviderProps) {
 
     return {
       ...result,
-      examples: JSON.parse(result.examples || "[]"),
-      translations: JSON.parse(result.translations || "[]"),
-      definitions: JSON.parse(result.definitions || "[]"),
-      tags: JSON.parse(result.tags || "[]"),
+      examples: parseJsonArray(result.examples),
+      translations: parseJsonObjectArray(result.translations),
+      definitions: parseJsonObjectArray(result.definitions),
+      tags: parseJsonArray(result.tags),
     };
   };
 
@@ -345,7 +368,7 @@ export function DatabaseProvider({ children }: DatabaseProviderProps) {
 
     return {
       ...result,
-      questions: JSON.parse(result.questions || "[]"),
+      questions: parseJsonArray(result.questions),
       isActive: result.isActive === 1,
     };
   };

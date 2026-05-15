@@ -6,6 +6,7 @@ import { useColorScheme } from "../hooks/use-color-scheme";
 import { Card } from "../components/ui/Card";
 import { PageHeader } from "../components/ui/PageHeader";
 import { ListItem } from "../components/ui/ListItem";
+import FeatureGate from "../components/FeatureGate";
 import { Screen } from "../components/ui/Screen";
 import { Chevron } from "../components/ui/Chevron";
 import { documentGuides } from "../services/germany-data";
@@ -16,7 +17,8 @@ export default function DocumentsScreen() {
   const palette = colorScheme === "dark" ? Colors.dark : Colors.light;
 
   return (
-    <Screen>
+    <FeatureGate feature="documents">
+      <Screen>
       <PageHeader title="Documents" subtitle="Forms and guidance" />
 
       <Card>
@@ -40,6 +42,7 @@ export default function DocumentsScreen() {
           right={<Chevron />}
         />
       ))}
-    </Screen>
+      </Screen>
+    </FeatureGate>
   );
 }

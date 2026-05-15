@@ -5,6 +5,7 @@ import { Colors, Spacing, Typography } from "../constants/theme";
 import { useColorScheme } from "../hooks/use-color-scheme";
 import { Card } from "../components/ui/Card";
 import { PageHeader } from "../components/ui/PageHeader";
+import FeatureGate from "../components/FeatureGate";
 import { Screen } from "../components/ui/Screen";
 import { getJson, setJson } from "../services/localStore";
 import {
@@ -95,7 +96,8 @@ export default function DocumentsTrackerScreen() {
   }
 
   return (
-    <Screen>
+    <FeatureGate feature="documents">
+      <Screen>
       <PageHeader
         title="Document Tracker"
         subtitle={country ? country.name : "Global"}
@@ -236,6 +238,7 @@ export default function DocumentsTrackerScreen() {
           </View>
         </Pressable>
       </Card>
-    </Screen>
+      </Screen>
+    </FeatureGate>
   );
 }

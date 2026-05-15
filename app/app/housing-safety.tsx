@@ -5,6 +5,7 @@ import { Colors, Spacing, Typography } from "../constants/theme";
 import { useColorScheme } from "../hooks/use-color-scheme";
 import { Card } from "../components/ui/Card";
 import { PageHeader } from "../components/ui/PageHeader";
+import FeatureGate from "../components/FeatureGate";
 import { Screen } from "../components/ui/Screen";
 import {
   getHousingChecklist,
@@ -21,7 +22,8 @@ export default function HousingSafetyScreen() {
   const checklist = getHousingChecklist(code);
 
   return (
-    <Screen>
+    <FeatureGate feature="housing">
+      <Screen>
       <PageHeader
         title="Housing Safety"
         subtitle={country ? country.name : "Global"}
@@ -76,6 +78,7 @@ export default function HousingSafetyScreen() {
           </Text>
         ))}
       </Card>
-    </Screen>
+      </Screen>
+    </FeatureGate>
   );
 }

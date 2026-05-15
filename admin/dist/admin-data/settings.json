@@ -1,0 +1,65 @@
+{
+  "general": {
+    "appName": "Simorgh",
+    "version": "1.0.0",
+    "maxUsers": 10000,
+    "maintenance": false,
+    "debugMode": false
+  },
+  "database": {
+    "host": "localhost",
+    "port": 27017,
+    "name": "simorgh",
+    "autoBackup": true,
+    "backupInterval": 24,
+    "maxBackups": 10
+  },
+  "security": {
+    "jwtSecret": "your-secret-key",
+    "jwtExpiry": 24,
+    "rateLimit": true,
+    "maxRequests": 100,
+    "corsEnabled": true,
+    "allowedOrigins": [
+      "http://localhost:3000"
+    ]
+  },
+  "notifications": {
+    "emailEnabled": false,
+    "smtpHost": "",
+    "smtpPort": 587,
+    "smtpUser": "",
+    "smtpPass": "",
+    "pushEnabled": true,
+    "pushKey": ""
+  },
+  "analytics": {
+    "enabled": true,
+    "trackingCode": "",
+    "anonymizeData": true,
+    "retentionDays": 90
+  },
+  "featureFlags": {
+    "learning": true,
+    "community": false,
+    "jobs": true,
+    "chat": true,
+    "events": true,
+    "documents": false,
+    "countries": false,
+    "checklist": false,
+    "deadlines": false,
+    "forms": false,
+    "emergency": false,
+    "phrasebook": false,
+    "reminders": false,
+    "school": false,
+    "support": false,
+    "housing": true,
+    "tax": false,
+    "services": false,
+    "guides": false,
+    "locations": false,
+    "timeline": false
+  }
+}

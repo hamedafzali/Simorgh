@@ -1,208 +1,192 @@
-import { StyleSheet, ViewStyle } from "react-native";
+import { StyleSheet } from "react-native";
 import { Spacing, Typography } from "./constants/theme";
 
-export type ColorSchemeName = "dark" | "light";
-
 export const homeStyles = StyleSheet.create({
-  topCard: {
-    marginBottom: Spacing.md,
-  },
-  menuCard: {
-    marginBottom: Spacing.md,
-  },
-  topRow: {
+  topBar: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     gap: Spacing.md,
+    marginBottom: Spacing.md,
   },
-  topLeft: {
+  brandBlock: {
     flex: 1,
   },
-  topRight: {
-    flex: 1,
-    alignItems: "flex-end",
+  brandTitle: {
+    fontSize: 34,
+    fontWeight: Typography.fontWeight.bold,
+    lineHeight: 40,
+    letterSpacing: -0.4,
   },
-  homeActions: {
-    marginTop: Spacing.sm,
+  brandSubtitle: {
+    marginTop: 4,
+    fontSize: Typography.sizes.bodySecondary,
+    lineHeight: 20,
+  },
+  brandMetaRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: Spacing.sm,
+    marginTop: 6,
+  },
+  brandMetaText: {
+    fontSize: Typography.sizes.bodySecondary,
+    lineHeight: 20,
+  },
+  topBarActions: {
     flexDirection: "row",
     alignItems: "center",
     gap: Spacing.sm,
   },
   iconButton: {
-    width: 38,
-    height: 38,
-    borderRadius: 12,
-    borderWidth: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  divider: {
-    width: 1,
-    height: 44,
-    opacity: 0.7,
-  },
-  topKicker: {
-    fontSize: Typography.sizes.caption,
-    fontWeight: Typography.fontWeight.semibold,
-    letterSpacing: 0.8,
-    textTransform: "uppercase",
-  },
-  topPrimary: {
-    marginTop: Spacing.xs,
-    fontSize: Typography.sizes.headingL,
-    fontWeight: Typography.fontWeight.bold,
-    lineHeight: 26,
-  },
-  persianDate: {
-    marginTop: 2,
-    fontSize: Typography.sizes.bodySecondary,
-    lineHeight: 20,
-  },
-  weatherRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: Spacing.sm,
-  },
-  temp: {
-    fontSize: Typography.sizes.headingL,
-    fontWeight: Typography.fontWeight.bold,
-    lineHeight: 26,
-  },
-  weatherHint: {
-    marginTop: 2,
-    fontSize: Typography.sizes.bodySecondary,
-    lineHeight: 20,
-  },
-  menuGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    marginTop: Spacing.sm,
-  },
-  menuItemBase: {
-    width: "33.3333%",
-    padding: Spacing.sm,
-    borderRadius: 16,
-    borderWidth: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    minHeight: 92,
-    overflow: "hidden",
-  },
-  menuPressed: {
-    transform: [{ translateY: 1 }, { scale: 0.992 }],
-  },
-  menuHighlight: {
-    position: "absolute",
-    top: 1,
-    left: 1,
-    right: 1,
-    height: 2,
-    borderRadius: 16,
-    opacity: 0.55,
-  },
-  menuShade: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    bottom: 0,
-    height: 18,
-    opacity: 0.18,
-  },
-  menuIconBase: {
-    width: 44,
-    height: 44,
+    width: 40,
+    height: 40,
     borderRadius: 14,
+    borderWidth: 1,
     alignItems: "center",
     justifyContent: "center",
-    borderWidth: 1,
   },
-  menuLabel: {
-    marginTop: Spacing.sm,
+  primaryCard: {
+    marginBottom: Spacing.md,
+    shadowColor: "#58CC02",
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.12,
+    shadowRadius: 18,
+    elevation: 3,
+  },
+  primaryEyebrow: {
     fontSize: Typography.sizes.caption,
     fontWeight: Typography.fontWeight.semibold,
-    textAlign: "center",
+    letterSpacing: 0.3,
   },
-  widgetGrid: {
+  primaryTitle: {
+    marginTop: Spacing.sm,
+    fontSize: 30,
+    fontWeight: Typography.fontWeight.bold,
+    lineHeight: 36,
+  },
+  primarySubtitle: {
+    marginTop: Spacing.xs,
+    fontSize: Typography.sizes.bodySecondary,
+    lineHeight: 22,
+  },
+  primaryButton: {
+    marginTop: Spacing.lg,
+    minHeight: 52,
+    borderRadius: 18,
+    paddingHorizontal: 18,
+    paddingVertical: 14,
     flexDirection: "row",
-    gap: Spacing.sm,
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  primaryButtonText: {
+    fontSize: Typography.sizes.body,
+    fontWeight: Typography.fontWeight.semibold,
+  },
+  sectionCard: {
     marginBottom: Spacing.md,
   },
-  col: {
-    flex: 1,
-    gap: Spacing.sm,
+  sectionHeader: {
+    marginBottom: Spacing.md,
+  },
+  sectionHeaderCompact: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: Spacing.md,
+    marginBottom: Spacing.md,
   },
   sectionTitle: {
     fontSize: Typography.sizes.headingM,
     fontWeight: Typography.fontWeight.bold,
-    marginBottom: Spacing.xs,
   },
   sectionHint: {
-    fontSize: Typography.sizes.bodySecondary,
-    lineHeight: 22,
-    marginBottom: Spacing.md,
+    marginTop: 4,
+    fontSize: Typography.sizes.bodySmall,
+    lineHeight: 18,
+    maxWidth: 280,
   },
-  quickRow: {
-    flexDirection: "row",
+  sectionLink: {
+    fontSize: Typography.sizes.bodySmall,
+    fontWeight: Typography.fontWeight.semibold,
+  },
+  pathStack: {
     gap: Spacing.sm,
-    marginBottom: Spacing.sm,
   },
-  quickItem: {
+  pathItemPrimary: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderWidth: 1,
+    borderRadius: 18,
+    padding: 16,
+  },
+  pathItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderWidth: 1,
+    borderRadius: 16,
+    padding: 14,
+  },
+  pathIconPrimary: {
+    width: 48,
+    height: 48,
+    borderRadius: 16,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: Spacing.md,
+  },
+  pathIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 14,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: Spacing.md,
+  },
+  pathCopy: {
     flex: 1,
+    paddingRight: Spacing.sm,
+  },
+  pathTitle: {
+    fontSize: Typography.sizes.body,
+    fontWeight: Typography.fontWeight.semibold,
+  },
+  pathSubtitle: {
+    marginTop: 4,
+    fontSize: Typography.sizes.bodySmall,
+    lineHeight: 18,
+  },
+  pathBadge: {
+    minWidth: 28,
+    height: 28,
+    borderRadius: 14,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 8,
+  },
+  pathBadgeText: {
+    fontSize: Typography.sizes.bodySmall,
+    fontWeight: Typography.fontWeight.semibold,
+  },
+  pinnedGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: Spacing.sm,
+  },
+  pinnedItem: {
+    minWidth: "48%",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.sm,
+    borderWidth: 1,
+    borderRadius: 16,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+  },
+  pinnedText: {
+    flex: 1,
+    fontSize: Typography.sizes.bodySecondary,
+    fontWeight: Typography.fontWeight.semibold,
   },
 });
-
-export function getHomeMenuItemStyle(options: {
-  colorScheme: ColorSchemeName;
-  pressed: boolean;
-}): ViewStyle {
-  const { colorScheme, pressed } = options;
-
-  const borderColor =
-    colorScheme === "dark"
-      ? "rgba(255,255,255,0.14)"
-      : "rgba(255,255,255,0.55)";
-
-  const backgroundColor =
-    colorScheme === "dark"
-      ? "rgba(255,255,255,0.06)"
-      : "rgba(255,255,255,0.26)";
-
-  return {
-    borderColor,
-    backgroundColor,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 12 },
-    shadowOpacity: colorScheme === "dark" ? 0.24 : 0.12,
-    shadowRadius: 22,
-    elevation: 3,
-    opacity: pressed ? 0.96 : 1,
-  };
-}
-
-export function getHomeMenuHighlightColor(colorScheme: ColorSchemeName) {
-  return colorScheme === "dark"
-    ? "rgba(255,255,255,0.10)"
-    : "rgba(255,255,255,0.55)";
-}
-
-export function getHomeMenuShadeColor(colorScheme: ColorSchemeName) {
-  return colorScheme === "dark" ? "rgba(0,0,0,0.20)" : "rgba(31,58,95,0.10)";
-}
-
-export function getHomeMenuIconStyle(options: {
-  colorScheme: ColorSchemeName;
-}): ViewStyle {
-  const { colorScheme } = options;
-
-  return {
-    backgroundColor:
-      colorScheme === "dark"
-        ? "rgba(255,255,255,0.08)"
-        : "rgba(255,255,255,0.34)",
-    borderColor:
-      colorScheme === "dark"
-        ? "rgba(255,255,255,0.16)"
-        : "rgba(255,255,255,0.55)",
-  };
-}
