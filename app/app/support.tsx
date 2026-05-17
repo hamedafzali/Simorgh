@@ -11,11 +11,14 @@ import {
   getSupportResources,
   supportedCountries,
 } from "../services/countries-data";
+import { usePreferences } from "../contexts/PreferencesContext";
+import { fa } from "../services/l10n";
 
 export default function SupportScreen() {
   const params = useLocalSearchParams<{ country?: string }>();
   const code = (params.country || "DE").toUpperCase();
   const country = supportedCountries.find((c) => c.code === code);
+  const { language } = usePreferences();
 
   const colorScheme = useColorScheme();
   const palette = colorScheme === "dark" ? Colors.dark : Colors.light;
@@ -39,7 +42,7 @@ export default function SupportScreen() {
               marginBottom: Spacing.xs,
             }}
           >
-            {resource.name}
+            {fa(resource.nameFa, resource.name, language)}
           </Text>
           <Text
             style={{
@@ -48,8 +51,8 @@ export default function SupportScreen() {
               lineHeight: 22,
             }}
           >
-            {resource.category}
-            {"\n"}{resource.summary}
+            {fa(resource.categoryFa, resource.category, language)}
+            {"\n"}{fa(resource.summaryFa, resource.summary, language)}
             {resource.contact ? `\nContact: ${resource.contact}` : ""}
           </Text>
         </Card>

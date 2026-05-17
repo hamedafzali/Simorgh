@@ -8,11 +8,15 @@ import { Header } from "../../components/ui/Header";
 import { Screen } from "../../components/ui/Screen";
 import { Button } from "../../components/ui/Button";
 import { germanyGuides } from "../../services/germany-data";
+import { usePreferences } from "../../contexts/PreferencesContext";
+import { fa, faArr } from "../../services/l10n";
+import { t } from "../../services/i18n";
 
 export default function GuideDetailScreen() {
   const router = useRouter();
   const params = useLocalSearchParams<{ id?: string }>();
   const id = params.id;
+  const { language } = usePreferences();
 
   const colorScheme = useColorScheme();
   const palette = colorScheme === "dark" ? Colors.dark : Colors.light;
@@ -26,7 +30,7 @@ export default function GuideDetailScreen() {
     <Screen>
       <Header
         title="Guide"
-        subtitle={guide ? guide.title : "Not found"}
+        subtitle={guide ? fa(guide.titleFa, guide.title, language) : "Not found"}
         showBack
       />
 
@@ -59,7 +63,7 @@ export default function GuideDetailScreen() {
                 marginBottom: Spacing.xs,
               }}
             >
-              {guide.title}
+              {fa(guide.titleFa, guide.title, language)}
             </Text>
             <Text
               style={{
@@ -68,7 +72,7 @@ export default function GuideDetailScreen() {
                 lineHeight: 22,
               }}
             >
-              {guide.summary}
+              {fa(guide.summaryFa, guide.summary, language)}
             </Text>
           </Card>
 
@@ -81,9 +85,9 @@ export default function GuideDetailScreen() {
                 marginBottom: Spacing.sm,
               }}
             >
-              Steps
+              {t(language, "settlement.steps")}
             </Text>
-            {guide.steps.map((step) => (
+            {faArr(guide.stepsFa, guide.steps, language).map((step) => (
               <Text
                 key={step}
                 style={{
@@ -106,9 +110,9 @@ export default function GuideDetailScreen() {
                 marginBottom: Spacing.sm,
               }}
             >
-              Checklist
+              {t(language, "settlement.checklist")}
             </Text>
-            {guide.checklist.map((item) => (
+            {faArr(guide.checklistFa, guide.checklist, language).map((item) => (
               <Text
                 key={item}
                 style={{
@@ -132,9 +136,9 @@ export default function GuideDetailScreen() {
                   marginBottom: Spacing.sm,
                 }}
               >
-                {section.title}
+                {fa(section.titleFa, section.title, language)}
               </Text>
-              {section.bullets.map((bullet) => (
+              {faArr(section.bulletsFa, section.bullets, language).map((bullet) => (
                 <Text
                   key={bullet}
                   style={{
@@ -159,7 +163,7 @@ export default function GuideDetailScreen() {
                   marginBottom: Spacing.sm,
                 }}
               >
-                Resources
+                {language === "fa" ? "منابع" : "Resources"}
               </Text>
               {guide.resources.map((resource) => (
                 <Text

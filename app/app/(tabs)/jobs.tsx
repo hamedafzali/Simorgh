@@ -3,7 +3,6 @@ import { Pressable, Text, View } from "react-native";
 import { useRouter } from "expo-router";
 import { Colors, Spacing, Typography } from "../../constants/theme";
 import { useColorScheme } from "../../hooks/use-color-scheme";
-import { Button } from "../../components/ui/Button";
 import { Card } from "../../components/ui/Card";
 import { PageHeader } from "../../components/ui/PageHeader";
 import { Screen } from "../../components/ui/Screen";
@@ -86,12 +85,8 @@ export default function JobsTab() {
             lineHeight: 22,
           }}
         >
-          Germany-focused opportunities and job tools for newcomers.
+          Germany-focused opportunities and job tools for newcomers. Live job alerts and search are coming in a future release.
         </Text>
-        <View style={{ height: Spacing.md }} />
-        <Button title="Refresh list" onPress={() => {}} />
-        <View style={{ height: Spacing.sm }} />
-        <Button title="Create alert" variant="secondary" onPress={() => {}} />
       </Card>
 
       {germanyJobs.map((job) =>

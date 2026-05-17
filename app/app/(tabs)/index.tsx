@@ -7,10 +7,13 @@ import { Screen } from "../../components/ui/Screen";
 import { SyncButton } from "../../components/ui/SyncButton";
 import { Colors, Spacing, Typography, getTextFontFamily } from "../../constants/theme";
 import { usePreferences } from "../../contexts/PreferencesContext";
+import { useFeatureFlags } from "../../contexts/FeatureFlagsContext";
 import { useColorScheme } from "../../hooks/use-color-scheme";
 import { homeStyles } from "../../styles";
 import { t } from "../../services/i18n";
 import { describeWeatherCode, getCurrentWeather } from "../../services/weather";
+import { homeShortcuts } from "../../services/homeShortcuts";
+import { PersianCalendar } from "../../components/PersianCalendar";
 
 const localizedWeatherLabel = {
   fa: {
@@ -113,14 +116,18 @@ const toShamsi = (date: Date) => {
   return `${toPersianDigits(shamsiDay)} ${shamsiMonths[shamsiMonth - 1]} ${toPersianDigits(shamsiYear)}`;
 };
 
+const SHORTCUTS_INITIAL = 6;
+
 export default function HomeTab() {
   const colorScheme = useColorScheme();
   const palette = colorScheme === "dark" ? Colors.dark : Colors.light;
   const { language, location } = usePreferences();
+  const { featureFlags } = useFeatureFlags();
   const boldFont = getTextFontFamily(language, "bold");
   const regularFont = getTextFontFamily(language, "normal");
   const [weatherLabel, setWeatherLabel] = useState(t(language, "home.weatherUnavailable"));
   const [weatherTemp, setWeatherTemp] = useState<string | null>(null);
+  const [showAllShortcuts, setShowAllShortcuts] = useState(false);
 
   const locale =
     language === "fa"
@@ -138,6 +145,13 @@ export default function HomeTab() {
         : now.toLocaleDateString(locale, { day: "numeric", month: "long", year: "numeric" });
     return `${weekday} · ${dateLabel}`;
   }, [language, locale]);
+
+  const enabledShortcuts = useMemo(
+    () => homeShortcuts.filter((s) => !s.flagKey || featureFlags[s.flagKey]),
+    [featureFlags]
+  );
+  const visibleShortcuts = showAllShortcuts ? enabledShortcuts : enabledShortcuts.slice(0, SHORTCUTS_INITIAL);
+  const hiddenCount = enabledShortcuts.length - SHORTCUTS_INITIAL;
 
   useEffect(() => {
     let mounted = true;
@@ -247,6 +261,78 @@ export default function HomeTab() {
           </View>
         </View>
       </Card>
+
+      {enabledShortcuts.length > 0 && (
+        <>
+          <View style={[homeStyles.sectionHeaderCompact, { marginTop: Spacing.md }]}>
+            <View>
+              <Text
+                style={[homeStyles.sectionTitle, { color: palette.textPrimary, fontFamily: boldFont }]}
+              >
+                {t(language, "home.enabledShortcuts")}
+              </Text>
+              <Text
+                style={[homeStyles.sectionHint, { color: palette.textSecondary, fontFamily: regularFont }]}
+              >
+                {t(language, "home.enabledShortcutsHint")}
+              </Text>
+            </View>
+          </View>
+
+          <View style={homeStyles.pinnedGrid}>
+            {visibleShortcuts.map((shortcut) => (
+              <Pressable
+                key={shortcut.key}
+                style={({ pressed }) => [
+                  homeStyles.pinnedItem,
+                  {
+                    borderColor: palette.borderLight,
+                    backgroundColor: colorScheme === "dark" ? "rgba(24,33,47,0.96)" : "#FFFFFF",
+                    opacity: pressed ? 0.78 : 1,
+                  },
+                ]}
+                onPress={() => router.push(shortcut.route as any)}
+              >
+                <Feather name={shortcut.icon} size={16} color={palette.primary} />
+                <Text
+                  style={[homeStyles.pinnedText, { color: palette.textPrimary, fontFamily: regularFont }]}
+                  numberOfLines={1}
+                >
+                  {shortcut.title}
+                </Text>
+              </Pressable>
+            ))}
+          </View>
+
+          {hiddenCount > 0 && (
+            <Pressable
+              onPress={() => setShowAllShortcuts((prev) => !prev)}
+              style={{ alignSelf: "center", marginTop: Spacing.sm, paddingVertical: 6, paddingHorizontal: 12 }}
+            >
+              <Text
+                style={{
+                  color: palette.primary,
+                  fontSize: Typography.sizes.bodySecondary,
+                  fontFamily: regularFont,
+                }}
+              >
+                {showAllShortcuts
+                  ? t(language, "home.showLess")
+                  : t(language, "home.showMore", { count: hiddenCount })}
+              </Text>
+            </Pressable>
+          )}
+        </>
+      )}
+
+      <View style={{ marginTop: Spacing.md }}>
+        <View style={[homeStyles.sectionHeaderCompact, { marginBottom: Spacing.sm }]}>
+          <Text style={[homeStyles.sectionTitle, { color: palette.textPrimary, fontFamily: boldFont }]}>
+            {t(language, "home.persianCalendar")}
+          </Text>
+        </View>
+        <PersianCalendar />
+      </View>
     </Screen>
   );
 }

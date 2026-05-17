@@ -19,7 +19,13 @@ import { SyncButton } from "../components/ui/SyncButton";
 import { usePreferences } from "../contexts/PreferencesContext";
 import { useDatabase } from "../contexts/DatabaseContext";
 import { useFeatureFlags } from "../contexts/FeatureFlagsContext";
+import { useCountries } from "../contexts/CountriesContext";
 import { t } from "../services/i18n";
+
+const COUNTRY_FLAGS: Record<string, string> = {
+  DE: "🇩🇪", CA: "🇨🇦", US: "🇺🇸", UK: "🇬🇧",
+  AU: "🇦🇺", TR: "🇹🇷", SE: "🇸🇪",
+};
 
 const GERMAN_STATES = [
   "Baden-Württemberg",
@@ -85,13 +91,17 @@ export default function SettingsScreen() {
   const {
     language,
     direction,
+    country,
     setLanguage,
     setDirection,
+    setCountry,
+    setOnboardingDone,
     location,
     setLocation,
     useDeviceLocation,
     setUseDeviceLocation,
   } = usePreferences();
+  const { countries } = useCountries();
   const {
     isOnline,
     isSyncing,
@@ -358,6 +368,59 @@ export default function SettingsScreen() {
           </Text>
           <Text style={[styles.currentMeta, { color: palette.textMuted }]}>
             {t(language, "settings.direction")}: {direction.toUpperCase()}
+          </Text>
+        </View>
+      </GlassCard>
+
+      <GlassCard>
+        <Text style={[styles.sectionTitle, { color: palette.textPrimary }]}>
+          {t(language, "settings.country")}
+        </Text>
+        <Text style={[styles.sectionHint, { color: palette.textSecondary }]}>
+          {t(language, "settings.countrySub")}
+        </Text>
+        <View style={styles.languageGrid}>
+          {countries.map((c) => {
+            const active = country === c.code;
+            const flag = COUNTRY_FLAGS[c.code] ?? "🌍";
+            return (
+              <Pressable
+                key={c.code}
+                onPress={() => setCountry(c.code)}
+                style={({ pressed }) => [
+                  styles.countryChip,
+                  {
+                    borderColor: active ? palette.primary : palette.borderLight,
+                    backgroundColor: active
+                      ? colorScheme === "dark"
+                        ? "rgba(143,176,167,0.18)"
+                        : "rgba(39,76,70,0.10)"
+                      : colorScheme === "dark"
+                      ? "rgba(255,255,255,0.04)"
+                      : "rgba(255,255,255,0.30)",
+                    opacity: pressed ? 0.82 : 1,
+                  },
+                ]}
+              >
+                <Text style={styles.countryFlag}>{flag}</Text>
+                <Text
+                  style={[
+                    styles.languageChipText,
+                    { color: active ? palette.primary : palette.textPrimary },
+                  ]}
+                >
+                  {c.name}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </View>
+        <View style={styles.currentBox}>
+          <Text style={[styles.currentTitle, { color: palette.textPrimary }]}>
+            {t(language, "common.current")}
+          </Text>
+          <Text style={[styles.currentValue, { color: palette.textSecondary }]}>
+            {COUNTRY_FLAGS[country] ?? "🌍"} {countries.find(c => c.code === country)?.name ?? country}
           </Text>
         </View>
       </GlassCard>
@@ -966,6 +1029,30 @@ export default function SettingsScreen() {
           </View>
         )}
       </GlassCard>
+      <GlassCard style={{ marginTop: Spacing.md }}>
+        <Text style={[styles.sectionTitle, { color: palette.textPrimary }]}>
+          {t(language, "settings.resetOnboarding")}
+        </Text>
+        <Text style={[styles.sectionHint, { color: palette.textSecondary }]}>
+          {t(language, "settings.resetOnboardingSub")}
+        </Text>
+        <Pressable
+          onPress={() => setOnboardingDone(false)}
+          style={({ pressed }) => [
+            styles.syncButton,
+            {
+              backgroundColor: "transparent",
+              borderWidth: 1,
+              borderColor: palette.borderLight,
+              opacity: pressed ? 0.75 : 1,
+            },
+          ]}
+        >
+          <Text style={[styles.syncButtonText, { color: palette.textPrimary }]}>
+            {t(language, "settings.showOnboarding")}
+          </Text>
+        </Pressable>
+      </GlassCard>
     </Screen>
   );
 }
@@ -1084,6 +1171,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     borderRadius: 999,
     borderWidth: 1,
+  },
+  countryChip: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderRadius: 999,
+    borderWidth: 1,
+  },
+  countryFlag: {
+    fontSize: 18,
   },
   languageChipText: {
     fontSize: Typography.sizes.bodySecondary,

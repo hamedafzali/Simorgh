@@ -11,11 +11,15 @@ import {
   getHousingChecklist,
   supportedCountries,
 } from "../services/countries-data";
+import { usePreferences } from "../contexts/PreferencesContext";
+import { fa, faArr } from "../services/l10n";
+import { t } from "../services/i18n";
 
 export default function HousingSafetyScreen() {
   const params = useLocalSearchParams<{ country?: string }>();
   const code = (params.country || "DE").toUpperCase();
   const country = supportedCountries.find((c) => c.code === code);
+  const { language } = usePreferences();
 
   const colorScheme = useColorScheme();
   const palette = colorScheme === "dark" ? Colors.dark : Colors.light;
@@ -38,9 +42,9 @@ export default function HousingSafetyScreen() {
             marginBottom: Spacing.sm,
           }}
         >
-          {checklist.title}
+          {fa(checklist.titleFa, checklist.title, language)}
         </Text>
-        {checklist.items.map((item) => (
+        {faArr(checklist.itemsFa, checklist.items, language).map((item) => (
           <Text
             key={item}
             style={{
@@ -63,9 +67,9 @@ export default function HousingSafetyScreen() {
             marginBottom: Spacing.sm,
           }}
         >
-          Scam warnings
+          {t(language, "settlement.scamWarnings")}
         </Text>
-        {checklist.warnings.map((warning) => (
+        {faArr(checklist.warningsFa, checklist.warnings, language).map((warning) => (
           <Text
             key={warning}
             style={{

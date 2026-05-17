@@ -13,11 +13,16 @@ import {
   getTimeline,
   supportedCountries,
 } from "../services/countries-data";
+import { usePreferences } from "../contexts/PreferencesContext";
+import { fa } from "../services/l10n";
+import { t } from "../services/i18n";
 
 type ChecklistItem = {
   id: string;
   label: string;
+  labelFa?: string;
   section: string;
+  sectionFa?: string;
 };
 
 const storageKey = (code: string) => `checklist:${code}`;
@@ -26,6 +31,7 @@ export default function ChecklistScreen() {
   const params = useLocalSearchParams<{ country?: string }>();
   const code = (params.country || "DE").toUpperCase();
   const country = supportedCountries.find((c) => c.code === code);
+  const { language } = usePreferences();
 
   const colorScheme = useColorScheme();
   const palette = colorScheme === "dark" ? Colors.dark : Colors.light;
@@ -35,26 +41,36 @@ export default function ChecklistScreen() {
 
   const items = useMemo<ChecklistItem[]>(() => {
     const list: ChecklistItem[] = [];
+    const starterStepsFa = starter.stepsFa ?? [];
+    const starterChecklistFa = starter.checklistFa ?? [];
+
     starter.steps.forEach((step, index) => {
       list.push({
         id: `step-${index}`,
         label: step,
+        labelFa: starterStepsFa[index],
         section: "Starter Steps",
+        sectionFa: "مراحل اولیه",
       });
     });
     starter.checklist.forEach((item, index) => {
       list.push({
         id: `doc-${index}`,
         label: item,
+        labelFa: starterChecklistFa[index],
         section: "Documents",
+        sectionFa: "مدارک",
       });
     });
     timeline.forEach((block, blockIndex) => {
+      const blockItemsFa = block.itemsFa ?? [];
       block.items.forEach((item, index) => {
         list.push({
           id: `timeline-${blockIndex}-${index}`,
           label: item,
+          labelFa: blockItemsFa[index],
           section: `Timeline · ${block.dayRange}`,
+          sectionFa: `روزشمار · ${block.dayRange}`,
         });
       });
     });
@@ -99,7 +115,7 @@ export default function ChecklistScreen() {
     <FeatureGate feature="checklist">
       <Screen>
       <PageHeader
-        title="Checklist"
+        title={t(language, "checklist.title")}
         subtitle={country ? country.name : "Global"}
       />
 
@@ -113,7 +129,7 @@ export default function ChecklistScreen() {
               marginBottom: Spacing.sm,
             }}
           >
-            {section}
+            {fa(sectionItems[0]?.sectionFa, section, language)}
           </Text>
           {sectionItems.map((item) => {
             const isDone = !!done[item.id];
@@ -134,7 +150,7 @@ export default function ChecklistScreen() {
                   }}
                 >
                   {isDone ? "✓ " : "• "}
-                  {item.label}
+                  {fa(item.labelFa, item.label, language)}
                 </Text>
               </Pressable>
             );

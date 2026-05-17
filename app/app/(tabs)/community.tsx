@@ -244,7 +244,7 @@ export default function CommunityTab() {
               lineHeight: 22,
             }}
           >
-            Community features are currently disabled for this release.
+            {t(language, "community.disabled")}
           </Text>
         </Card>
       )}

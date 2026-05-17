@@ -12,6 +12,9 @@ import {
   getDeadlines,
   supportedCountries,
 } from "../services/countries-data";
+import { usePreferences } from "../contexts/PreferencesContext";
+import { fa } from "../services/l10n";
+import { t } from "../services/i18n";
 
 const arrivalKey = (code: string) => `arrival:${code}`;
 const doneKey = (code: string) => `deadlines:${code}`;
@@ -36,6 +39,7 @@ export default function DeadlinesScreen() {
   const params = useLocalSearchParams<{ country?: string }>();
   const code = (params.country || "DE").toUpperCase();
   const country = supportedCountries.find((c) => c.code === code);
+  const { language } = usePreferences();
 
   const colorScheme = useColorScheme();
   const palette = colorScheme === "dark" ? Colors.dark : Colors.light;
@@ -97,7 +101,7 @@ export default function DeadlinesScreen() {
             lineHeight: 22,
           }}
         >
-          Set your arrival date to calculate due dates. Format: YYYY-MM-DD.
+          {t(language, "settlement.arrivalHint")}
         </Text>
         <TextInput
           value={arrivalDate}
@@ -127,7 +131,7 @@ export default function DeadlinesScreen() {
           : null;
         const dueLabel = dueDate
           ? dueDate.toLocaleDateString()
-          : `Due in ${item.dueInDays} days`;
+          : t(language, "settlement.dueInDays", { count: item.dueInDays });
 
         return (
           <Card key={item.title}>
@@ -140,7 +144,7 @@ export default function DeadlinesScreen() {
                   textDecorationLine: isDone ? "line-through" : "none",
                 }}
               >
-                {isDone ? "✓ " : ""} {item.title}
+                {isDone ? "✓ " : ""} {fa(item.titleFa, item.title, language)}
               </Text>
               <Text
                 style={{
@@ -150,7 +154,7 @@ export default function DeadlinesScreen() {
                   marginTop: Spacing.xs,
                 }}
               >
-                {item.notes}
+                {fa(item.notesFa, item.notes, language)}
               </Text>
               <View style={{ marginTop: Spacing.xs }}>
                 <Text

@@ -12,6 +12,9 @@ import {
   getResidencyReminders,
   supportedCountries,
 } from "../services/countries-data";
+import { usePreferences } from "../contexts/PreferencesContext";
+import { fa } from "../services/l10n";
+import { t } from "../services/i18n";
 
 type ReminderState = Record<string, boolean>;
 
@@ -21,6 +24,7 @@ export default function ResidencyRemindersScreen() {
   const params = useLocalSearchParams<{ country?: string }>();
   const code = (params.country || "DE").toUpperCase();
   const country = supportedCountries.find((c) => c.code === code);
+  const { language } = usePreferences();
 
   const colorScheme = useColorScheme();
   const palette = colorScheme === "dark" ? Colors.dark : Colors.light;
@@ -68,8 +72,7 @@ export default function ResidencyRemindersScreen() {
             lineHeight: 22,
           }}
         >
-          Save reminders now. Notifications will be added later, using your
-          selections.
+          {t(language, "settlement.remindersHint")}
         </Text>
       </Card>
 
@@ -92,7 +95,7 @@ export default function ResidencyRemindersScreen() {
                     color: isOn ? palette.primary : palette.textPrimary,
                   }}
                 >
-                  {item.title}
+                  {fa(item.titleFa, item.title, language)}
                 </Text>
                 <View
                   style={{
@@ -120,7 +123,7 @@ export default function ResidencyRemindersScreen() {
                   marginTop: Spacing.xs,
                 }}
               >
-                Due in {item.dueInDays} days. {item.notes}
+                {t(language, "settlement.dueInDays", { count: item.dueInDays })}. {fa(item.notesFa, item.notes, language)}
               </Text>
             </Pressable>
           </Card>

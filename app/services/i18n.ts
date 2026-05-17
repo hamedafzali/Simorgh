@@ -33,6 +33,7 @@ const translations = {
       enabledShortcutsHint: "Only items enabled in Settings appear here.",
       showMore: "Show {{count}} more",
       showLess: "Show less",
+      persianCalendar: "Persian Calendar",
       checklistTitle: "Finish your checklist",
       checklistSubtitle: "Track move-in tasks and required documents.",
       deadlinesTitle: "Review deadlines",
@@ -102,6 +103,7 @@ const translations = {
       documentsSub: "Immigration forms and guidance",
       faq: "FAQ",
       faqSub: "Quick answers to common questions",
+      disabled: "Community features are currently disabled for this release.",
     },
     learn: {
       title: "Learning",
@@ -131,6 +133,20 @@ const translations = {
       focusTipBody:
         "Focus on survival phrases first. They help in appointments, housing, and daily tasks.",
     },
+    settlement: {
+      steps: "Steps",
+      checklist: "Checklist",
+      documents: "Documents",
+      fields: "Fields",
+      tips: "Tips",
+      scamWarnings: "Scam warnings",
+      arrivalHint:
+        "Set your arrival date to calculate due dates. Format: YYYY-MM-DD.",
+      dueInDays: "Due in {{count}} days",
+      remindersHint:
+        "Save reminders now. Notifications will be added in a future release.",
+      noServices: "No services listed yet. We will add vetted providers soon.",
+    },
     settings: {
       title: "Settings",
       subtitle: "Language, location, and offline sync",
@@ -151,7 +167,8 @@ const translations = {
       cityPostal: "City / postal code",
       searchPlaceholder: "e.g. Berlin, 10115",
       shortcuts: "Home screen shortcuts",
-      shortcutsSub: "Enable only the features you want to see on the Home page.",
+      shortcutsSub:
+        "Enable only the features you want to see on the Home page.",
       database: "Database & Sync",
       databaseSub: "Manage your offline content and sync with the server.",
       connection: "Connection",
@@ -173,8 +190,40 @@ const translations = {
       hoursAgo: "{{count}}h ago",
       daysAgo: "{{count}}d ago",
       unknown: "Unknown",
-      backendUnavailable: "Backend connection failed. You can retry, and the app will continue using local data.",
+      backendUnavailable:
+        "Backend connection failed. You can retry, and the app will continue using local data.",
       connectionTimeout: "Backend check timed out. Please retry.",
+      country: "Country",
+      countrySub: "The country you are in or moving to",
+      resetOnboarding: "Onboarding",
+      resetOnboardingSub: "Restart the setup to change language or country",
+      showOnboarding: "Show Onboarding Again",
+    },
+    events: {
+      title: "Events",
+      subtitle: "Community gatherings and workshops",
+      loading: "Loading...",
+      empty: "No events found for your country.",
+      detailTitle: "Event",
+      notFound: "Event not found.",
+      details: "Details",
+      visitWebsite: "Visit Website",
+      source: "Source",
+    },
+    docTracker: {
+      title: "Document Tracker",
+      hint: "Track expiry dates for your key documents. Format: YYYY-MM-DD.",
+      expiryPlaceholder: "Expiry date (YYYY-MM-DD)",
+      notesPlaceholder: "Notes (optional)",
+      remove: "Remove",
+      addTitle: "Add document",
+      namePlaceholder: "Document name",
+      add: "Add",
+      expiredLabel: "Expired",
+      expiresSoon: "Expires in {{count}} days",
+    },
+    checklist: {
+      title: "Checklist",
     },
   },
   fa: {
@@ -198,17 +247,18 @@ const translations = {
       featureUnavailable: "این قابلیت در این نسخه در دسترس نیست.",
     },
     home: {
-      subtitle:
-        "کارهای استقرار و یادگیری را بدون گم شدن بین منوها دنبال کنید.",
+      subtitle: "کارهای استقرار و یادگیری را بدون گم شدن بین منوها دنبال کنید.",
       weatherUnavailable: "آب‌وهوا در دسترس نیست",
       weatherSetup: "برای هواشناسی مکان را تنظیم کنید",
       doNext: "اقدام بعدی",
       community: "اجتماع",
       learning: "یادگیری",
-      enabledShortcuts: "میانبرهای فعال",
-      enabledShortcutsHint: "فقط موارد فعال‌شده در تنظیمات اینجا نمایش داده می‌شوند.",
+      enabledShortcuts: " امکانات",
+      enabledShortcutsHint:
+        "فقط موارد فعال‌شده در تنظیمات اینجا نمایش داده می‌شوند.",
       showMore: "نمایش {{count}} مورد بیشتر",
       showLess: "بستن",
+      persianCalendar: "تقویم شمسی",
       checklistTitle: "چک‌لیست خود را کامل کنید",
       checklistSubtitle: "کارهای اسکان و مدارک لازم را دنبال کنید.",
       deadlinesTitle: "مهلت‌ها را بررسی کنید",
@@ -278,6 +328,7 @@ const translations = {
       documentsSub: "فرم‌های مهاجرت و راهنما",
       faq: "سوالات متداول",
       faqSub: "پاسخ سریع به سوالات رایج",
+      disabled: "قابلیت‌های جامعه در این نسخه غیرفعال هستند.",
     },
     learn: {
       title: "یادگیری",
@@ -290,7 +341,8 @@ const translations = {
       level: "سطح",
       days: "روز",
       openHub: "باز کردن مرکز یادگیری",
-      empty: "هنوز داده‌ای برای یادگیری وجود ندارد. برای دریافت واژگان همگام‌سازی کنید.",
+      empty:
+        "هنوز داده‌ای برای یادگیری وجود ندارد. برای دریافت واژگان همگام‌سازی کنید.",
       openSync: "باز کردن همگام‌سازی",
       modules: "بخش‌ها",
       vocabulary: "واژگان",
@@ -306,6 +358,21 @@ const translations = {
       focusTip: "نکته تمرکز",
       focusTipBody:
         "ابتدا روی عبارات ضروری تمرکز کنید. این‌ها در قرارهای اداری، مسکن و کارهای روزانه کمک می‌کنند.",
+    },
+    settlement: {
+      steps: "مراحل",
+      checklist: "چک‌لیست",
+      documents: "مدارک",
+      fields: "فیلدها",
+      tips: "نکات",
+      scamWarnings: "هشدارهای کلاهبرداری",
+      arrivalHint:
+        "تاریخ ورود را برای محاسبه سررسیدها وارد کنید. فرمت: YYYY-MM-DD.",
+      dueInDays: "سررسید در {{count}} روز",
+      remindersHint:
+        "یادآورها را همین حالا ذخیره کنید. اعلان‌ها در نسخه بعدی اضافه می‌شوند.",
+      noServices:
+        "هنوز خدماتی فهرست نشده. به زودی ارائه‌دهندگان تأیید شده اضافه می‌کنیم.",
     },
     settings: {
       title: "تنظیمات",
@@ -349,8 +416,40 @@ const translations = {
       hoursAgo: "{{count}} ساعت پیش",
       daysAgo: "{{count}} روز پیش",
       unknown: "نامشخص",
-      backendUnavailable: "اتصال به بک‌اند ناموفق بود. می‌توانید دوباره تلاش کنید و برنامه با داده‌های محلی ادامه می‌دهد.",
+      backendUnavailable:
+        "اتصال به بک‌اند ناموفق بود. می‌توانید دوباره تلاش کنید و برنامه با داده‌های محلی ادامه می‌دهد.",
       connectionTimeout: "بررسی بک‌اند زمان‌بر شد. دوباره تلاش کنید.",
+      country: "کشور",
+      countrySub: "کشوری که در آن هستید یا قصد دارید بروید",
+      resetOnboarding: "راه‌اندازی اولیه",
+      resetOnboardingSub: "برای تغییر زبان یا کشور از ابتدا شروع کنید",
+      showOnboarding: "نمایش مجدد راه‌اندازی",
+    },
+    events: {
+      title: "رویدادها",
+      subtitle: "رویدادهای جامعه و کارگاه‌ها",
+      loading: "در حال بارگذاری...",
+      empty: "هیچ رویدادی برای کشور شما یافت نشد.",
+      detailTitle: "رویداد",
+      notFound: "رویداد یافت نشد.",
+      details: "جزئیات",
+      visitWebsite: "مشاهده وب‌سایت",
+      source: "منبع",
+    },
+    docTracker: {
+      title: "پیگیری مدارک",
+      hint: "تاریخ انقضای مدارک مهم خود را دنبال کنید. فرمت: YYYY-MM-DD.",
+      expiryPlaceholder: "تاریخ انقضا (YYYY-MM-DD)",
+      notesPlaceholder: "یادداشت (اختیاری)",
+      remove: "حذف",
+      addTitle: "افزودن مدرک",
+      namePlaceholder: "نام مدرک",
+      add: "افزودن",
+      expiredLabel: "منقضی شده",
+      expiresSoon: "انقضا در {{count}} روز",
+    },
+    checklist: {
+      title: "چک‌لیست",
     },
   },
   de: {
@@ -371,7 +470,8 @@ const translations = {
       day: "Tag",
       goHome: "Zur Startseite",
       retry: "Erneut versuchen",
-      featureUnavailable: "Diese Funktion ist in dieser Version nicht verfuegbar.",
+      featureUnavailable:
+        "Diese Funktion ist in dieser Version nicht verfuegbar.",
     },
     home: {
       subtitle:
@@ -386,6 +486,7 @@ const translations = {
         "Nur in den Einstellungen aktivierte Eintraege erscheinen hier.",
       showMore: "Noch {{count}} anzeigen",
       showLess: "Weniger anzeigen",
+      persianCalendar: "Persischer Kalender",
       checklistTitle: "Checkliste abschliessen",
       checklistSubtitle: "Umzugsaufgaben und Dokumente im Blick behalten.",
       deadlinesTitle: "Fristen pruefen",
@@ -455,6 +556,7 @@ const translations = {
       documentsSub: "Einwanderungsformulare und Hinweise",
       faq: "FAQ",
       faqSub: "Schnelle Antworten auf haeufige Fragen",
+      disabled: "Community-Funktionen sind in dieser Version deaktiviert.",
     },
     learn: {
       title: "Lernen",
@@ -485,6 +587,21 @@ const translations = {
       focusTipBody:
         "Starte mit Alltagssaetzen. Sie helfen bei Terminen, Wohnen und im Alltag.",
     },
+    settlement: {
+      steps: "Schritte",
+      checklist: "Checkliste",
+      documents: "Dokumente",
+      fields: "Felder",
+      tips: "Tipps",
+      scamWarnings: "Betrugswarnungen",
+      arrivalHint:
+        "Ankunftsdatum eingeben, um Fristen zu berechnen. Format: YYYY-MM-DD.",
+      dueInDays: "Faellig in {{count}} Tagen",
+      remindersHint:
+        "Erinnerungen jetzt speichern. Benachrichtigungen folgen in einer kuenftigen Version.",
+      noServices:
+        "Noch keine Dienste eingetragen. Gepruеfte Anbieter folgen bald.",
+    },
     settings: {
       title: "Einstellungen",
       subtitle: "Sprache, Ort und Offline-Sync",
@@ -507,7 +624,8 @@ const translations = {
       shortcutsSub:
         "Nur Funktionen aktivieren, die auf der Startseite erscheinen sollen.",
       database: "Datenbank & Sync",
-      databaseSub: "Offline-Inhalte verwalten und mit dem Server synchronisieren.",
+      databaseSub:
+        "Offline-Inhalte verwalten und mit dem Server synchronisieren.",
       connection: "Verbindung",
       databaseVersion: "Datenbankversion",
       localContent: "Lokale Inhalte",
@@ -522,13 +640,47 @@ const translations = {
       testUpdate: "Update-UI testen",
       searchFailed: "Suche fehlgeschlagen. Bitte erneut versuchen.",
       locationPermissionDenied: "Standortfreigabe wurde nicht erteilt.",
-      locationReadFailed: "Standort konnte nicht gelesen werden. Bitte erneut versuchen.",
+      locationReadFailed:
+        "Standort konnte nicht gelesen werden. Bitte erneut versuchen.",
       justNow: "Gerade eben",
       hoursAgo: "vor {{count}} Std.",
       daysAgo: "vor {{count}} Tagen",
       unknown: "Unbekannt",
-      backendUnavailable: "Die Verbindung zum Backend ist fehlgeschlagen. Du kannst es erneut versuchen; die App nutzt weiter lokale Daten.",
-      connectionTimeout: "Die Backend-Pruefung hat zu lange gedauert. Bitte erneut versuchen.",
+      backendUnavailable:
+        "Die Verbindung zum Backend ist fehlgeschlagen. Du kannst es erneut versuchen; die App nutzt weiter lokale Daten.",
+      connectionTimeout:
+        "Die Backend-Pruefung hat zu lange gedauert. Bitte erneut versuchen.",
+      country: "Land",
+      countrySub: "Das Land, in dem du lebst oder hinziehst",
+      resetOnboarding: "Einfuehrung",
+      resetOnboardingSub: "Setup neu starten, um Sprache oder Land zu aendern",
+      showOnboarding: "Einfuehrung erneut anzeigen",
+    },
+    events: {
+      title: "Veranstaltungen",
+      subtitle: "Gemeinschaftstreffen und Workshops",
+      loading: "Wird geladen...",
+      empty: "Keine Veranstaltungen fuer dein Land gefunden.",
+      detailTitle: "Veranstaltung",
+      notFound: "Veranstaltung nicht gefunden.",
+      details: "Details",
+      visitWebsite: "Website besuchen",
+      source: "Quelle",
+    },
+    docTracker: {
+      title: "Dokumenten-Tracker",
+      hint: "Verfolge Ablaufdaten deiner wichtigen Dokumente. Format: JJJJ-MM-TT.",
+      expiryPlaceholder: "Ablaufdatum (JJJJ-MM-TT)",
+      notesPlaceholder: "Notizen (optional)",
+      remove: "Entfernen",
+      addTitle: "Dokument hinzufuegen",
+      namePlaceholder: "Dokumentname",
+      add: "Hinzufuegen",
+      expiredLabel: "Abgelaufen",
+      expiresSoon: "Laeuft in {{count}} Tagen ab",
+    },
+    checklist: {
+      title: "Checkliste",
     },
   },
 } as const;
@@ -536,7 +688,7 @@ const translations = {
 export function t(
   language: AppLanguage,
   key: string,
-  values?: Record<string, string | number>
+  values?: Record<string, string | number>,
 ): string {
   const parts = key.split(".");
   let result: unknown = translations[language];

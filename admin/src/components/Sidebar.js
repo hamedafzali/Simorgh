@@ -10,7 +10,11 @@ import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   MobileOutlined,
+  GlobalOutlined,
+  CalendarOutlined,
+  LogoutOutlined,
 } from "@ant-design/icons";
+import apiService from "../services/api";
 import { useNavigate, useLocation } from "react-router-dom";
 
 const Sidebar = () => {
@@ -48,6 +52,16 @@ const Sidebar = () => {
       key: "/analytics",
       icon: <BarChartOutlined />,
       label: "Analytics",
+    },
+    {
+      key: "/countries",
+      icon: <GlobalOutlined />,
+      label: "Countries",
+    },
+    {
+      key: "/events",
+      icon: <CalendarOutlined />,
+      label: "Events",
     },
     {
       key: "/settings",
@@ -113,15 +127,22 @@ const Sidebar = () => {
           bottom: 16,
           left: 16,
           right: 16,
-          borderTop: "1px solid #f0f0f0",
+          borderTop: "1px solid rgba(255,255,255,0.1)",
           paddingTop: 16,
-          textAlign: "center",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: 8,
         }}
       >
-        <Space>
-          <Badge count={3} style={{ backgroundColor: "#52c41a" }} />
-          <span style={{ color: "#666", fontSize: 12 }}>Online Users: 3</span>
-        </Space>
+        <Button
+          type="text"
+          icon={<LogoutOutlined />}
+          onClick={() => apiService.logout()}
+          style={{ color: "#aaa", width: "100%" }}
+        >
+          {!collapsed && "Sign Out"}
+        </Button>
       </div>
     </Layout.Sider>
   );

@@ -1,33 +1,67 @@
 {
   "expo": {
-    "name": "Simorgh Connect",
+    "name": "Simorgh",
     "slug": "simorgh-connect",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/splash-icon.png",
-    "scheme": "simorghconnect",
-    "platforms": ["ios", "android"],
+    "scheme": "simorgh",
+    "platforms": [
+      "ios",
+      "android"
+    ],
     "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/images/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#F7F7F3"
+    },
     "ios": {
-      "supportsTablet": true,
+      "bundleIdentifier": "com.simorgh.app",
+      "supportsTablet": false,
+      "buildNumber": "1",
       "infoPlist": {
-        "NSLocationWhenInUseUsageDescription": "Simorgh Connect uses your location to show local jobs, events, and documents near you."
+        "NSLocationWhenInUseUsageDescription": "Simorgh uses your location to show local services and offices near you.",
+        "NSUserNotificationUsageDescription": "Simorgh sends reminders for important deadlines and residency tasks.",
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
+      "package": "com.simorgh.app",
+      "versionCode": 1,
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/images/splash-icon.png",
-        "backgroundImage": "./assets/images/splash-icon.png",
-        "monochromeImage": "./assets/images/splash-icon.png"
+        "foregroundImage": "./assets/images/icon-android.png",
+        "backgroundColor": "#F7F7F3"
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "permissions": ["ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION"]
+      "permissions": [
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION",
+        "RECEIVE_BOOT_COMPLETED",
+        "SCHEDULE_EXACT_ALARM",
+        "VIBRATE"
+      ]
     },
+    "plugins": [
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/splash-icon.png",
+          "color": "#274C46",
+          "sounds": []
+        }
+      ]
+    ],
     "experiments": {
       "typedRoutes": false,
       "reactCompiler": false
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "ac9f4617-4604-4351-bb14-e0ec6bd108a0"
+      }
+    },
+    "owner": "hamed.afzali"
   }
 }

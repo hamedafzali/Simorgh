@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: simorgh-backend
+    runtime: node
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: node src/server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3001
+      - key: MONGODB_URI
+        sync: false  # set this in the Render dashboard
+    disk:
+      name: admin-data
+      mountPath: /opt/render/project/src/admin/dist/admin-data
+      sizeGB: 1

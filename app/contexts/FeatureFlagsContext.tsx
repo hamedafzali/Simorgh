@@ -1,7 +1,8 @@
-import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { AppState } from "react-native";
-import { defaultFeatureFlags, getFeatureFlags, type FeatureFlags } from "../services/features";
+import { defaultFeatureFlags, getFeatureFlagsForCountry, syncFeatureFlags, type FeatureFlags } from "../services/features";
 import { useDatabase } from "./DatabaseContext";
+import { usePreferences } from "./PreferencesContext";
 
 type FeatureFlagsContextType = {
   featureFlags: FeatureFlags;
@@ -13,33 +14,46 @@ const FeatureFlagsContext = createContext<FeatureFlagsContextType | null>(null);
 export function FeatureFlagsProvider({ children }: { children: React.ReactNode }) {
   const [featureFlags, setFeatureFlags] = useState<FeatureFlags>(defaultFeatureFlags);
   const { isInitialized, isOnline, syncDatabaseVersion } = useDatabase();
+  const { country } = usePreferences();
 
-  const refreshFeatureFlags = async () => {
-    const flags = await getFeatureFlags();
+  const refreshFeatureFlags = useCallback(async () => {
+    const flags = await getFeatureFlagsForCountry(country || "DE");
     setFeatureFlags(flags);
-  };
+  }, [country]);
 
+  const syncAndRefresh = useCallback(async () => {
+    // Fetch flags directly from the lightweight endpoint first (fast, always up to date)
+    const flagsSynced = await syncFeatureFlags();
+    if (flagsSynced) {
+      await refreshFeatureFlags();
+    }
+    // Also run the full database version sync in the background
+    void syncDatabaseVersion();
+  }, [refreshFeatureFlags, syncDatabaseVersion]);
+
+  // Load cached flags immediately once DB is ready
   useEffect(() => {
     if (!isInitialized) return;
     void refreshFeatureFlags();
-  }, [isInitialized]);
+  }, [isInitialized, refreshFeatureFlags]);
 
+  // Sync from backend when online
   useEffect(() => {
     if (!isInitialized || !isOnline) return;
-    void syncDatabaseVersion().then(refreshFeatureFlags);
+    void syncAndRefresh();
 
     const sub = AppState.addEventListener("change", (state) => {
       if (state === "active") {
-        void syncDatabaseVersion().then(refreshFeatureFlags);
+        void syncAndRefresh();
       }
     });
 
     return () => sub.remove();
-  }, [isInitialized, isOnline, syncDatabaseVersion]);
+  }, [isInitialized, isOnline, syncAndRefresh]);
 
   const value = useMemo(
     () => ({ featureFlags, refreshFeatureFlags }),
-    [featureFlags]
+    [featureFlags, refreshFeatureFlags]
   );
 
   return (

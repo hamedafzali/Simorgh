@@ -13,29 +13,38 @@ class ApiService {
       },
     });
 
-    // Add request interceptor
+    // Attach JWT token to every request
     this.client.interceptors.request.use(
       (config) => {
-        console.log(
-          `API Request: ${config.method?.toUpperCase()} ${config.url}`
-        );
+        const token = localStorage.getItem("admin_token");
+        if (token) config.headers.Authorization = `Bearer ${token}`;
         return config;
       },
-      (error) => {
-        return Promise.reject(error);
-      }
+      (error) => Promise.reject(error)
     );
 
-    // Add response interceptor
+    // On 401, clear stale token and reload to show login screen
     this.client.interceptors.response.use(
-      (response) => {
-        return response.data;
-      },
+      (response) => response.data,
       (error) => {
+        if (error.response?.status === 401) {
+          localStorage.removeItem("admin_token");
+          window.location.reload();
+        }
         console.error("API Error:", error.response?.data || error.message);
         return Promise.reject(error);
       }
     );
+  }
+
+  // Auth
+  async login(password) {
+    return await this.client.post("/admin/login", { password });
+  }
+
+  logout() {
+    localStorage.removeItem("admin_token");
+    window.location.reload();
   }
 
   // Dashboard
@@ -196,6 +205,41 @@ class ApiService {
 
   async packageSQLiteDatabase() {
     return await this.client.post("/admin/database/package-sqlite");
+  }
+
+  // Countries
+  async getCountries() {
+    return await this.client.get("/admin/countries");
+  }
+
+  async addCountry(country) {
+    return await this.client.post("/admin/countries", country);
+  }
+
+  async updateCountry(code, updates) {
+    return await this.client.put(`/admin/countries/${code}`, updates);
+  }
+
+  async deleteCountry(code) {
+    return await this.client.delete(`/admin/countries/${code}`);
+  }
+
+  // Events
+  async getEvents(params = {}) {
+    const qs = new URLSearchParams(params).toString();
+    return await this.client.get(`/admin/events${qs ? `?${qs}` : ""}`);
+  }
+
+  async addEvent(event) {
+    return await this.client.post("/admin/events", event);
+  }
+
+  async updateEvent(id, updates) {
+    return await this.client.put(`/admin/events/${id}`, updates);
+  }
+
+  async deleteEvent(id) {
+    return await this.client.delete(`/admin/events/${id}`);
   }
 
   // Real-time endpoints (would use WebSockets in production)

@@ -8,11 +8,14 @@ import { PageHeader } from "../components/ui/PageHeader";
 import FeatureGate from "../components/FeatureGate";
 import { Screen } from "../components/ui/Screen";
 import { getTaxReminders, supportedCountries } from "../services/countries-data";
+import { usePreferences } from "../contexts/PreferencesContext";
+import { fa } from "../services/l10n";
 
 export default function TaxBasicsScreen() {
   const params = useLocalSearchParams<{ country?: string }>();
   const code = (params.country || "DE").toUpperCase();
   const country = supportedCountries.find((c) => c.code === code);
+  const { language } = usePreferences();
 
   const colorScheme = useColorScheme();
   const palette = colorScheme === "dark" ? Colors.dark : Colors.light;
@@ -36,7 +39,7 @@ export default function TaxBasicsScreen() {
               marginBottom: Spacing.xs,
             }}
           >
-            {item.title}
+            {fa(item.titleFa, item.title, language)}
           </Text>
           <Text
             style={{
@@ -45,8 +48,8 @@ export default function TaxBasicsScreen() {
               lineHeight: 22,
             }}
           >
-            {item.timing}
-            {"\n"}{item.notes}
+            {fa(item.timingFa, item.timing, language)}
+            {"\n"}{fa(item.notesFa, item.notes, language)}
           </Text>
         </Card>
       ))}

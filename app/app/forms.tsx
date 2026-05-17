@@ -8,11 +8,15 @@ import { PageHeader } from "../components/ui/PageHeader";
 import FeatureGate from "../components/FeatureGate";
 import { Screen } from "../components/ui/Screen";
 import { getFormGuides, supportedCountries } from "../services/countries-data";
+import { usePreferences } from "../contexts/PreferencesContext";
+import { fa, faArr } from "../services/l10n";
+import { t } from "../services/i18n";
 
 export default function FormsScreen() {
   const params = useLocalSearchParams<{ country?: string }>();
   const code = (params.country || "DE").toUpperCase();
   const country = supportedCountries.find((c) => c.code === code);
+  const { language } = usePreferences();
 
   const colorScheme = useColorScheme();
   const palette = colorScheme === "dark" ? Colors.dark : Colors.light;
@@ -36,7 +40,7 @@ export default function FormsScreen() {
               marginBottom: Spacing.xs,
             }}
           >
-            {guide.title}
+            {fa(guide.titleFa, guide.title, language)}
           </Text>
           <Text
             style={{
@@ -45,7 +49,7 @@ export default function FormsScreen() {
               lineHeight: 22,
             }}
           >
-            {guide.summary}
+            {fa(guide.summaryFa, guide.summary, language)}
           </Text>
           <Text
             style={{
@@ -55,7 +59,7 @@ export default function FormsScreen() {
               fontWeight: Typography.fontWeight.semibold,
             }}
           >
-            Fields
+            {t(language, "settlement.fields")}
           </Text>
           {guide.fields.map((field) => (
             <Text
@@ -78,9 +82,9 @@ export default function FormsScreen() {
               fontWeight: Typography.fontWeight.semibold,
             }}
           >
-            Tips
+            {t(language, "settlement.tips")}
           </Text>
-          {guide.tips.map((tip) => (
+          {faArr(guide.tipsFa, guide.tips, language).map((tip) => (
             <Text
               key={tip}
               style={{

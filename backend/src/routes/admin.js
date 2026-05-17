@@ -31,6 +31,18 @@ const {
   getSettings,
   saveSettings,
 } = require("../services/admin-settings-store");
+const {
+  getCountries,
+  addCountry,
+  updateCountry,
+  deleteCountry,
+} = require("../services/countries-store");
+const {
+  getEvents,
+  addEvent,
+  updateEvent,
+  deleteEvent,
+} = require("../services/events-store");
 
 function getUserModel() {
   try {
@@ -1162,6 +1174,79 @@ router.post("/database/words", async (req, res) => {
   } catch (error) {
     console.error("Create word error:", error);
     res.status(500).json({ error: "Failed to create word" });
+  }
+});
+
+// Countries CRUD
+router.get("/countries", async (req, res) => {
+  try {
+    res.json({ countries: await getCountries() });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch countries" });
+  }
+});
+
+router.post("/countries", async (req, res) => {
+  try {
+    const countries = await addCountry(req.body);
+    res.status(201).json({ countries });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+router.put("/countries/:code", async (req, res) => {
+  try {
+    const countries = await updateCountry(req.params.code, req.body);
+    res.json({ countries });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+router.delete("/countries/:code", async (req, res) => {
+  try {
+    const countries = await deleteCountry(req.params.code);
+    res.json({ countries });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+// Events CRUD
+router.get("/events", async (req, res) => {
+  try {
+    const { country, state, city, category } = req.query;
+    res.json({ events: await getEvents({ country, state, city, category }) });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch events" });
+  }
+});
+
+router.post("/events", async (req, res) => {
+  try {
+    const event = await addEvent(req.body);
+    res.status(201).json({ event });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+router.put("/events/:id", async (req, res) => {
+  try {
+    const event = await updateEvent(req.params.id, req.body);
+    res.json({ event });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+router.delete("/events/:id", async (req, res) => {
+  try {
+    await deleteEvent(req.params.id);
+    res.json({ message: "Event deleted" });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
   }
 });
 

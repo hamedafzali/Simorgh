@@ -10,9 +10,12 @@ import FeatureGate from "../components/FeatureGate";
 import { Screen } from "../components/ui/Screen";
 import { Chevron } from "../components/ui/Chevron";
 import { germanyGuides } from "../services/germany-data";
+import { usePreferences } from "../contexts/PreferencesContext";
+import { fa } from "../services/l10n";
 
 export default function GuidesScreen() {
   const router = useRouter();
+  const { language } = usePreferences();
   const colorScheme = useColorScheme();
   const palette = colorScheme === "dark" ? Colors.dark : Colors.light;
 
@@ -43,8 +46,9 @@ export default function GuidesScreen() {
             lineHeight: 22,
           }}
         >
-          Step-by-step checklists for the most important tasks in the first
-          months.
+          {language === "fa"
+            ? "چک‌لیست‌های گام‌به‌گام برای مهم‌ترین کارها در ماه‌های اول."
+            : "Step-by-step checklists for the most important tasks in the first months."}
         </Text>
       </Card>
 
@@ -59,13 +63,13 @@ export default function GuidesScreen() {
               marginBottom: Spacing.sm,
             }}
           >
-            {category}
+            {fa(guides[0]?.categoryFa, category, language)}
           </Text>
           {guides.map((guide) => (
             <ListItem
               key={guide.id}
-              title={guide.title}
-              subtitle={guide.summary}
+              title={fa(guide.titleFa, guide.title, language)}
+              subtitle={fa(guide.summaryFa, guide.summary, language)}
               onPress={() => router.push(`/guide/${guide.id}` as any)}
               right={<Chevron />}
             />

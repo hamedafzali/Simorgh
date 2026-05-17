@@ -1,0 +1,51 @@
+[
+  {
+    "code": "DE",
+    "name": "Germany",
+    "localName": "Deutschland",
+    "summary": "Registration, insurance, and work essentials.",
+    "enabled": true
+  },
+  {
+    "code": "CA",
+    "name": "Canada",
+    "localName": "Canada",
+    "summary": "Arrival checklist and settlement basics.",
+    "enabled": false
+  },
+  {
+    "code": "US",
+    "name": "United States",
+    "localName": "United States",
+    "summary": "Immigration basics and local setup.",
+    "enabled": false
+  },
+  {
+    "code": "UK",
+    "name": "United Kingdom",
+    "localName": "United Kingdom",
+    "summary": "Healthcare, residency, and work prep.",
+    "enabled": false
+  },
+  {
+    "code": "AU",
+    "name": "Australia",
+    "localName": "Australia",
+    "summary": "Local onboarding and services.",
+    "enabled": false
+  },
+  {
+    "code": "TR",
+    "name": "Turkey",
+    "localName": "Türkiye",
+    "summary": "Residency, banking, and daily life.",
+    "enabled": false
+  },
+  {
+    "code": "SE",
+    "name": "Sweden",
+    "localName": "Sverige",
+    "summary": "Registration and services.",
+    "enabled": false
+  }
+]

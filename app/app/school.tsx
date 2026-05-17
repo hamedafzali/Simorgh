@@ -8,11 +8,15 @@ import { PageHeader } from "../components/ui/PageHeader";
 import FeatureGate from "../components/FeatureGate";
 import { Screen } from "../components/ui/Screen";
 import { getSchoolGuide, supportedCountries } from "../services/countries-data";
+import { usePreferences } from "../contexts/PreferencesContext";
+import { fa, faArr } from "../services/l10n";
+import { t } from "../services/i18n";
 
 export default function SchoolGuideScreen() {
   const params = useLocalSearchParams<{ country?: string }>();
   const code = (params.country || "DE").toUpperCase();
   const country = supportedCountries.find((c) => c.code === code);
+  const { language } = usePreferences();
 
   const colorScheme = useColorScheme();
   const palette = colorScheme === "dark" ? Colors.dark : Colors.light;
@@ -35,7 +39,7 @@ export default function SchoolGuideScreen() {
             marginBottom: Spacing.xs,
           }}
         >
-          {guide.title}
+          {fa(guide.titleFa, guide.title, language)}
         </Text>
         <Text
           style={{
@@ -44,7 +48,7 @@ export default function SchoolGuideScreen() {
             lineHeight: 22,
           }}
         >
-          {guide.summary}
+          {fa(guide.summaryFa, guide.summary, language)}
         </Text>
       </Card>
 
@@ -57,9 +61,9 @@ export default function SchoolGuideScreen() {
             marginBottom: Spacing.sm,
           }}
         >
-          Steps
+          {t(language, "settlement.steps")}
         </Text>
-        {guide.steps.map((step) => (
+        {faArr(guide.stepsFa, guide.steps, language).map((step) => (
           <Text
             key={step}
             style={{
@@ -82,9 +86,9 @@ export default function SchoolGuideScreen() {
             marginBottom: Spacing.sm,
           }}
         >
-          Documents
+          {t(language, "settlement.documents")}
         </Text>
-        {guide.documents.map((doc) => (
+        {faArr(guide.documentsFa, guide.documents, language).map((doc) => (
           <Text
             key={doc}
             style={{

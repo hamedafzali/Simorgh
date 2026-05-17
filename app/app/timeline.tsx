@@ -8,11 +8,14 @@ import { PageHeader } from "../components/ui/PageHeader";
 import FeatureGate from "../components/FeatureGate";
 import { Screen } from "../components/ui/Screen";
 import { getTimeline, supportedCountries } from "../services/countries-data";
+import { usePreferences } from "../contexts/PreferencesContext";
+import { fa, faArr } from "../services/l10n";
 
 export default function TimelineScreen() {
   const params = useLocalSearchParams<{ country?: string }>();
-  const code = (params.country || "GLOBAL").toUpperCase();
+  const code = (params.country || "DE").toUpperCase();
   const country = supportedCountries.find((c) => c.code === code);
+  const { language } = usePreferences();
 
   const colorScheme = useColorScheme();
   const palette = colorScheme === "dark" ? Colors.dark : Colors.light;
@@ -36,9 +39,9 @@ export default function TimelineScreen() {
               marginBottom: Spacing.sm,
             }}
           >
-            {block.dayRange} · {block.title}
+            {block.dayRange} · {fa(block.titleFa, block.title, language)}
           </Text>
-          {block.items.map((item) => (
+          {faArr(block.itemsFa, block.items, language).map((item) => (
             <Text
               key={item}
               style={{

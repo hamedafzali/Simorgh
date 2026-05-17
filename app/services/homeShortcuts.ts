@@ -1,5 +1,8 @@
+import type { FeatureFlags } from "./features";
+
 export type HomeShortcut = {
   key: string;
+  flagKey?: keyof FeatureFlags;
   title: string;
   subtitle: string;
   icon: "briefcase" | "calendar" | "file-text" | "globe" | "clock" | "help-circle" | "check-circle" | "message-square" | "bell" | "bookmark" | "heart" | "home" | "file" | "clipboard" | "alert-triangle" | "map" | "map-pin" | "message-circle" | "settings";
@@ -8,7 +11,24 @@ export type HomeShortcut = {
 
 export const homeShortcuts: HomeShortcut[] = [
   {
+    key: "learning",
+    flagKey: "learning",
+    title: "Learn",
+    subtitle: "Deutsch",
+    icon: "bookmark",
+    route: "/(tabs)/learn",
+  },
+  {
+    key: "community",
+    flagKey: "community",
+    title: "Community",
+    subtitle: "Connect",
+    icon: "message-square",
+    route: "/(tabs)/community",
+  },
+  {
     key: "jobs",
+    flagKey: "jobs",
     title: "Jobs",
     subtitle: "Browse",
     icon: "briefcase",
@@ -16,6 +36,7 @@ export const homeShortcuts: HomeShortcut[] = [
   },
   {
     key: "events",
+    flagKey: "events",
     title: "Events",
     subtitle: "Nearby",
     icon: "calendar",
@@ -23,6 +44,7 @@ export const homeShortcuts: HomeShortcut[] = [
   },
   {
     key: "documents",
+    flagKey: "documents",
     title: "Documents",
     subtitle: "Guides",
     icon: "file-text",
@@ -30,6 +52,7 @@ export const homeShortcuts: HomeShortcut[] = [
   },
   {
     key: "countries",
+    flagKey: "countries",
     title: "Countries",
     subtitle: "Starter packs",
     icon: "globe",
@@ -37,6 +60,7 @@ export const homeShortcuts: HomeShortcut[] = [
   },
   {
     key: "timeline",
+    flagKey: "timeline",
     title: "Timeline",
     subtitle: "90 days",
     icon: "clock",
@@ -44,6 +68,7 @@ export const homeShortcuts: HomeShortcut[] = [
   },
   {
     key: "services",
+    flagKey: "services",
     title: "Services",
     subtitle: "Trusted",
     icon: "help-circle",
@@ -51,6 +76,7 @@ export const homeShortcuts: HomeShortcut[] = [
   },
   {
     key: "checklist",
+    flagKey: "checklist",
     title: "Checklist",
     subtitle: "Progress",
     icon: "check-circle",
@@ -58,6 +84,7 @@ export const homeShortcuts: HomeShortcut[] = [
   },
   {
     key: "deadlines",
+    flagKey: "deadlines",
     title: "Deadlines",
     subtitle: "Due dates",
     icon: "calendar",
@@ -65,6 +92,7 @@ export const homeShortcuts: HomeShortcut[] = [
   },
   {
     key: "documents-tracker",
+    flagKey: "documents",
     title: "Doc Tracker",
     subtitle: "Expiry",
     icon: "file-text",
@@ -72,6 +100,7 @@ export const homeShortcuts: HomeShortcut[] = [
   },
   {
     key: "phrasebook",
+    flagKey: "phrasebook",
     title: "Phrasebook",
     subtitle: "Phrases",
     icon: "message-square",
@@ -79,6 +108,7 @@ export const homeShortcuts: HomeShortcut[] = [
   },
   {
     key: "residency-reminders",
+    flagKey: "reminders",
     title: "Reminders",
     subtitle: "Residency",
     icon: "bell",
@@ -86,6 +116,7 @@ export const homeShortcuts: HomeShortcut[] = [
   },
   {
     key: "school",
+    flagKey: "school",
     title: "School",
     subtitle: "Enrollment",
     icon: "bookmark",
@@ -93,6 +124,7 @@ export const homeShortcuts: HomeShortcut[] = [
   },
   {
     key: "support",
+    flagKey: "support",
     title: "Support",
     subtitle: "Wellbeing",
     icon: "heart",
@@ -100,6 +132,7 @@ export const homeShortcuts: HomeShortcut[] = [
   },
   {
     key: "housing",
+    flagKey: "housing",
     title: "Housing",
     subtitle: "Safety",
     icon: "home",
@@ -107,6 +140,7 @@ export const homeShortcuts: HomeShortcut[] = [
   },
   {
     key: "tax",
+    flagKey: "tax",
     title: "Tax Basics",
     subtitle: "Deadlines",
     icon: "file",
@@ -114,6 +148,7 @@ export const homeShortcuts: HomeShortcut[] = [
   },
   {
     key: "forms",
+    flagKey: "forms",
     title: "Forms",
     subtitle: "Guided",
     icon: "clipboard",
@@ -121,6 +156,7 @@ export const homeShortcuts: HomeShortcut[] = [
   },
   {
     key: "emergency",
+    flagKey: "emergency",
     title: "Emergency",
     subtitle: "Numbers",
     icon: "alert-triangle",
@@ -128,6 +164,7 @@ export const homeShortcuts: HomeShortcut[] = [
   },
   {
     key: "guides",
+    flagKey: "guides",
     title: "Guides",
     subtitle: "Essentials",
     icon: "map",
@@ -135,6 +172,7 @@ export const homeShortcuts: HomeShortcut[] = [
   },
   {
     key: "locations",
+    flagKey: "locations",
     title: "Locations",
     subtitle: "Nearby",
     icon: "map-pin",
@@ -142,6 +180,7 @@ export const homeShortcuts: HomeShortcut[] = [
   },
   {
     key: "chat",
+    flagKey: "chat",
     title: "Chat",
     subtitle: "Community",
     icon: "message-circle",
