@@ -1,8 +1,8 @@
-const fs = require('fs').promises;
 const path = require('path');
+const { readStore, writeStore } = require('./json-store');
 
-const dataDir = path.join(__dirname, '../../../admin/dist/admin-data');
-const countriesPath = path.join(dataDir, 'countries.json');
+// Legacy file location — imported into Mongo once if present
+const countriesPath = path.join(__dirname, '../../../admin/dist/admin-data/countries.json');
 
 const defaultCountries = [
   { code: 'DE', name: 'Germany', localName: 'Deutschland', summary: 'Registration, insurance, and work essentials.', enabled: true },
@@ -14,28 +14,12 @@ const defaultCountries = [
   { code: 'SE', name: 'Sweden', localName: 'Sverige', summary: 'Registration and services.', enabled: false },
 ];
 
-async function ensureStore() {
-  await fs.mkdir(dataDir, { recursive: true });
-  try {
-    await fs.access(countriesPath);
-  } catch {
-    await fs.writeFile(countriesPath, JSON.stringify(defaultCountries, null, 2));
-  }
-}
-
 async function getCountries() {
-  await ensureStore();
-  try {
-    const raw = await fs.readFile(countriesPath, 'utf8');
-    return JSON.parse(raw);
-  } catch {
-    return defaultCountries;
-  }
+  return readStore('countries', defaultCountries, countriesPath);
 }
 
 async function saveCountries(countries) {
-  await ensureStore();
-  await fs.writeFile(countriesPath, JSON.stringify(countries, null, 2));
+  await writeStore('countries', countries);
   return countries;
 }
 

@@ -1,8 +1,8 @@
-const fs = require('fs').promises;
 const path = require('path');
+const { readStore, writeStore } = require('./json-store');
 
-const dataDir = path.join(__dirname, '../../../admin/dist/admin-data');
-const settingsPath = path.join(dataDir, 'settings.json');
+// Legacy file location — imported into Mongo once if present
+const settingsPath = path.join(__dirname, '../../../admin/dist/admin-data/settings.json');
 
 const defaultSettings = {
   general: {
@@ -147,25 +147,14 @@ const defaultSettings = {
   },
 };
 
-async function ensureStore() {
-  await fs.mkdir(dataDir, { recursive: true });
-  try { await fs.access(settingsPath); } catch { await fs.writeFile(settingsPath, JSON.stringify(defaultSettings, null, 2)); }
-}
-
 async function getSettings() {
-  await ensureStore();
-  try {
-    const raw = await fs.readFile(settingsPath, 'utf8');
-    return { ...defaultSettings, ...JSON.parse(raw) };
-  } catch {
-    return defaultSettings;
-  }
+  const stored = await readStore('settings', defaultSettings, settingsPath);
+  return { ...defaultSettings, ...stored };
 }
 
 async function saveSettings(settings) {
-  await ensureStore();
   const next = { ...defaultSettings, ...settings };
-  await fs.writeFile(settingsPath, JSON.stringify(next, null, 2));
+  await writeStore('settings', next);
   return next;
 }
 

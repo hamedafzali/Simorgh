@@ -1,9 +1,9 @@
-const fs = require('fs').promises;
 const path = require('path');
 const { randomUUID } = require('crypto');
+const { readStore, writeStore } = require('./json-store');
 
-const dataDir = path.join(__dirname, '../../../admin/dist/admin-data');
-const eventsPath = path.join(dataDir, 'events.json');
+// Legacy file location — imported into Mongo once if present
+const eventsPath = path.join(__dirname, '../../../admin/dist/admin-data/events.json');
 
 const defaultEvents = [
   {
@@ -98,34 +98,18 @@ const defaultEvents = [
   },
 ];
 
-async function ensureStore() {
-  await fs.mkdir(dataDir, { recursive: true });
-  try {
-    await fs.access(eventsPath);
-  } catch {
-    await fs.writeFile(eventsPath, JSON.stringify(defaultEvents, null, 2));
-  }
-}
-
 async function getEvents({ country, state, city, category, enabledOnly = false } = {}) {
-  await ensureStore();
-  try {
-    const raw = await fs.readFile(eventsPath, 'utf8');
-    let events = JSON.parse(raw);
-    if (enabledOnly) events = events.filter(e => e.enabled);
-    if (country) events = events.filter(e => e.country === country);
-    if (state) events = events.filter(e => !e.state || e.state === state);
-    if (city) events = events.filter(e => !e.city || e.city === city);
-    if (category) events = events.filter(e => e.category === category);
-    return events.sort((a, b) => a.date.localeCompare(b.date));
-  } catch {
-    return defaultEvents;
-  }
+  let events = await readStore('events', defaultEvents, eventsPath);
+  if (enabledOnly) events = events.filter(e => e.enabled);
+  if (country) events = events.filter(e => e.country === country);
+  if (state) events = events.filter(e => !e.state || e.state === state);
+  if (city) events = events.filter(e => !e.city || e.city === city);
+  if (category) events = events.filter(e => e.category === category);
+  return events.sort((a, b) => a.date.localeCompare(b.date));
 }
 
 async function saveAllEvents(events) {
-  await ensureStore();
-  await fs.writeFile(eventsPath, JSON.stringify(events, null, 2));
+  await writeStore('events', events);
 }
 
 async function addEvent(event) {
