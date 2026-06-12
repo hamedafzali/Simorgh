@@ -1,0 +1,7 @@
+# Like .gitignore for EAS uploads, but allows .env so EXPO_PUBLIC_* values
+# (backend URL + app API key) are baked into beta builds.
+node_modules/
+.expo/
+.DS_Store
+*.log
+*.db
