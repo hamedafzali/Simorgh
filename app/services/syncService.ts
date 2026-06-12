@@ -10,6 +10,7 @@ import {
 import { NetInfoState } from "@react-native-community/netinfo";
 import { API_BASE_URL } from "../config/api";
 import { saveFeatureFlags } from "./features";
+import { track } from "./analytics";
 
 // Backend API configuration
 const BACKEND_BASE_URL = API_BASE_URL;
@@ -520,6 +521,11 @@ class SyncService {
       await this.saveSyncConfig(config);
 
       console.log("Full sync completed");
+      const failed = results.filter((r) => !r.success);
+      void track(failed.length === 0 ? "sync_completed" : "sync_failed", {
+        synced: results.filter((r) => r.success).map((r) => r.entityType),
+        failed: failed.map((r) => ({ entity: r.entityType, error: r.error })),
+      });
       return results;
     } finally {
       this.isSyncing = false;

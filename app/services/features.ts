@@ -33,28 +33,31 @@ export type CountryEntry = {
 
 export type CountryConfig = Record<string, CountryEntry>;
 
+// First-run defaults: the app must be fully usable before it ever reaches the
+// backend. Mirrors the backend admin defaults — Germany features on, unfinished
+// features (chat) off. Backend sync overrides these once available.
 export const defaultFeatureFlags: FeatureFlags = {
-  learning: false,
-  community: false,
-  jobs: false,
+  learning: true,
+  community: true,
+  jobs: true,
   chat: false,
-  events: false,
-  documents: false,
-  countries: false,
-  checklist: false,
-  deadlines: false,
-  forms: false,
-  emergency: false,
-  phrasebook: false,
-  reminders: false,
-  school: false,
-  support: false,
-  housing: false,
-  tax: false,
-  services: false,
-  guides: false,
-  locations: false,
-  timeline: false,
+  events: true,
+  documents: true,
+  countries: true,
+  checklist: true,
+  deadlines: true,
+  forms: true,
+  emergency: true,
+  phrasebook: true,
+  reminders: true,
+  school: true,
+  support: true,
+  housing: true,
+  tax: true,
+  services: true,
+  guides: true,
+  locations: true,
+  timeline: true,
 };
 
 const FLAGS_KEY = "feature_flags";

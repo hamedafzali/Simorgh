@@ -46,7 +46,7 @@ const defaultSettings = {
   featureFlags: {
     learning: true,
     community: true,
-    jobs: false,
+    jobs: true,
     chat: false,
     events: true,
     documents: true,
@@ -71,7 +71,7 @@ const defaultSettings = {
       enabled: true,
       name: 'Germany',
       features: {
-        learning: true, community: true, jobs: false, chat: false,
+        learning: true, community: true, jobs: true, chat: false,
         events: true, documents: true, countries: true, checklist: true,
         deadlines: true, forms: true, emergency: true, phrasebook: true,
         reminders: true, school: true, support: true, housing: true,

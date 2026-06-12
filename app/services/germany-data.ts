@@ -29,18 +29,6 @@ export type Guide = {
   updatedAt: string;
 };
 
-export type Job = {
-  id: string;
-  title: string;
-  company: string;
-  city: string;
-  type: "Full-time" | "Part-time" | "Internship";
-  level: "A1" | "A2" | "B1" | "B2" | "C1";
-  description: string;
-  requirements: string[];
-  benefits: string[];
-  howToApply: string[];
-};
 
 
 export type DocumentGuide = {
@@ -480,68 +468,6 @@ export const documentGuides: DocumentGuide[] = [
   },
 ];
 
-export const germanyJobs: Job[] = [
-  {
-    id: "j1",
-    title: "Warehouse Associate",
-    company: "LogiBerlin GmbH",
-    city: "Berlin",
-    type: "Full-time",
-    level: "A2",
-    description: "Entry-level warehouse role with training and clear processes.",
-    requirements: ["Basic German (A2)", "Reliability", "Physical stamina"],
-    benefits: ["Paid training", "Shift allowance", "Fixed contract"],
-    howToApply: ["Prepare CV in PDF", "Send short email application", "Attend on-site interview"],
-  },
-  {
-    id: "j2",
-    title: "Restaurant Service",
-    company: "Rhein Café",
-    city: "Köln",
-    type: "Part-time",
-    level: "A1",
-    description: "Front-of-house service and customer support.",
-    requirements: ["Friendly communication", "Basic German", "Punctuality"],
-    benefits: ["Tips", "Flexible shifts"],
-    howToApply: ["Walk in with CV", "Short trial shift"],
-  },
-  {
-    id: "j3",
-    title: "Office Assistant",
-    company: "Nord Solutions",
-    city: "Hamburg",
-    type: "Internship",
-    level: "B1",
-    description: "Support scheduling, emails, and simple reports.",
-    requirements: ["B1 German", "MS Office basics", "Attention to detail"],
-    benefits: ["Mentorship", "Certificate", "Potential full-time offer"],
-    howToApply: ["CV + cover letter", "Remote interview"],
-  },
-  {
-    id: "j4",
-    title: "Delivery Driver (E-bike)",
-    company: "SpeedGo",
-    city: "Berlin",
-    type: "Part-time",
-    level: "A1",
-    description: "Deliver food orders within the city.",
-    requirements: ["Basic German or English", "Smartphone"],
-    benefits: ["Flexible schedule", "Bonuses"],
-    howToApply: ["Online form", "ID verification"],
-  },
-  {
-    id: "j5",
-    title: "Customer Support (Persian/German)",
-    company: "ConnectCare",
-    city: "Frankfurt",
-    type: "Full-time",
-    level: "B2",
-    description: "Support Persian-speaking customers with services in German.",
-    requirements: ["B2 German", "Persian native", "Customer empathy"],
-    benefits: ["Remote days", "Training budget"],
-    howToApply: ["CV + short video intro"],
-  },
-];
 
 
 export const germanyLocations: Location[] = [

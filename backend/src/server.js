@@ -13,9 +13,15 @@ const PORT = process.env.PORT || 3001;
 
 // Middleware
 app.use(helmet());
+// CORS_ORIGINS: comma-separated browser origins (admin panel etc.).
+// Unset → allow all (dev mode). Native app requests have no Origin and are unaffected.
+const corsOrigins = (process.env.CORS_ORIGINS || "")
+  .split(",")
+  .map((s) => s.trim())
+  .filter(Boolean);
 app.use(
   cors({
-    origin: "*", // Allow all origins for development
+    origin: corsOrigins.length > 0 ? corsOrigins : "*",
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization", "x-api-key"],
   })
@@ -85,6 +91,15 @@ app.post("/api/admin/login", (req, res) => {
 app.use("/api/admin", requireAdminJWT, adminRoutes);
 app.use("/api/admin", requireAdminJWT, adminSQLiteRoutes);
 
+// Live job search — proxies the official Arbeitsagentur API with caching
+const jobsRoutes = require("./routes/jobs");
+app.use("/api/jobs", requireAppApiKey, jobsRoutes);
+
+// Analytics — app ingestion (API key) and admin summary (JWT)
+const analyticsRoutes = require("./routes/analytics");
+app.use("/api/analytics", requireAppApiKey, analyticsRoutes.publicRouter);
+app.use("/api/admin/analytics", requireAdminJWT, analyticsRoutes.adminRouter);
+
 // Public endpoint — returns enabled countries list for the app
 app.get("/api/countries", requireAppApiKey, async (req, res) => {
   try {
@@ -120,6 +135,11 @@ app.get("/api/events", requireAppApiKey, async (req, res) => {
     console.error("Events error:", error);
     res.status(500).json({ error: "Failed to get events" });
   }
+});
+
+// Privacy policy — public URL required for app store listings
+app.get("/privacy", (req, res) => {
+  res.sendFile(path.join(__dirname, "../public/privacy.html"));
 });
 
 // Serve admin panel static files

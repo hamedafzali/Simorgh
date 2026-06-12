@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useRouter } from "expo-router";
+import { track } from "../services/analytics";
 import { Card } from "./ui/Card";
 import { EmptyState } from "./ui/EmptyState";
 import { PageHeader } from "./ui/PageHeader";
@@ -20,8 +21,15 @@ export default function FeatureGate({ feature, title, subtitle, children }: Prop
   const router = useRouter();
   const { featureFlags } = useFeatureFlags();
   const { language } = usePreferences();
+  const enabled = featureFlags[feature];
 
-  if (featureFlags[feature]) {
+  useEffect(() => {
+    if (enabled) {
+      void track("feature_opened", { feature });
+    }
+  }, [feature, enabled]);
+
+  if (enabled) {
     return <>{children}</>;
   }
 

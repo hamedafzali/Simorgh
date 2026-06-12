@@ -15,6 +15,7 @@ import { usePreferences, type AppLanguage } from "../contexts/PreferencesContext
 import { useCountries } from "../contexts/CountriesContext";
 import { setJson } from "../services/localStore";
 import { requestNotificationPermission } from "../services/notifications";
+import { track } from "../services/analytics";
 
 // ── Priority areas, ordered by Iranian community urgency ──────────────────
 const PRIORITIES = [
@@ -308,6 +309,10 @@ export default function OnboardingScreen() {
       await setJson("pref:priorities", Array.from(priorities));
     }
     await requestNotificationPermission().catch(() => {});
+    void track("onboarding_completed", {
+      country: selectedCountry,
+      priorities: Array.from(priorities),
+    });
     setOnboardingDone(true);
   }
 

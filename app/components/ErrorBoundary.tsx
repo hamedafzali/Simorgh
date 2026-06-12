@@ -1,5 +1,6 @@
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
+import { trackError } from "../services/analytics";
 
 type State = { hasError: boolean; message: string };
 
@@ -18,6 +19,7 @@ export class ErrorBoundary extends React.Component<
 
   componentDidCatch(error: unknown, info: React.ErrorInfo) {
     console.error("[ErrorBoundary]", error, info.componentStack);
+    void trackError(error, "error_boundary");
   }
 
   render() {

@@ -14,6 +14,7 @@ import { CountriesProvider } from "../contexts/CountriesContext";
 import { ErrorBoundary } from "../components/ErrorBoundary";
 import OnboardingScreen from "./onboarding";
 import { addNotificationResponseListener } from "../services/notifications";
+import { track, flushAnalytics } from "../services/analytics";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -25,6 +26,10 @@ function AppNavigator() {
       SplashScreen.hideAsync();
     }
   }, [prefsLoaded]);
+
+  useEffect(() => {
+    void track("app_open").then(() => flushAnalytics());
+  }, []);
 
   useEffect(() => {
     const sub = addNotificationResponseListener((response) => {

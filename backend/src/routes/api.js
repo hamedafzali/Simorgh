@@ -540,21 +540,4 @@ router.get("/categories", async (req, res) => {
   }
 });
 
-// Chat endpoint
-router.post("/chat", (req, res) => {
-  const { message, language } = req.body;
-
-  // TODO: Implement actual chat logic
-  res.json({ reply: `Chat response for: ${message}` });
-});
-
-// Jobs endpoint
-router.get("/jobs", (req, res) => {
-  // TODO: Implement actual jobs logic
-  res.json({
-    version: 1,
-    jobs: [],
-  });
-});
-
 module.exports = router;

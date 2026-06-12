@@ -16,6 +16,7 @@ COPY backend/package*.json ./
 RUN npm install --omit=dev
 
 COPY backend/src ./src
+COPY backend/public ./public
 COPY backend/database ./database
 COPY --from=admin-build /app/admin/build ../admin/build
 COPY admin/src/scripts ../admin/src/scripts

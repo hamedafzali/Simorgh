@@ -12,6 +12,14 @@ services:
         value: 3001
       - key: MONGODB_URI
         sync: false  # set this in the Render dashboard
+      - key: APP_API_KEY
+        sync: false  # required in prod — same value goes in the app's EXPO_PUBLIC_API_KEY
+      - key: ADMIN_PASSWORD
+        sync: false  # required in prod — admin panel login
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CORS_ORIGINS
+        sync: false  # comma-separated browser origins allowed to call the API
     disk:
       name: admin-data
       mountPath: /opt/render/project/src/admin/dist/admin-data
