@@ -18,6 +18,12 @@ services:
       PORT: 3001
       MONGODB_URI: mongodb://mongo:27017/simorgh
       NODE_ENV: production
+      # Set these in a .env file next to this compose file (required when
+      # exposing the server to the internet; empty = open dev mode)
+      APP_API_KEY: ${APP_API_KEY:-}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
+      JWT_SECRET: ${JWT_SECRET:-}
+      CORS_ORIGINS: ${CORS_ORIGINS:-}
     ports:
       - "3001:3001"
     volumes:
