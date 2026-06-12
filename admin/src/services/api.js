@@ -1,8 +1,15 @@
 import axios from "axios";
 
+// Local dev/docker serves the admin on its own port (3000) with the API on
+// 3001; in production the backend serves the admin itself, so the API is
+// same-origin under /api.
+const isStandaloneDev =
+  window.location.port === "3000" || window.location.port === "6001";
 const API_BASE_URL =
   process.env.REACT_APP_API_URL ||
-  `${window.location.protocol}//${window.location.hostname}:6001/api`;
+  (isStandaloneDev
+    ? `${window.location.protocol}//${window.location.hostname}:3001/api`
+    : `${window.location.protocol}//${window.location.host}/api`);
 
 class ApiService {
   constructor() {
