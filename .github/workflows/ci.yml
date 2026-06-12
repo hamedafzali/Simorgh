@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  app-typecheck:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+      - run: npx tsc --noEmit
+
+  backend-check:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+      - name: Syntax-check all backend sources
+        run: |
+          find src -name "*.js" -print0 | xargs -0 -n1 node --check
+      - name: Boot smoke test
+        run: |
+          node src/server.js &
+          SERVER_PID=$!
+          sleep 3
+          curl -sf http://localhost:3001/ > /dev/null
+          curl -sf http://localhost:3001/privacy > /dev/null
+          kill $SERVER_PID

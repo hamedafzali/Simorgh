@@ -18,20 +18,20 @@ import { Chevron } from "../../components/ui/Chevron";
 import { Button } from "../../components/ui/Button";
 import { documentGuides } from "../../services/germany-data";
 import { searchJobs, type LiveJob } from "../../services/jobs";
+import { API_BASE_URL, apiHeaders } from "../../config/api";
 import { track } from "../../services/analytics";
 import { usePreferences } from "../../contexts/PreferencesContext";
 import FeatureGate from "../../components/FeatureGate";
 
-// Translate function
-const translate = async (text: string, from = "en", to = "de") => {
-  const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(
-    text,
-  )}&langpair=${from}|${to}`;
-
-  const res = await fetch(url);
+// Translate via our backend proxy (cached server-side, quota-friendly)
+const translate = async (text: string, from = "de", to = "fa") => {
+  const params = new URLSearchParams({ q: text, from, to });
+  const res = await fetch(`${API_BASE_URL}/translate?${params}`, {
+    headers: apiHeaders(),
+  });
+  if (!res.ok) throw new Error(`Translate failed: HTTP ${res.status}`);
   const data = await res.json();
-
-  return data.responseData.translatedText;
+  return data.result;
 };
 
 type JobTranslation = {

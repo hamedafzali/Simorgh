@@ -50,7 +50,7 @@ const defaultSettings = {
     chat: false,
     events: true,
     documents: true,
-    countries: true,
+    countries: false,
     checklist: true,
     deadlines: true,
     forms: true,
@@ -72,7 +72,7 @@ const defaultSettings = {
       name: 'Germany',
       features: {
         learning: true, community: true, jobs: true, chat: false,
-        events: true, documents: true, countries: true, checklist: true,
+        events: true, documents: true, countries: false, checklist: true,
         deadlines: true, forms: true, emergency: true, phrasebook: true,
         reminders: true, school: true, support: true, housing: true,
         tax: true, services: true, guides: true, locations: true, timeline: true,

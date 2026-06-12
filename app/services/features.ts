@@ -43,7 +43,7 @@ export const defaultFeatureFlags: FeatureFlags = {
   chat: false,
   events: true,
   documents: true,
-  countries: true,
+  countries: false,
   checklist: true,
   deadlines: true,
   forms: true,

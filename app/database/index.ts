@@ -1,5 +1,5 @@
 import * as SQLite from "expo-sqlite";
-import { API_BASE_URL } from "../config/api";
+import { API_BASE_URL, apiHeaders } from "../config/api";
 
 // Database configuration
 export const DB_NAME = "simorgh_local.db";
@@ -492,9 +492,7 @@ class DatabaseService {
         }`,
         {
           signal: controller.signal,
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: apiHeaders(),
         }
       );
 

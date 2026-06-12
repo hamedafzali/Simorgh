@@ -28,20 +28,29 @@ app.use(
 );
 app.use(express.json());
 
-// App API key middleware — protects /api/* public endpoints (not admin panel)
-const APP_API_KEY = process.env.APP_API_KEY;
-function requireAppApiKey(req, res, next) {
-  if (!APP_API_KEY) return next(); // key not configured → open (dev mode)
-  const key = req.headers["x-api-key"];
-  if (key !== APP_API_KEY) {
-    return res.status(401).json({ error: "Unauthorized" });
-  }
-  next();
-}
-
 // Admin JWT middleware — protects /api/admin/* routes
 const JWT_SECRET = process.env.JWT_SECRET;
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
+
+// Blanket guard for /api/*: requires the app API key (mobile app) or a valid
+// admin JWT (admin panel). /api/admin/* is excluded — it has its own JWT
+// middleware, and /api/admin/login must stay reachable unauthenticated.
+const APP_API_KEY = process.env.APP_API_KEY;
+function requireAppKeyOrAdmin(req, res, next) {
+  if (req.path.startsWith("/admin")) return next();
+  if (!APP_API_KEY) return next(); // key not configured → open (dev mode)
+  if (req.headers["x-api-key"] === APP_API_KEY) return next();
+  const auth = req.headers.authorization;
+  if (auth && auth.startsWith("Bearer ")) {
+    try {
+      jwt.verify(auth.slice(7), JWT_SECRET || "dev-secret");
+      return next();
+    } catch {
+      // fall through to 401
+    }
+  }
+  return res.status(401).json({ error: "Unauthorized" });
+}
 
 function requireAdminJWT(req, res, next) {
   if (!ADMIN_PASSWORD) return next(); // not configured → open (dev mode)
@@ -71,6 +80,7 @@ const adminSQLiteRoutes = require("./routes/admin-sqlite");
 const { getSettings } = require("./services/admin-settings-store");
 const { getCountries } = require("./services/countries-store");
 const { getEvents } = require("./services/events-store");
+app.use("/api", requireAppKeyOrAdmin);
 app.use("/api", apiRoutes);
 app.use("/api/database", databaseRoutes);
 app.use("/api/database-version", databaseVersionRoutes);
@@ -93,15 +103,19 @@ app.use("/api/admin", requireAdminJWT, adminSQLiteRoutes);
 
 // Live job search — proxies the official Arbeitsagentur API with caching
 const jobsRoutes = require("./routes/jobs");
-app.use("/api/jobs", requireAppApiKey, jobsRoutes);
+app.use("/api/jobs", jobsRoutes);
+
+// Translation proxy — cached MyMemory translations for the app
+const translateRoutes = require("./routes/translate");
+app.use("/api/translate", translateRoutes);
 
 // Analytics — app ingestion (API key) and admin summary (JWT)
 const analyticsRoutes = require("./routes/analytics");
-app.use("/api/analytics", requireAppApiKey, analyticsRoutes.publicRouter);
+app.use("/api/analytics", analyticsRoutes.publicRouter);
 app.use("/api/admin/analytics", requireAdminJWT, analyticsRoutes.adminRouter);
 
 // Public endpoint — returns enabled countries list for the app
-app.get("/api/countries", requireAppApiKey, async (req, res) => {
+app.get("/api/countries", async (req, res) => {
   try {
     const all = await getCountries();
     res.json({ countries: all.filter(c => c.enabled) });
@@ -112,7 +126,7 @@ app.get("/api/countries", requireAppApiKey, async (req, res) => {
 });
 
 // Lightweight public endpoint — app polls this for feature flag changes
-app.get("/api/feature-flags", requireAppApiKey, async (req, res) => {
+app.get("/api/feature-flags", async (req, res) => {
   try {
     const settings = await getSettings();
     res.json({
@@ -126,7 +140,7 @@ app.get("/api/feature-flags", requireAppApiKey, async (req, res) => {
 });
 
 // Public endpoint — returns enabled events filtered by location
-app.get("/api/events", requireAppApiKey, async (req, res) => {
+app.get("/api/events", async (req, res) => {
   try {
     const { country, state, city, category } = req.query;
     const events = await getEvents({ country, state, city, category, enabledOnly: true });

@@ -8,7 +8,7 @@ import {
   UpdateCheckResult,
 } from "../database";
 import { NetInfoState } from "@react-native-community/netinfo";
-import { API_BASE_URL } from "../config/api";
+import { API_BASE_URL, apiHeaders } from "../config/api";
 import { saveFeatureFlags } from "./features";
 import { track } from "./analytics";
 
@@ -182,7 +182,9 @@ class SyncService {
   // Fetch data from backend
   private async fetchFromBackend<T>(endpoint: string): Promise<T[]> {
     try {
-      const response = await fetch(`${BACKEND_BASE_URL}${endpoint}`);
+      const response = await fetch(`${BACKEND_BASE_URL}${endpoint}`, {
+        headers: apiHeaders(),
+      });
 
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -613,9 +615,7 @@ class SyncService {
 
       const response = await fetch(`${BACKEND_BASE_URL}/database-version/current`, {
         signal: controller.signal,
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: apiHeaders(),
       });
 
       clearTimeout(timeoutId);
